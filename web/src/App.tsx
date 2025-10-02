@@ -19,7 +19,7 @@ export default function App() {
     <div style={{ minHeight: '100vh', background: 'linear-gradient(180deg, #0a2540 0%, #0f3a67 100%)', color: 'white' }}>
       <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <img src="/favicon.png" alt="BeaverNorth Advisors" style={{ height: 36, width: 36, objectFit: 'contain', borderRadius: 6, background: 'white' }} />
+          <img src="/favicon.png" alt="BeaverNorth Advisors" style={{ height: 36, width: 36, objectFit: 'contain' }} />
           <span style={{ fontWeight: 700, letterSpacing: 0.5 }}>BeaverNorth Advisors</span>
         </div>
         {/* Hidden login: no nav link; still accessible at /login. Keeping a tiny, subtle link for you while developing. */}
