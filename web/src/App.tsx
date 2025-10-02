@@ -9,44 +9,93 @@ export default function App() {
     <div style={{ minHeight: '100vh', color: 'var(--text-primary)' }}>
       <Nav />
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
-        <section style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: 32, alignItems: 'center', paddingTop: 24 }}>
-          <div>
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-              style={{ fontSize: 48, lineHeight: 1.1, margin: 0 }}
-            >
-              Canada‑Focused Insurance Advisory
-            </motion.h1>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.7 }}
-              style={{ color: 'var(--text-secondary)', marginTop: 14, fontSize: 18 }}
-            >
-              We help families and businesses across Canada protect what matters with clear advice and tailored coverage.
-            </motion.p>
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35, duration: 0.6 }} style={{ display: 'flex', gap: 12, marginTop: 18 }}>
-              <a href="#capabilities" style={{ background: 'var(--brand-yellow)', color: '#0a2540', padding: '10px 16px', borderRadius: 8, textDecoration: 'none', fontWeight: 700 }}>Explore Capabilities</a>
-              <Link to="/contact" style={{ border: '1px solid var(--line)', color: 'var(--text-primary)', padding: '10px 16px', borderRadius: 8, textDecoration: 'none' }}>Contact Us</Link>
-            </motion.div>
-          </div>
-          <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7 }} style={{ background: 'var(--surface-2)', border: '1px solid var(--line)', borderRadius: 16, padding: 24, backdropFilter: 'blur(6px)' }}>
-            <div style={{ display: 'grid', gap: 10 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ height: 10, width: 10, borderRadius: 20, background: 'var(--brand-green)' }} />
-                <span>Licensed advisors across provinces</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ height: 10, width: 10, borderRadius: 20, background: 'var(--brand-yellow)' }} />
-                <span>Life, Health, Auto, Home, and Business coverage</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ height: 10, width: 10, borderRadius: 20, background: 'var(--brand-orange)' }} />
-                <span>Personalized plans and ongoing support</span>
+        {/* HERO – rounded visual banner with overlay card and CTAs */}
+        <section style={{ marginTop: 8 }}>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            style={{
+              position: 'relative',
+              borderRadius: 24,
+              overflow: 'hidden',
+              height: 440,
+              border: '1px solid var(--line)',
+              background: `url(https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=2000&auto=format&fit=crop) center/cover no-repeat`,
+              boxShadow: '0 10px 40px rgba(0,0,0,0.25)'
+            }}
+          >
+            {/* gradient for readability */}
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(10,37,64,0.85) 0%, rgba(10,37,64,0.35) 60%, rgba(10,37,64,0.0) 100%)' }} />
+
+            {/* Headline + CTAs */}
+            <div style={{ position: 'absolute', left: 28, top: 28, right: 28 }}>
+              <p style={{ margin: 0, color: 'var(--text-secondary)' }}>#1 Canadian insurance advisory partner</p>
+              <h1 style={{ fontSize: 64, lineHeight: 1.05, margin: '6px 0 10px 0' }}>
+                New Confidence<br />for your Future
+              </h1>
+              <div style={{ display: 'flex', gap: 16 }}>
+                <Link to="/contact" style={{ background: 'var(--brand-green)', color: '#083a1f', padding: '10px 16px', borderRadius: 999, textDecoration: 'none', fontWeight: 700 }}>Get in touch ↗</Link>
+                <a href="#services" style={{ color: 'var(--text-primary)', padding: '10px 16px', borderRadius: 999, textDecoration: 'none', border: '1px solid var(--line)' }}>Our services →</a>
               </div>
             </div>
+
+            {/* Glass card on right */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              style={{
+                position: 'absolute',
+                right: 24,
+                top: 90,
+                width: 260,
+                borderRadius: 16,
+                padding: 16,
+                backdropFilter: 'blur(10px)',
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid var(--line)'
+              }}
+            >
+              <div style={{
+                height: 140,
+                borderRadius: 12,
+                background: `url(https://images.unsplash.com/photo-1581092772835-8d1600a3b8aa?q=80&w=800&auto=format&fit=crop) center/cover no-repeat`,
+                border: '1px solid var(--line)'
+              }} />
+              <div style={{ marginTop: 10, color: 'var(--text-secondary)' }}>Discover Our Recent Project</div>
+            </motion.div>
+          </motion.div>
+
+          {/* Metrics strip overlay */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            style={{
+              marginTop: -28,
+              background: '#fff',
+              color: '#0a2540',
+              borderRadius: 16,
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: 16,
+              padding: 20
+            }}
+          >
+            {[
+              { value: '6 mil', label: "Annual client savings guided" },
+              { value: '315', label: 'Projects completed nationwide' },
+              { value: '120K', label: 'Canadians supported to date' },
+            ].map((m) => (
+              <div key={m.value}>
+                <div style={{ fontSize: 36, fontWeight: 700 }}>{m.value}</div>
+                <div style={{ color: '#4b5563' }}>{m.label}</div>
+              </div>
+            ))}
           </motion.div>
         </section>
 
