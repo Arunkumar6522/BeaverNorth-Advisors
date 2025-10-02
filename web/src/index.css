@@ -3,19 +3,19 @@
   line-height: 1.5;
   font-weight: 400;
 
-  /* Canada-inspired palette */
-  --background: #0a2540; /* deep blue */
-  --surface-1: #0f3a67;
-  --surface-2: rgba(255, 255, 255, 0.08);
-  --line: rgba(255, 255, 255, 0.2);
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255,255,255,0.85);
-  --brand-yellow: #f2a900; /* warm yellow */
+  /* Light palette matching the reference */
+  --background: #f6f7fb; /* page background */
+  --surface-1: #ffffff;  /* cards/nav */
+  --surface-2: #ffffff;  /* subtle cards */
+  --line: #e5e7eb;       /* borders */
+  --text-primary: #0a2540;  /* headings */
+  --text-secondary: #4b5563; /* body */
+  --brand-yellow: #f2a900;
   --brand-orange: #ff7a00;
-  --brand-green: #49c26f;
+  --brand-green: #22c55e;   /* lighter green like reference CTA */
 
   color: var(--text-primary);
-  background: linear-gradient(180deg, var(--background) 0%, var(--surface-1) 100%);
+  background: var(--background);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -36,6 +36,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: var(--background);
 }
 
 h1 {

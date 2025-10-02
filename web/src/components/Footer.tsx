@@ -4,7 +4,8 @@ export default function Footer() {
       marginTop: 64,
       padding: '24px',
       borderTop: '1px solid var(--line)',
-      color: 'var(--text-secondary)'
+      color: 'var(--text-secondary)',
+      background: 'var(--surface-1)'
     }}>
       <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

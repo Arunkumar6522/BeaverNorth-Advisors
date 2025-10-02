@@ -26,17 +26,17 @@ export default function App() {
             }}
           >
             {/* gradient for readability */}
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(10,37,64,0.85) 0%, rgba(10,37,64,0.35) 60%, rgba(10,37,64,0.0) 100%)' }} />
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(10,37,64,0.65) 0%, rgba(10,37,64,0.25) 60%, rgba(10,37,64,0.0) 100%)' }} />
 
             {/* Headline + CTAs */}
             <div style={{ position: 'absolute', left: 28, top: 28, right: 28 }}>
               <p style={{ margin: 0, color: 'var(--text-secondary)' }}>#1 Canadian insurance advisory partner</p>
-              <h1 style={{ fontSize: 64, lineHeight: 1.05, margin: '6px 0 10px 0' }}>
+              <h1 style={{ color: 'white', fontSize: 64, lineHeight: 1.05, margin: '6px 0 10px 0' }}>
                 New Confidence<br />for your Future
               </h1>
               <div style={{ display: 'flex', gap: 16 }}>
-                <Link to="/contact" style={{ background: 'var(--brand-green)', color: '#083a1f', padding: '10px 16px', borderRadius: 999, textDecoration: 'none', fontWeight: 700 }}>Get in touch ↗</Link>
-                <a href="#services" style={{ color: 'var(--text-primary)', padding: '10px 16px', borderRadius: 999, textDecoration: 'none', border: '1px solid var(--line)' }}>Our services →</a>
+                <Link to="/contact" style={{ background: 'var(--brand-green)', color: 'white', padding: '10px 16px', borderRadius: 999, textDecoration: 'none', fontWeight: 700 }}>Get in touch ↗</Link>
+                <a href="#services" style={{ color: 'white', padding: '10px 16px', borderRadius: 999, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.6)' }}>Our services →</a>
               </div>
             </div>
 
@@ -75,10 +75,10 @@ export default function App() {
             transition={{ duration: 0.6 }}
             style={{
               marginTop: -28,
-              background: '#fff',
-              color: '#0a2540',
+              background: 'var(--surface-1)',
+              color: 'var(--text-primary)',
               borderRadius: 16,
-              border: '1px solid #e5e7eb',
+              border: '1px solid var(--line)',
               boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
               display: 'grid',
               gridTemplateColumns: 'repeat(3, 1fr)',
