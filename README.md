@@ -30,3 +30,4 @@ Static assets will be emitted to `web/dist`.
 - React 19 + Vite 7 (TypeScript)
 - framer-motion for animations
 - react-router-dom for routing
+# BeaverNorth-Advisors
