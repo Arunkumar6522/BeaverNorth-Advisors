@@ -5,6 +5,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import App from './App.tsx'
 import Login from './pages/Login.tsx'
 import Contact from './pages/Contact.tsx'
+import About from './pages/About.tsx'
+import Services from './pages/Services.tsx'
+import Blog from './pages/Blog.tsx'
+import { I18nProvider } from './i18n.tsx'
 
 const router = createBrowserRouter([
   {
@@ -19,10 +23,15 @@ const router = createBrowserRouter([
     path: '/contact',
     element: <Contact />,
   },
+  { path: '/about', element: <About /> },
+  { path: '/services', element: <Services /> },
+  { path: '/blog', element: <Blog /> },
 ])
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <I18nProvider>
+      <RouterProvider router={router} />
+    </I18nProvider>
   </StrictMode>,
 )

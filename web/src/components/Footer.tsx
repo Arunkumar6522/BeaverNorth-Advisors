@@ -1,4 +1,7 @@
+import { useI18n } from '../i18n'
+
 export default function Footer() {
+  const { t } = useI18n()
   return (
     <footer style={{
       marginTop: 64,
@@ -12,7 +15,7 @@ export default function Footer() {
           <img src="/favicon.png" alt="BeaverNorth Advisors" style={{ height: 24, width: 24, objectFit: 'contain' }} />
           <span>© {new Date().getFullYear()} BeaverNorth Advisors</span>
         </div>
-        <div style={{ fontSize: 14 }}>Canada‑based insurance advisory</div>
+        <div style={{ fontSize: 14 }}>{t('footer_tag')}</div>
       </div>
     </footer>
   )

@@ -1,12 +1,16 @@
 import './App.css'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { useI18n } from './i18n'
 import Nav from './components/Nav'
+import TopBar from './components/TopBar'
 import Footer from './components/Footer'
 
 export default function App() {
+  const { t } = useI18n()
   return (
     <div style={{ minHeight: '100vh', color: 'var(--text-primary)' }}>
+      <TopBar />
       <Nav />
       <main style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
         {/* HERO – rounded visual banner with overlay card and CTAs */}
@@ -30,13 +34,13 @@ export default function App() {
 
             {/* Headline + CTAs */}
             <div style={{ position: 'absolute', left: 28, top: 28, right: 28 }}>
-              <p style={{ margin: 0, color: 'var(--text-secondary)' }}>#1 Canadian insurance advisory partner</p>
+              <p style={{ margin: 0, color: 'var(--text-secondary)' }}>{t('hero_tag')}</p>
               <h1 style={{ color: 'white', fontSize: 64, lineHeight: 1.05, margin: '6px 0 10px 0' }}>
-                New Confidence<br />for your Future
+                {t('hero_headline_1')}<br />{t('hero_headline_2')}
               </h1>
               <div style={{ display: 'flex', gap: 16 }}>
-                <Link to="/contact" style={{ background: 'var(--brand-green)', color: 'white', padding: '10px 16px', borderRadius: 999, textDecoration: 'none', fontWeight: 700 }}>Get in touch ↗</Link>
-                <a href="#services" style={{ color: 'white', padding: '10px 16px', borderRadius: 999, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.6)' }}>Our services →</a>
+                <Link to="/contact" style={{ background: 'var(--brand-green)', color: 'white', padding: '10px 16px', borderRadius: 999, textDecoration: 'none', fontWeight: 700 }}>{t('cta_get_in_touch')} ↗</Link>
+                <a href="#services" style={{ color: 'white', padding: '10px 16px', borderRadius: 999, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.6)' }}>{t('cta_our_services')} →</a>
               </div>
             </div>
 
@@ -67,6 +71,25 @@ export default function App() {
             </motion.div>
           </motion.div>
 
+          {/* Partner insurers carousel placeholder */}
+          <div style={{
+            marginTop: 18,
+            display: 'flex',
+            gap: 28,
+            padding: '12px 8px',
+            alignItems: 'center',
+            overflowX: 'auto',
+            scrollbarWidth: 'none',
+            color: '#6b7280',
+            background: 'var(--surface-1)',
+            border: '1px solid var(--line)',
+            borderRadius: 12
+          }}>
+            {['Manulife','Sun Life','Canada Life','Desjardins','iA Financial','RBC Insurance'].map((n) => (
+              <div key={n} style={{ whiteSpace: 'nowrap', fontWeight: 600 }}>{n}</div>
+            ))}
+          </div>
+
           {/* Metrics strip overlay */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -87,9 +110,9 @@ export default function App() {
             }}
           >
             {[
-              { value: '6 mil', label: "Annual client savings guided" },
-              { value: '315', label: 'Projects completed nationwide' },
-              { value: '120K', label: 'Canadians supported to date' },
+              { value: '6 mil', label: t('metrics_1_label') },
+              { value: '315', label: t('metrics_2_label') },
+              { value: '120K', label: t('metrics_3_label') },
             ].map((m) => (
               <div key={m.value}>
                 <div style={{ fontSize: 36, fontWeight: 700 }}>{m.value}</div>
