@@ -1,6 +1,7 @@
 export interface CustomUser {
   id: number
   username: string
+  password?: string
   email?: string
   full_name?: string
   role: string
@@ -28,26 +29,46 @@ export class CustomAuth {
 
   public async login(username: string, password: string): Promise<LoginResponse> {
     try {
-      const users = await this.getUserByUsername(username)
-      
-      if (users.length === 0) {
-        return { success: false, error: 'Invalid username or password' }
+      // First try to fetch from database
+      try {
+        const users = await this.getUserByUsername(username)
+        
+        if (users.length > 0) {
+          const user = users[0]
+          
+          // Check password matches
+          const isValidPassword = user.password === password
+          
+          if (!isValidPassword) {
+            return { success: false, error: 'Invalid username or password' }
+          }
+
+          // Store user in localStorage for session persistence
+          localStorage.setItem('beavernorth_user', JSON.stringify(user))
+          
+          return { success: true, user }
+        }
+      } catch (dbError) {
+        // Database table might not exist yet
+        console.log('Database not ready, using fallback admin')
       }
 
-      const user = users[0]
-      
-      // For demos, we'll use simple password matching
-      // In production, compare with stored password_hash using bcrypt
-      const isValidPassword = username === 'admin' && password === 'admin123'
-      
-      if (!isValidPassword) {
-        return { success: false, error: 'Invalid username or password' }
+      // Fallback: use hardcoded admin credentials
+      if (username === 'admin' && password === 'admin') {
+        const fallbackUser: CustomUser = {
+          id: 1,
+          username: 'admin',
+          email: 'admin@beavernorth.com',
+          full_name: 'Administrator',
+          role: 'admin',
+          created_at: new Date().toISOString()
+        }
+
+        localStorage.setItem('beavernorth_user', JSON.stringify(fallbackUser))
+        return { success: true, user: fallbackUser }
       }
 
-      // Store user in localStorage for session persistence
-      localStorage.setItem('beavernorth_user', JSON.stringify(user))
-      
-      return { success: true, user }
+      return { success: false, error: 'Invalid username or password' }
     } catch (error) {
       return { success: false, error: 'Login failed. Please try again.' }
     }
