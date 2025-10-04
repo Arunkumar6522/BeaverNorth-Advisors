@@ -105,8 +105,7 @@ export default function Nav() {
                 padding: 8, 
                 background: 'transparent', 
                 border: 'none', 
-                cursor: 'pointer',
-                display: 'flex'
+                cursor: 'pointer'
               }}
             >
               <span style={{ 

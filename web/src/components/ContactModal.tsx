@@ -157,7 +157,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             position: 'absolute',
             top: '16px',
             right: '16px',
-            background: 'transparent',
             border: 'none',
             fontSize: '24px',
             cursor: 'pointer',
