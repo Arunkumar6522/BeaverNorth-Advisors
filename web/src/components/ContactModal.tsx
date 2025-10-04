@@ -56,7 +56,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       
       if (result.success) {
         setOtpSent(true)
-        alert(`OTP sent to ${formatPhoneNumber(phoneNumber)}`)
+        // Show friendly success message instead of alert
+        console.log(`✅ OTP sent to ${formatPhoneNumber(phoneNumber)}`)
       } else {
         alert(result.message)
       }
@@ -581,6 +582,13 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   }}>
                     Phone Number * (for verification)
                   </label>
+                  <p style={{ 
+                    fontSize: '12px',
+                    color: 'var(--text-secondary)',
+                    marginBottom: '12px'
+                  }}>
+                    📱 We'll send a 6-digit code to verify your number
+                  </p>
                   <div style={{ display: 'flex', gap: '0' }}>
                     <CountryCodeSelector
                       value={formData.countryCode}
@@ -590,6 +598,11 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       type="tel"
                       name="phone"
                       placeholder="5551234567"
+                      onFocus={(e) => {
+                        if (!formData.phone) {
+                          e.target.value = ''
+                        }
+                      }}
                       value={formData.phone}
                       onChange={handleChange}
                       required
@@ -643,7 +656,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                           opacity: 0.8
                         }}
                       >
-                        ✓ OTP Sent
+                        ✓ SMS Sent
                       </button>
                     )}
                     
@@ -669,6 +682,33 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       </button>
                     )}
                   </div>
+                  
+                  {otpSent && (
+                    <div style={{
+                      marginTop: '12px',
+                      padding: '12px 16px',
+                      background: 'var(--surface-2)',
+                      borderRadius: '8px',
+                      border: '1px solid var(--brand-green)',
+                      textAlign: 'center'
+                    }}>
+                      <p style={{ 
+                        margin: 0, 
+                        color: 'var(--brand-green)', 
+                        fontSize: '14px', 
+                        fontWeight: 500 
+                      }}>
+                        📱 SMS sent to {formData.countryCode} {formData.phone}
+                      </p>
+                      <p style={{ 
+                        margin: '4px 0 0 0', 
+                        color: 'var(--text-secondary)', 
+                        fontSize: '12px' 
+                      }}>
+                        Check your phone for the 6-digit code
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {otpSent && (
@@ -682,10 +722,17 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     }}>
                       Enter verification code
                     </label>
+                    <p style={{ 
+                      fontSize: '12px',
+                      color: 'var(--text-secondary)',
+                      marginBottom: '12px'
+                    }}>
+                      🔐 Enter the 6-digit code from your SMS
+                    </p>
                     <input
                       type="text"
                       name="otp"
-                      placeholder="Enter 6-digit code"
+                      placeholder="123456"
                       value={formData.otp}
                       onChange={handleChange}
                       maxLength={6}
@@ -699,9 +746,18 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         color: 'var(--text-primary)',
                         outline: 'none',
                         textAlign: 'center',
-                        letterSpacing: '8px'
+                        letterSpacing: '8px',
+                        fontFamily: 'monospace'
                       }}
                     />
+                    <p style={{ 
+                      fontSize: '11px',
+                      color: 'var(--text-secondary)',
+                      margin: '8px 0 0 0',
+                      textAlign: 'center'
+                    }}>
+                      Didn't receive it? Check your SMS inbox
+                    </p>
                   </div>
                 )}
 
@@ -739,7 +795,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         cursor: loading || !formData.email || !formData.otp ? 'not-allowed' : 'pointer'
                       }}
                     >
-                      {loading ? 'Getting Quote...' : 'Get My Quote'}
+                        {loading ? 'Verifying...' : 'Complete Quote Request'}
                     </button>
                   </div>
                 </form>
