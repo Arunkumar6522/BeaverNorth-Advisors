@@ -9,10 +9,12 @@ interface ContactModalProps {
 export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [formData, setFormData] = useState({
     name: '',
+    dob: '',
+    smokingStatus: '',
+    province: '',
+    insuranceProduct: '',
     email: '',
-    phone: '',
-    inquiry: '',
-    message: ''
+    phone: ''
   })
 
   const [loading, setLoading] = useState(false)
@@ -23,15 +25,15 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     setLoading(true)
     
     // Simulate form submission
-    setTimeout(() => {
-      setLoading(false)
-      setSubmitted(true)
-      setTimeout(() => {
-        onClose()
-        setSubmitted(false)
-        setFormData({ name: '', email: '', phone: '', inquiry: '', message: '' })
-      }, 2000)
-    }, 1000)
+        setTimeout(() => {
+        setLoading(false)
+        setSubmitted(true)
+        setTimeout(() => {
+          onClose()
+          setSubmitted(false)
+          setFormData({ name: '', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '' })
+        }, 2000)
+      }, 1000)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -108,10 +110,10 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             style={{ height: '40px', width: '40px', marginBottom: '12px' }}
           />
           <h2 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)' }}>
-            Contact BeaverNorth Advisors
+            Get Your Insurance Quote
           </h2>
           <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '16px' }}>
-            Get your insurance quote and expert advice
+            Licensed Canadian insurance advisors ready to help
           </p>
         </div>
 
@@ -136,15 +138,16 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               ✓
             </div>
             <h3 style={{ color: 'var(--brand-green)', marginBottom: '12px' }}>
-              Thank You!
+              Quote Request Received!
             </h3>
             <p style={{ color: 'var(--text-secondary)' }}>
-              We've received your inquiry and will contact you within 24 hours.
+              Our licensed advisors will contact you within 24 hours with your personalized insurance quote.
             </p>
           </motion.div>
         ) : (
-          <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '20px' }}>
-            <div style={{ display: 'grid', gap: '12px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '16px' }}>
+            <div style={{ display: 'grid', gap: '16px' }}>
+              {/* Full Name */}
               <input
                 type="text"
                 name="name"
@@ -163,7 +166,119 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   transition: 'border-color 0.2s'
                 }}
               />
+
+              {/* Date of Birth */}
+              <input
+                type="date"
+                name="dob"
+                placeholder="Date of Birth *"
+                value={formData.dob}
+                onChange={handleChange}
+                required
+                style={{
+                  padding: '14px 16px',
+                  border: '2px solid var(--line)',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  background: 'var(--surface-1)',
+                  color: 'var(--text-primary)',
+                  outline: 'none'
+                }}
+              />
+
+              {/* Smoking Status */}
+              <div style={{ display: 'grid', gap: '8px' }}>
+                <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  Smoking Status *
+                </label>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input
+                      type="radio"
+                      name="smokingStatus"
+                      value="non-smoker"
+                      checked={formData.smokingStatus === 'non-smoker'}
+                      onChange={handleChange}
+                      required
+                      style={{ width: '18px', height: '18px' }}
+                    />
+                    <span style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Non-Smoker</span>
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input
+                      type="radio"
+                      name="smokingStatus"
+                      value="smoker"
+                      checked={formData.smokingStatus === 'smoker'}
+                      onChange={handleChange}
+                      required
+                      style={{ width: '18px', height: '18px' }}
+                    />
+                    <span style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Smoker</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Province */}
+              <select
+                name="province"
+                value={formData.province}
+                onChange={handleChange}
+                required
+                style={{
+                  padding: '14px 16px',
+                  border: '2px solid var(--line)',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  background: 'var(--surface-1)',
+                  color: 'var(--text-primary)',
+                  outline: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="">Select Province *</option>
+                <option value="Alberta">Alberta</option>
+                <option value="British Columbia">British Columbia</option>
+                <option value="Manitoba">Manitoba</option>
+                <option value="New Brunswick">New Brunswick</option>
+                <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+                <option value="Northwest Territories">Northwest Territories</option>
+                <option value="Nova Scotia">Nova Scotia</option>
+                <option value="Nunavut">Nunavut</option>
+                <option value="Ontario">Ontario</option>
+                <option value="Prince Edward Island">Prince Edward Island</option>
+                <option value="Quebec">Quebec</option>
+                <option value="Saskatchewan">Saskatchewan</option>
+                <option value="Yukon">Yukon</option>
+              </select>
+
+              {/* Insurance Product */}
+              <select
+                name="insuranceProduct"
+                value={formData.insuranceProduct}
+                onChange={handleChange}
+                required
+                style={{
+                  padding: '14px 16px',
+                  border: '2px solid var(--line)',
+                  borderRadius: '12px',
+                  fontSize: '16px',
+                  background: 'var(--surface-1)',
+                  color: 'var(--text-primary)',
+                  outline: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                <option value="">What type of life insurance are you looking for? *</option>
+                <option value="term-life">Term Life Insurance</option>
+                <option value="whole-life">Whole Life Insurance</option>
+                <option value="non-medical">Non-Medical Life Insurance</option>
+                <option value="mortgage-life">Mortgage Life Insurance</option>
+                <option value="senior-life">Senior Life Insurance</option>
+                <option value="travel">Travel Insurance</option>
+              </select>
               
+              {/* Email */}
               <input
                 type="email"
                 name="email"
@@ -182,12 +297,14 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 }}
               />
 
+              {/* Phone */}
               <input
                 type="tel"
                 name="phone"
-                placeholder="Phone Number"
+                placeholder="Phone Number *"
                 value={formData.phone}
                 onChange={handleChange}
+                required
                 style={{
                   padding: '14px 16px',
                   border: '2px solid var(--line)',
@@ -196,51 +313,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   background: 'var(--surface-1)',
                   color: 'var(--text-primary)',
                   outline: 'none'
-                }}
-              />
-
-              <select
-                name="inquiry"
-                value={formData.inquiry}
-                onChange={handleChange}
-                required
-                style={{
-                  padding: '14px 16px',
-                  border: '2px solid var(--line)',
-                  borderRadius: '12px',
-                  fontSize: '16px',
-                  background: 'var(--surface-1)',
-                  color: 'var(--text-primary)',
-                  outline: 'none',
-                  cursor: 'pointer'
-                }}
-              >
-                <option value="">Select Inquiry Type *</option>
-                <option value="life">Life Insurance</option>
-                <option value="health">Health Insurance</option>
-                <option value="home">Home Insurance</option>
-                <option value="auto">Auto Insurance</option>
-                <option value="business">Business Insurance</option>
-                <option value="general">General Inquiry</option>
-              </select>
-
-              <textarea
-                name="message"
-                placeholder="Tell us about your insurance needs... *"
-                value={formData.message}
-                onChange={handleChange}
-                required
-                rows={4}
-                style={{
-                  padding: '14px 16px',
-                  border: '2px solid var(--line)',
-                  borderRadius: '12px',
-                  fontSize: '16px',
-                  background: 'var(--surface-1)',
-                  color: 'var(--text-primary)',
-                  outline: 'none',
-                  resize: 'vertical',
-                  minHeight: '120px'
                 }}
               />
             </div>
@@ -261,7 +333,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 marginTop: '8px'
               }}
             >
-              {loading ? 'Submitting...' : 'Send Inquiry'}
+              {loading ? 'Getting Quote...' : 'Get My Quote'}
             </button>
 
             <p style={{ 
@@ -271,8 +343,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               margin: '16px 0 0 0',
               lineHeight: 1.5
             }}>
-              By submitting this form, you agree to our privacy policy.<br/>
-              We respond within 24 hours to all inquiries.
+              Your information is secure and confidential.<br/>
+              Licensed Canadian insurance advisors respond within 24 hours.
             </p>
           </form>
         )}
