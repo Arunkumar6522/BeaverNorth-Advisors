@@ -7,15 +7,19 @@ import {
   Avatar,
   FormControl,
   Select,
-  MenuItem
+  MenuItem,
+  Grid
 } from '@mui/material'
 import { 
   TrendingUp, 
   People, 
   Phone, 
   CheckCircleOutline,
-  CalendarToday
+  CalendarToday,
+  SmokingRooms,
+  NoSmoking
 } from '@mui/icons-material'
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
 
 interface StatCardProps {
   title: string
@@ -107,6 +111,30 @@ export default function Dashboard() {
     }
   ]
 
+  // Smoking status data for donut chart
+  const smokingData = [
+    { name: 'Smokers', value: 45, color: '#FF5722' },
+    { name: 'Non-Smokers', value: 102, color: '#1976D2' }
+  ]
+
+  const CustomTooltip = ({ active, payload }: any) => {
+      if (active && payload && payload.length) {
+        return (
+          <div style={{ 
+            backgroundColor: '#fff', 
+            padding: '10px', 
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          }}>
+            <p style={{ margin: 0, fontWeight: 'bold' }}>{payload[0].name}</p>
+            <p style={{ margin: 0, color: '#666' }}>{`${payload[0].value} leads (${Math.round(payload[0].payload.percentage)}%)`}</p>
+        </div>
+      )
+    }
+    return null
+  }
+
   return (
     <Box sx={{ height: '100%', overflow: 'auto', px: 2 }}>
       {/* Header with Time Period Selector */}
@@ -170,7 +198,7 @@ export default function Dashboard() {
 
       {/* Recent Activity */}
       <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
-        <Box sx={{ flex: { xs: '1', md: '2' } }}>
+        <Box sx={{ flex: { xs: '1', md: '3' } }}>
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: '600', mb: 3, color: '#111827' }}>
@@ -223,59 +251,51 @@ export default function Dashboard() {
           </Card>
         </Box>
         
-        <Box sx={{ flex: '1' }}>
+        <Box sx={{ flex: '1', minWidth: '300px' }}>
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
             <CardContent>
-              <Typography variant="h6" sx={{ fontWeight: '600', mb: 3, color: '#111827' }}>
-                Quick Actions
+              <Typography variant="h6" sx={{ fontWeight: '600', mb: 2, color: '#111827' }}>
+                Smoking Status Distribution
               </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Box sx={{ 
-                  p: 2, 
-                  borderRadius: 2, 
-                  backgroundColor: '#F0FDF4', 
-                  border: '1px solid #BBF7D0',
-                  cursor: 'pointer',
-                  transition: 'background-color 0.2s',
-                  '&:hover': { backgroundColor: '#DCFCE7' }
-                }}>
-                  <Typography variant="body1" sx={{ fontWeight: '500', color: '#166534' }}>
-                    View All Leads
+              <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                <ResponsiveContainer width="100%" height={200}>
+                  <PieChart>
+                    <Pie
+                      data={smokingData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={90}
+                      paddingAngle={5}
+                      dataKey="value"
+                      label={false}
+                    >
+                      {smokingData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-around', pt: 2, borderTop: '1px solid #f0f0f0' }}>
+                <Box sx={{ textAlign: 'center' }}>
+                  <SmokingRooms sx={{ color: '#FF5722', fontSize: 20, mb: 1 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#FF5722' }}>
+                    {smokingData[0].value} Smokers
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#4B5563' }}>
-                    Manage your lead pipeline
+                  <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                    {(smokingData[0].value / (smokingData[0].value + smokingData[1].value) * 100).toFixed(1)}%
                   </Typography>
                 </Box>
-                
-                <Box sx={{ 
-                  p: 2, 
-                  borderRadius: 2, 
-                  backgroundColor: '#EFF6FF', 
-                  border: '1px solid #DDD6FE',
-                  cursor: 'pointer',
-                  '&:hover': { backgroundColor: '#DBEAFE' }
-                }}>
-                  <Typography variant="body1" sx={{ fontWeight: '500', color: '#1E40AF' }}>
-                    Export Leads Data
+                <Box sx={{ textAlign: 'center' }}>
+                  <NoSmoking sx={{ color: '#1976D2', fontSize: 20, mb: 1 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#1976D2' }}>
+                    {smokingData[1].value} Non-Smokers
                   </Typography>
-                  <Typography variant="body2" sx={{ color: '#4B5563' }}>
-                    Download CSV report
-                  </Typography>
-                </Box>
-                
-                <Box sx={{ 
-                  p: 2, 
-                  borderRadius: 2, 
-                  backgroundColor: '#FFFBEB', 
-                  border: '1px solid #FEF3C7',
-                  cursor: 'pointer',
-                  '&:hover': { backgroundColor: '#FEF3C7' }
-                }}>
-                  <Typography variant="body1" sx={{ fontWeight: '500', color: '#D97706' }}>
-                    Setup Auto Follow-ups
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: '#4B5563' }}>
-                    Configure email sequences
+                  <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                    {(smokingData[1].value / (smokingData[0].value + smokingData[1].value) * 100).toFixed(1)}%
                   </Typography>
                 </Box>
               </Box>

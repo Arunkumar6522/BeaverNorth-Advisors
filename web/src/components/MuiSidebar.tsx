@@ -74,13 +74,30 @@ export default function MuiSidebar({
       }}>
         {open ? (
           <>
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5 }}>
-                BeaverNorth
-              </Typography>
-              <Typography variant="caption" sx={{ opacity: 0.9 }}>
-                Insurance Advisors
-              </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+              <Box sx={{ 
+                width: 40, 
+                height: 40,
+                backgroundImage: 'linear-gradient(135deg, #1976D2 0%, #1565C0 100%)',
+                borderRadius: '6px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1.2rem',
+                color: 'white',
+                fontWeight: 'bold',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              }}>
+                BN
+              </Box>
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                  BeaverNorth
+                </Typography>
+                <Typography variant<｜tool▁calls▁end｜>caption" sx={{ opacity: 0.9 }}>
+                  Insurance Advisors
+                </Typography>
+              </Box>
             </Box>
             <IconButton 
               size="small"
@@ -95,9 +112,21 @@ export default function MuiSidebar({
           </>
         ) : (
           <>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: 16 }}>
+            <Box sx={{ 
+              width: 32, 
+              height: 32,
+              backgroundImage: 'linear-gradient(135deg, #1976D2 0%, #1565C0 100%)',
+              borderRadius: '6px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1rem',
+              color: 'white',
+              fontWeight: 'bold',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}>
               BN
-            </Typography>
+            </Box>
             <IconButton 
               size="small"
               sx={{ 
