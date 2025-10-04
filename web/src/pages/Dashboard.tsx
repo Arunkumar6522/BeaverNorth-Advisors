@@ -1,10 +1,14 @@
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { customAuth, type CustomUser } from '../lib/custom-auth'
-import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import DashboardLayout from '../components/DashboardLayout'
+import DashboardOverview from '../components/Dashboard'
+import LeadsManagement from '../components/LeadsManagement'
 
 export default function Dashboard() {
   const [user, setUser] = useState<CustomUser | null>(null)
+  const [currentModule, setCurrentModule] = useState('dashboard')
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -21,6 +25,35 @@ export default function Dashboard() {
     navigate('/login')
   }
 
+  const handleModuleChange = (moduleId: string) => {
+    setCurrentModule(moduleId)
+  }
+
+  const renderModule = () => {
+    switch (currentModule) {
+      case 'dashboard':
+        return <DashboardOverview />
+      case 'leads':
+        return <LeadsManagement />
+      case 'analytics':
+        return (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            style={{ padding: '40px', textAlign: 'center' }}
+          >
+            <h2>Analytics Coming Soon</h2>
+            <p style={{ color: '#6B7280', marginTop: '16px' }}>
+              Advanced reporting and insights will be available here.
+            </p>
+          </motion.div>
+        )
+      default:
+        return <DashboardOverview />
+    }
+  }
+
   if (!user) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -30,157 +63,126 @@ export default function Dashboard() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f6f7fb', color: 'var(--text-primary)' }}>
-      {/* Header */}
-      <header style={{
-        background: 'var(--surface-1)',
-        borderBottom: '1px solid var(--line)',
-        padding: '16px 24px',
-        position: 'sticky',
-        top: 0,
-        zIndex: 10,
-        backdropFilter: 'blur(8px)'
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          maxWidth: 1200,
-          margin: '0 auto'
+    <div>
+      {/* Custom Layout Wrapper */}
+      <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F9FAFB' }}>
+        
+        {/* Sidebar */}
+        <div style={{ 
+          width: 240, 
+          backgroundColor: '#ffffff', 
+          borderRight: '1px solid #E5E7EB',
+          paddingTop: 64 // Account for top bar
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <img src="/favicon.png" alt="BeaverNorth Advisors" style={{ height: 32, width: 32, objectFit: 'contain' }} />
-            <h1 style={{ margin: 0, fontSize: 24 }}>Dashboard</h1>
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              style={{
-                background: 'var(--brand-green)',
-                color: 'white',
-                padding: '8px 16px',
-                borderRadius: 20,
-                fontSize: 14,
-                fontWeight: 600
-              }}
-            >
-              Welcome, {user.full_name || user.username}
-            </motion.div>
+          <div style={{ padding: 16 }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#22C55E', mb: 3 }}>
+              BeaverNorth Advisors
+            </Typography>
             
-            <button
-              onClick={handleLogout}
-              style={{
-                background: 'var(--brand-orange)',
-                color: 'white',
-                padding: '8px 16px',
-                borderRadius: 8,
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: 14,
-                fontWeight: 600
-              }}
-            >
-              Logout
-            </button>
+            <nav>
+              {[
+                { id: 'dashboard', name: 'Dashboard', icon: '📊' },
+                { id: 'leads', name: 'Leads Management', icon: '👥' },
+                { id: 'analytics', name: 'Analytics', icon: '📈' }
+              ].map((module) => (
+                <div
+                  key={module.id}
+                  onClick={() => handleModuleChange(module.id)}
+                  style={{
+                    padding: '12px 16px',
+                    borderRadius: module.id === currentModule ? '12px' : '8px',
+                    backgroundColor: module.id === currentModule ? '#22C55E' : 'transparent',
+                    color: module.id === currentModule ? 'white' : '#374151',
+                    cursor: 'pointer',
+                    marginBottom: 4,
+                    fontWeight: module.id === currentModule ? '600' : '500',
+                    transition: 'all 0.2s',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 12
+                  }}
+                >
+                  <span style={{ fontSize: 20 }}>{module.icon}</span>
+                  {module.name}
+                </div>
+              ))}
+            </nav>
           </div>
         </div>
-      </header>
 
-      {/* Main Content */}
-      <main style={{ maxWidth: 1200, margin: '0 auto', padding: '32px 24px' }}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.6 }}
-          style={{
-            background: 'var(--surface-1)',
-            borderRadius: 16,
-            padding: 32,
-            border: '1px solid var(--line)',
-            marginBottom: 24
-          }}
-        >
-          <h2 style={{ marginTop: 0 }}>Dashboard Overview</h2>
-          <p style={{ color: 'var(--text-secondary)' }}>
-            Welcome to your BeaverNorth Advisors dashboard, {user.full_name || user.username}! 
-            Here you can manage your insurance advisory business.
-          </p>
-        </motion.div>
-
-        {/* Stats Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: 20 }}>
-          {[
-            { title: 'Total Clients', value: '245', color: 'var(--brand-green)' },
-            { title: 'Active Policies', value: '189', color: 'var(--brand-yellow)' },
-            { title: 'New Quotes', value: '12', color: 'var(--brand-orange)' },
-            { title: 'Revenue (MTD)', value: '$12,450', color: '#22c55e' }
-          ].map((stat, index) => (
-            <motion.div
-              key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + index * 0.1, duration: 0.6 }}
-              style={{
-                background: 'var(--surface-1)',
-                borderRadius: 12,
-                padding: 24,
-                border: '1px solid var(--line)',
-                cursor: 'pointer'
-              }}
-              whileHover={{ y: -4 }}
-            >
-              <h3 style={{ marginTop: 0, marginBottom: 8, color: stat.color }}>{stat.value}</h3>
-              <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: 14 }}>{stat.title}</p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Recent Activity */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          style={{
-            background: 'var(--surface-1)',
-            borderRadius: 12,
-            padding: 24,
-            border: '1px solid var(--line)',
-            marginTop: 24
-          }}
-        >
-          <h3 style={{ marginTop: 0 }}>Recent Activity</h3>
-          <div style={{ display: 'grid', gap: 12 }}>
-            {[
-              { action: 'New client registration', time: '2 hours ago', client: 'Sarah Johnson' },
-              { action: 'Policy renewal processed', time: '4 hours ago', client: 'Mike Chen' },
-              { action: 'Quote generated', time: '6 hours ago', client: 'Emily Davis' },
-              { action: 'Claim submitted', time: '1 day ago', client: 'Robert Wilson' }
-            ].map((item, index) => (
-              <div
-                key={index}
+        {/* Main Content */}
+        <div style={{ flex: 1, paddingTop: 64 }}>
+          
+          {/* Top Bar */}
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 240,
+            right: 0,
+            backgroundColor: '#ffffff',
+            borderBottom: '1px solid #E5E7EB',
+            padding: '16px 24px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            zIndex: 1000
+          }}>
+            <h2 style={{ margin: 0, color: '#111827', fontWeight: '600' }}>
+              📊 {currentModule === 'dashboard' ? 'Dashboard' : 
+                  currentModule === 'leads' ? 'Leads Management' : 'Analytics'}
+            </h2>
+            
+            {/* Welcome & Logout */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{
+                background: '#22C55E',
+                color: 'white',
+                padding: '8px 16px',
+                borderRadius: '20px',
+                fontSize: 14,
+                fontWeight: 600
+              }}>
+                👋 {user.full_name || user.username}
+              </div>
+              
+              <button
+                onClick={handleLogout}
                 style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '12px 0',
-                  borderBottom: index === 3 ? 'none' : '1px solid var(--line)'
+                  background: '#EF4444',
+                  color: 'white',
+                  padding: '8px 16px',
+                  borderRadius: '8px',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: 14,
+                  fontWeight: 600
                 }}
               >
-                <div>
-                  <p style={{ margin: '4px 0', fontSize: 14 }}>{item.action}</p>
-                  <p style={{ margin: '4px 0', fontSize: 12, color: 'var(--text-secondary)' }}>
-                    Client: {item.client}
-                  </p>
-                </div>
-                <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{item.time}</span>
-              </div>
-            ))}
+                Logout
+              </button>
+            </div>
           </div>
-        </motion.div>
-      </main>
+
+          {/* Module Content */}
+          <div style={{ padding: '32px 24px' }}>
+            {renderModule()}
+          </div>
+        </div>
+      </div>
     </div>
   )
+}
+
+// Typography component for inline styling
+const Typography = ({ variant, children, ...props }: any) => {
+  const getStyle = () => {
+    switch (variant) {
+      case 'h6':
+        return { fontSize: '18px', fontWeight: '600' }
+      default:
+        return {}
+    }
+  }
+
+  return <div style={getStyle()} {...props}>{children}</div>
 }

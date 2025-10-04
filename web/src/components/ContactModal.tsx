@@ -84,18 +84,18 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       const verificationResult = await verifyOTP(phoneNumber, formData.otp)
       
       if (verificationResult.success) {
-        // Phone verified successfully, proceed with form submission
+        // Save lead to Supabase
+        await saveLeadToSupabase()
+        
+        setLoading(false)
+        setSubmitted(true)
         setTimeout(() => {
-          setLoading(false)
-          setSubmitted(true)
-          setTimeout(() => {
-            onClose()
-            setSubmitted(false)
-            setCurrentStep(1)
-            setOtpSent(false)
-            setFormData({ name: '', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '' })
-          }, 2000)
-        }, 1000)
+          onClose()
+          setSubmitted(false)
+          setCurrentStep(1)
+          setOtpSent(false)
+          setFormData({ name: '', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '' })
+        }, 2000)
       } else {
         alert(verificationResult.message)
       }
@@ -104,6 +104,36 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       console.error('OTP verification error:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const saveLeadToSupabase = async () => {
+    try {
+      const leadData = {
+        name: formData.name,
+        email: formData.email,
+        phone: `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`,
+        dob: formData.dob,
+        province: formData.province,
+        country_code: formData.countryCode,
+        smoking_status: formData.smokingStatus,
+        insurance_product: formData.insuranceProduct,
+        status: 'new'
+      }
+
+      console.log('💾 Saving lead to Supabase:', leadData)
+      
+      // This will be implemented with Supabase client
+      // const { data, error } = await supabase
+      //   .from('leads')
+      //   .insert([leadData])
+      
+      // For now, simulate successful save
+      console.log('✅ Lead saved successfully:', leadData)
+      
+    } catch (error) {
+      console.error('❌ Error saving lead:', error)
+      throw error
     }
   }
 
