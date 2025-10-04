@@ -216,7 +216,7 @@ export default function Dashboard() {
                 Gender Distribution
               </Typography>
               <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
-                <ResponsiveContainer width="100%" height={180}>
+                <ResponsiveContainer width="100%" height={150}>
                   <PieChart>
                     <Pie
                       data={genderData}
@@ -236,41 +236,29 @@ export default function Dashboard() {
                   </PieChart>
                 </ResponsiveContainer>
               </Box>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', pt: 1, borderTop: '1px solid #f0f0f0' }}>
-                <Box sx={{ textAlign: 'center', minWidth: '45%', mb: 1 }}>
-                  <MaleIcon sx={{ color: '#2196F3', fontSize: 16, mb: 0.5 }} />
-                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#2196F3', fontSize: '0.8rem' }}>
-                    {genderData[0].value} Male
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
-                    {(genderData[0].value / (genderData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)}%
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 1, borderTop: '1px solid #f0f0f0', alignItems: 'center' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <MaleIcon sx={{ color: '#2196F3', fontSize: 12 }} />
+                  <Typography variant="caption" sx={{ fontWeight: '600', color: '#2196F3', fontSize: '0.65rem' }}>
+                    {genderData[0].value}M
                   </Typography>
                 </Box>
-                <Box sx={{ textAlign: 'center', minWidth: '45%', mb: 1 }}>
-                  <FemaleIcon sx={{ color: '#E91E63', fontSize: 16, mb: 0.5 }} />
-                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#E91E63', fontSize: '0.8rem' }}>
-                    {genderData[1].value} Female
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
-                    {(genderData[1].value / (genderData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)}%
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <FemaleIcon sx={{ color: '#E91E63', fontSize: 12 }} />
+                  <Typography variant="caption" sx={{ fontWeight: '600', color: '#E91E63', fontSize: '0.65rem' }}>
+                    {genderData[1].value}F
                   </Typography>
                 </Box>
-                <Box sx={{ textAlign: 'center', minWidth: '45%', mb: 1 }}>
-                  <OthersIcon sx={{ color: '#9C27B0', fontSize: 16, mb: 0.5 }} />
-                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#9C27B0', fontSize: '0.8rem' }}>
-                    {genderData[2].value} Others
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
-                    {(genderData[2].value / (genderData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)}%
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <OthersIcon sx={{ color: '#9C27B0', fontSize: 12 }} />
+                  <Typography variant="caption" sx={{ fontWeight: '600', color: '#9C27B0', fontSize: '0.65rem' }}>
+                    {genderData[2].value}O
                   </Typography>
                 </Box>
-                <Box sx={{ textAlign: 'center', minWidth: '45%', mb: 1 }}>
-                  <PreferNotToSayIcon sx={{ color: '#607D8B', fontSize: 16, mb: 0.5 }} />
-                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#607D8B', fontSize: '0.8rem' }}>
-                    {genderData[3].value} Prefer not to say
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
-                    {(genderData[3].value / (genderData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)}%
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <PreferNotToSayIcon sx={{ color: '#607D8B', fontSize: 12 }} />
+                  <Typography variant="caption" sx={{ fontWeight: '600', color: '#607D8B', fontSize: '0.65rem' }}>
+                    {genderData[3].value}?
                   </Typography>
                 </Box>
               </Box>
@@ -284,7 +272,7 @@ export default function Dashboard() {
                 Smoking Status Distribution
               </Typography>
               <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
-                <ResponsiveContainer width="100%" height={180}>
+                <ResponsiveContainer width="100%" height={150}>
                   <PieChart>
                     <Pie
                       data={smokingData}
