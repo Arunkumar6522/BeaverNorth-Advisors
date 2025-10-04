@@ -193,25 +193,29 @@ export default function DeletedLeads() {
   }
 
   return (
-    <Box sx={{ height: '100vh', overflow: 'hidden' }}>
+    <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <Box sx={{ mb: 3, px: 2 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1 }}>
+      <Box sx={{ px: 2, py: 3, flexShrink: 0 }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
           🗑️ Deleted Leads
         </Typography>
-        <Typography variant="body1" sx={{ color: '#6B7280' }}>
+        <Typography variant="body1" sx={{ color: '#6B7280', fontSize: '1.1rem' }}>
           View and manage deleted leads. You can restore them or permanently delete them.
         </Typography>
       </Box>
 
       {/* Actions */}
-      <Box sx={{ mb: 3, px: 2 }}>
+      <Box sx={{ px: 2, py: 2, flexShrink: 0 }}>
         <Button
           variant="outlined"
+          size="medium"
           startIcon={<RestoreIcon />}
           sx={{
             borderColor: '#1976D2',
             color: '#1976D2',
+            fontSize: '1rem',
+            py: 1.5,
+            px: 3,
             '&:hover': {
               borderColor: '#1976D2',
               backgroundColor: '#f0f4ff'
@@ -224,7 +228,7 @@ export default function DeletedLeads() {
       </Box>
 
       {/* Deleted Leads Table */}
-      <Box sx={{ height: 'calc(100vh - 200px)', overflow: 'hidden', mx: 2 }}>
+      <Box sx={{ flex: 1, overflow: 'hidden', mx: 2 }}>
         {deletedLeads.length === 0 ? (
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', p: 4, textAlign: 'center' }}>
             <Typography variant="h6" sx={{ color: '#666666', mb: 2 }}>

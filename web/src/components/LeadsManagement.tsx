@@ -406,24 +406,24 @@ export default function LeadsManagement() {
   }
 
   return (
-    <Box sx={{ height: '100vh', overflow: 'hidden' }}>
+    <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <Box sx={{ mb: 3, px: 2 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1 }}>
+      <Box sx={{ px: 2, py: 3, flexShrink: 0 }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
           👥 Leads Management
         </Typography>
-        <Typography variant="body1" sx={{ color: '#6B7280' }}>
+        <Typography variant="body1" sx={{ color: '#6B7280', fontSize: '1.1rem' }}>
           Manage and track your insurance leads pipeline
         </Typography>
       </Box>
 
       {/* Tabs */}
-      <Box sx={{ mb: 3, px: 2, borderBottom: 1, borderColor: 'divider' }}>
+      <Box sx={{ px: 2, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
         <Tabs value={currentTab === 'active' ? 0 : 1} onChange={handleTabChange}>
           <Tab 
             label={
               <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography>Active Leads</Typography>
+                <Typography sx={{ fontSize: '1rem' }}>Active Leads</Typography>
                 <Chip 
                   label={leads.filter(l => l.status !== 'converted' && !l.deleted_at).length} 
                   size="small" 
@@ -434,7 +434,7 @@ export default function LeadsManagement() {
           <Tab 
             label={
               <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography>Closed Leads</Typography>
+                <Typography sx={{ fontSize: '1rem' }}>Closed Leads</Typography>
                 <Chip 
                   label={leads.filter(l => l.status === 'converted' && !l.deleted_at).length} 
                   size="small" 
@@ -446,43 +446,45 @@ export default function LeadsManagement() {
       </Box>
 
       {/* Filters */}
-      <Card sx={{ borderRadius: 2, mb: 3, mx: 2, backgroundColor: '#ffffff' }}>
-        <CardContent>
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
-            <TextField
-              size="small"
-              placeholder="Search leads..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ color: '#6B7280' }} />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ minWidth: 250 }}
-            />
-            
-            <FormControl size="small" sx={{ minWidth: 150 }}>
-              <InputLabel>Status Filter</InputLabel>
-              <Select
-                value={statusFilter}
-                label="Status Filter"
-                onChange={(e) => setFilter(e.target.value)}
-              >
-                <MenuItem value="all">All Status</MenuItem>
-                <MenuItem value="new">New</MenuItem>
-                <MenuItem value="contacted">Contacted</MenuItem>
-                <MenuItem value="converted">Converted</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-        </CardContent>
-      </Card>
+      <Box sx={{ px: 2, py: 2, flexShrink: 0 }}>
+        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
+          <CardContent sx={{ py: 2 }}>
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+              <TextField
+                size="medium"
+                placeholder="Search leads..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ color: '#6B7280' }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ minWidth: 300 }}
+              />
+              
+              <FormControl size="medium" sx={{ minWidth: 180 }}>
+                <InputLabel>Status Filter</InputLabel>
+                <Select
+                  value={statusFilter}
+                  label="Status Filter"
+                  onChange={(e) => setFilter(e.target.value)}
+                >
+                  <MenuItem value="all">All Status</MenuItem>
+                  <MenuItem value="new">New</MenuItem>
+                  <MenuItem value="contacted">Contacted</MenuItem>
+                  <MenuItem value="converted">Converted</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
 
       {/* Full Screen Table */}
-      <Box sx={{ height: 'calc(100vh - 200px)', overflow: 'hidden', mx: 2 }}>
+      <Box sx={{ flex: 1, overflow: 'hidden', mx: 2 }}>
         <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%', display: 'flex', flexDirection: 'column' }}>
           <TableContainer sx={{ flex: 1, overflow: 'auto' }}>
             <Table stickyHeader>
