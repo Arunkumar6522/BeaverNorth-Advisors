@@ -19,12 +19,12 @@ export default function App() {
       
       {/* HERO Section - Minimalist Clean Design */}
       <Box sx={{
-        minHeight: 'calc(100vh - 140px)',
+        minHeight: 'calc(100vh - 100px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         px: { xs: 3, md: 6 },
-        py: { xs: 8, md: 12 }
+        py: { xs: 4, md: 6 }
       }}>
         
         <Box sx={{ 

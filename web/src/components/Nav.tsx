@@ -28,27 +28,51 @@ export default function Nav() {
         backdropFilter: 'blur(10px)',
         borderBottom: '1px solid rgba(105,131,204,0.1)',
         boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
-        px: { xs: 3, md: 6 },
-        py: 2
+        width: '100%',
+        left: 0,
+        right: 0
       }}>
         <Box sx={{
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           maxWidth: '1400px',
-          mx: 'auto'
+          mx: 'auto',
+          px: { xs: 3, md: 6 },
+          py: 2.5
         }}>
           
-          {/* Logo - Using actual BNA logo */}
-          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+          {/* Logo - Bigger with Company Name */}
+          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '16px' }}>
             <img 
               src="/src/assets/bna logo.png" 
               alt="BeaverNorth Advisors" 
               style={{ 
-                height: '50px',
+                height: '70px',
                 width: 'auto'
               }} 
             />
+            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+              <Box sx={{ 
+                fontWeight: 800,
+                color: '#1E377C',
+                fontSize: '1.5rem',
+                lineHeight: 1,
+                letterSpacing: '-0.02em'
+              }}>
+                BeaverNorth
+              </Box>
+              <Box sx={{ 
+                color: '#6983CC',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+                letterSpacing: '0.5px',
+                textTransform: 'uppercase',
+                mt: 0.5
+              }}>
+                Advisors
+              </Box>
+            </Box>
           </Link>
 
           {/* Desktop Navigation - Clean & Simple */}
