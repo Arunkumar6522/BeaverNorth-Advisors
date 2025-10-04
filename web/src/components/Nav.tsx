@@ -1,230 +1,222 @@
 import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
+import { Box, Typography, IconButton } from '@mui/material'
+import { Menu as MenuIcon, Close as CloseIcon, Language } from '@mui/icons-material'
 
 export default function Nav() {
   const location = useLocation()
-  const { locale, setLocale, t } = useI18n()
+  const { locale, setLocale } = useI18n()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
-  const linkStyle: React.CSSProperties = {
-    color: 'var(--text-primary)',
-    textDecoration: 'none',
-    padding: '8px 16px',
-    borderRadius: 8,
-    display: 'block',
-    fontSize: '16px',
-    fontWeight: 500,
-  }
-
-  const activeStyle: React.CSSProperties = {
-    background: 'var(--surface-2)',
-  }
+  const navItems = [
+    { label: 'Home', path: '/' },
+    { label: 'Features', path: '/features' },
+    { label: 'Services', path: '/services' },
+    { label: 'About us', path: '/about' },
+    { label: 'Contact us', path: '/contact' },
+    { label: 'FAQ', path: '/faq' }
+  ]
 
   return (
-    <header style={{
-      position: 'sticky', 
-      top: 0, 
-      zIndex: 100,
-      backdropFilter: 'blur(8px)',
-      background: 'var(--surface-1)',
-      borderBottom: '1px solid var(--line)',
+    <Box sx={{
+      position: 'sticky',
+      top: 0,
+      zIndex: 1000,
+      bgcolor: 'rgba(255,255,255,0.95)',
+      backdropFilter: 'blur(10px)',
+      borderBottom: '1px solid rgba(139,92,246,0.1)',
+      px: { xs: 3, md: 6 },
+      py: 2
     }}>
-      <div style={{
-        display: 'flex', 
-        alignItems: 'center', 
+      <Box sx={{
+        display: 'flex',
+        alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '16px 20px', 
-        maxWidth: 1200, 
-        margin: '0 auto'
+        maxWidth: '1400px',
+        mx: 'auto'
       }}>
+        
         {/* Logo */}
-        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 12, textDecoration: 'none' }}>
-          <img src="/favicon.png" alt="BeaverNorth Advisors" style={{ height: 40, width: 40, objectFit: 'contain' }} />
-          <span style={{ fontWeight: 700, color: 'var(--text-primary)', fontSize: '18px' }}>BeaverNorth</span>
+        <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{
+            width: 48,
+            height: 48,
+            borderRadius: 2,
+            background: 'linear-gradient(135deg, #8B5CF6 0%, #F59E0B 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(139,92,246,0.3)'
+          }}>
+            <img 
+              src="/favicon.png" 
+              alt="BeaverNorth" 
+              style={{ 
+                height: '28px', 
+                width: '28px',
+                filter: 'brightness(0) invert(1)'
+              }} 
+            />
+          </Box>
+          <Typography variant="h6" sx={{ 
+            fontWeight: 800,
+            color: '#1E293B',
+            fontSize: '1.3rem',
+            letterSpacing: '-0.02em'
+          }}>
+            BeaverNorth
+            <Typography component="span" sx={{ 
+              color: '#8B5CF6',
+              fontWeight: 800
+            }}>
+              Advisors
+            </Typography>
+          </Typography>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <div style={{ display: 'none', gap: 8 }} className="desktop-nav">
-            <NavLink to="/" style={() => ({ ...linkStyle, ...(location.pathname === '/' ? activeStyle : {}), fontSize: '14px' })}>{t('nav_home')}</NavLink>
-            <NavLink to="/about" style={() => ({ ...linkStyle, ...(location.pathname.startsWith('/about') ? activeStyle : {}), fontSize: '14px' })}>{t('nav_about')}</NavLink>
-            <NavLink to="/services" style={() => ({ ...linkStyle, ...(location.pathname.startsWith('/services') ? activeStyle : {}), fontSize: '14px' })}>{t('nav_services')}</NavLink>
-            <NavLink to="/blog" style={() => ({ ...linkStyle, ...(location.pathname.startsWith('/blog') ? activeStyle : {}), fontSize: '14px' })}>{t('nav_blog')}</NavLink>
-          </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Link to="/contact" style={{ 
-              ...linkStyle, 
-              background: 'var(--brand-green)', 
-              color: 'white', 
-              fontWeight: 600, 
-              fontSize: '14px', 
-              padding: '8px 16px',
-              borderRadius: 20,
-              border: 'none'
-            }}>
-              {t('nav_contact')}
-            </Link>
-            
-            {/* Language Switcher */}
-            <div style={{ display: 'flex', gap: 4 }}>
-              <button onClick={() => setLocale('en')} style={{ 
-                padding: '6px 10px', 
-                borderRadius: 6, 
-                border: '1px solid var(--line)', 
-                background: locale === 'en' ? 'var(--brand-green)' : 'transparent', 
-                color: locale === 'en' ? 'white' : 'var(--text-primary)',
-                cursor: 'pointer', 
-                fontSize: '12px',
-                fontWeight: 500
-              }}>
-                EN
-              </button>
-              <button onClick={() => setLocale('fr')} style={{ 
-                padding: '6px 10px', 
-                borderRadius: 6, 
-                border: '1px solid var(--line)', 
-                background: locale === 'fr' ? 'var(--brand-green)' : 'transparent', 
-                color: locale === 'fr' ? 'white' : 'var(--text-primary)',
-                cursor: 'pointer', 
-                fontSize: '12px',
-                fontWeight: 500
-              }}>
-                FR
-              </button>
-            </div>
-
-            {/* Mobile Hamburger Menu */}
-            <button 
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              style={{ 
-                display: 'flex', 
-                flexDirection: 'column', 
-                gap: 4, 
-                padding: 8, 
-                background: 'transparent', 
-                border: 'none', 
-                cursor: 'pointer'
+        <Box sx={{ 
+          display: { xs: 'none', lg: 'flex' },
+          alignItems: 'center',
+          gap: 1
+        }}>
+          {navItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              style={({ isActive }) => ({
+                textDecoration: 'none',
+                padding: '12px 20px',
+                borderRadius: 12,
+                fontSize: '15px',
+                fontWeight: 600,
+                color: isActive ? '#8B5CF6' : '#64748B',
+                transition: 'all 0.3s ease',
+                position: 'relative'
+              })}
+              onMouseEnter={(e) => {
+                if (location.pathname !== '/') {
+                  e.currentTarget.style.color = '#8B5CF6'
+                  e.currentTarget.style.backgroundColor = 'rgba(139,92,246,0.08)'
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (location.pathname !== '/') {
+                  e.currentTarget.style.color = '#64748B'
+                  e.currentTarget.style.backgroundColor = 'transparent'
+                }
               }}
             >
-              <span style={{ 
-                width: 20, 
-                height: 2, 
-                background: 'var(--text-primary)', 
-                borderRadius: 1,
-                transition: 'all 0.3s ease'
-              }}></span>
-              <span style={{ 
-                width: 20, 
-                height: 2, 
-                background: 'var(--text-primary)', 
-                borderRadius: 1,
-                transition: 'all 0.3s ease'
-              }}></span>
-              <span style={{ 
-                width: 20, 
-                height: 2, 
-                background: 'var(--text-primary)', 
-                borderRadius: 1,
-                transition: 'all 0.3s ease'
-              }}></span>
-            </button>
-          </div>
-        </nav>
-      </div>
+              {item.label}
+            </NavLink>
+          ))}
+          
+          {/* Language Switcher */}
+          <Box sx={{
+            ml: 3,
+            pl: 3,
+            borderLeft: '2px solid #E2E8F0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 1
+          }}>
+            <Language sx={{ fontSize: 20, color: '#64748B' }} />
+            <select
+              value={locale}
+              onChange={(e) => setLocale(e.target.value as 'en' | 'fr')}
+              style={{
+                border: 'none',
+                background: 'transparent',
+                fontSize: '14px',
+                fontWeight: 600,
+                color: '#64748B',
+                cursor: 'pointer',
+                outline: 'none'
+              }}
+            >
+              <option value="en">🇺🇸 EN</option>
+              <option value="fr">🇫🇷 FR</option>
+            </select>
+          </Box>
+        </Box>
 
-      {/* Mobile Menu Overlay */}
-      {isMenuOpen && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(0,0,0,0.5)',
-          zIndex: 99,
-          backdropFilter: 'blur(4px)'
-        }} onClick={() => setIsMenuOpen(false)}>
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
-            height: '100vh',
-            width: '280px',
-            background: 'var(--surface-1)',
-            boxShadow: '-4px 0 20px rgba(0,0,0,0.1)',
-            padding: '80px 0 20px 0',
-            animation: 'slideInRight 0.3s ease-out'
-          }} onClick={(e) => e.stopPropagation()}>
-            <nav style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-              <NavLink 
-                to="/" 
-                onClick={() => setIsMenuOpen(false)}
-                style={() => ({ 
-                  ...linkStyle, 
-                  borderBottom: '1px solid var(--line)',
-                  background: location.pathname === '/' ? 'var(--surface-2)' : 'transparent'
-                })}
-              >
-                {t('nav_home')}
-              </NavLink>
-              <NavLink 
-                to="/about" 
-                onClick={() => setIsMenuOpen(false)}
-                style={() => ({ 
-                  ...linkStyle, 
-                  borderBottom: '1px solid var(--line)',
-                  background: location.pathname.startsWith('/about') ? 'var(--surface-2)' : 'transparent'
-                })}
-              >
-                {t('nav_about')}
-              </NavLink>
-              <NavLink 
-                to="/services" 
-                onClick={() => setIsMenuOpen(false)}
-                style={() => ({ 
-                  ...linkStyle, 
-                  borderBottom: '1px solid var(--line)',
-                  background: location.pathname.startsWith('/services') ? 'var(--surface-2)' : 'transparent'
-                })}
-              >
-                {t('nav_services')}
-              </NavLink>
-              <NavLink 
-                to="/blog" 
-                onClick={() => setIsMenuOpen(false)}
-                style={() => ({ 
-                  ...linkStyle, 
-                  borderBottom: '1px solid var(--line)',
-                  background: location.pathname.startsWith('/blog') ? 'var(--surface-2)' : 'transparent'
-                })}
-              >
-                {t('nav_blog')}
-              </NavLink>
-              <Link 
-                to="/contact" 
-                onClick={() => setIsMenuOpen(false)}
-                style={{ 
-                  ...linkStyle, 
-                  background: 'var(--brand-green)', 
-                  color: 'white', 
-                  fontWeight: 600, 
-                  fontSize: '16px', 
-                  margin: '20px 16px 0 16px',
-                  borderRadius: 12,
-                  textAlign: 'center',
-                  borderBottom: 'none'
-                }}
-              >
-                {t('nav_contact')}
-              </Link>
-            </nav>
-          </div>
-        </div>
-      )}
-    </header>
+        {/* Mobile Menu Button */}
+        <Box sx={{ display: { xs: 'block', lg: 'none' } }}>
+          <IconButton
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            sx={{
+              '&:hover': {
+                backgroundColor: 'rgba(139,92,246,0.08)'
+              }
+            }}
+          >
+            {isMenuOpen ? <CloseIcon sx={{ color: '#64748B' }} /> : <MenuIcon sx={{ color: '#64748B' }} />}
+          </IconButton>
+        </Box>
+      </Box>
+
+      {/* Mobile Menu */}
+      <Box sx={{
+        display: { xs: isMenuOpen ? 'block' : 'none', lg: 'none' },
+        mt: 3,
+        p: 3,
+        bgcolor: 'rgba(255,255,255,0.98)',
+        borderRadius: 3,
+        border: '1px solid rgba(139,92,246,0.1)',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+        backdropFilter: 'blur(20px)'
+      }}>
+        {navItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            onClick={() => setIsMenuOpen(false)}
+            style={({ isActive }) => ({
+              textDecoration: 'none',
+              display: 'block',
+              padding: '16px 0',
+              fontSize: '16px',
+              fontWeight: 600,
+              color: isActive ? '#8B5CF6' : '#64748B',
+              borderBottom: '1px solid rgba(139,92,246,0.1)',
+              '&:last-child': {
+                borderBottom: 'none'
+              }
+            })}
+          >
+            {item.label}
+          </NavLink>
+        ))}
+        
+        {/* Mobile Language Switcher */}
+        <Box sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: 2, 
+          mt: 3, 
+          pt: 3,
+          borderTop: '1px solid rgba(139,92,246,0.1)'
+        }}>
+          <Language sx={{ fontSize: 20, color: '#64748B' }} />
+          <select
+            value={locale}
+            onChange={(e) => setLocale(e.target.value as 'en' | 'fr')}
+            style={{
+              border: 'none',
+              background: 'transparent',
+              fontSize: '16px',
+              fontWeight: 600,
+              color: '#64748B',
+              cursor: 'pointer',
+              outline: 'none'
+            }}
+          >
+            <option value="en">🇺🇸 English</option>
+            <option value="fr">🇫🇷 Français</option>
+          </select>
+        </Box>
+      </Box>
+    </Box>
   )
 }
-
-

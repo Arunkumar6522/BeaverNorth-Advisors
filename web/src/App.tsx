@@ -15,19 +15,16 @@ export default function App() {
     { 
       title: "Life Insurance", 
       desc: "Protect your family's future with comprehensive life insurance policies tailored to your needs and budget.",
-      icon: require('./assets/life-insurance.jpg').default || "👨‍👩‍👧‍👦",
       iconComponent: <Security sx={{ fontSize: 48, color: '#8B5CF6' }} />
     },
     { 
       title: "Business Insurance", 
       desc: "Secure your business operations with specialized coverage designed for Canadian entrepreneurs and companies.",
-      icon: require('./assets/business-insurance.jpg').default || "🏢",
       iconComponent: <Business sx={{ fontSize: 48, color: '#F59E0B' }} />
     },
     { 
       title: "Health Insurance", 
       desc: "Comprehensive health coverage including dental, vision, and extended care for all family members.",
-      icon: require('./assets/health-insurance.jpg').default || "❤️",
       iconComponent: <LocalHospital sx={{ fontSize: 48, color: '#EF4444' }} />
     }
   ]
