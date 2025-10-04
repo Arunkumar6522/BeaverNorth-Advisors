@@ -207,11 +207,10 @@ export default function Dashboard() {
         ))}
       </Box>
 
-      {/* Charts Section */}
-      <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', lg: 'row' }, mb: 3 }}>
-        <Box sx={{ flex: { xs: '1', lg: '2' }, display: 'flex', gap: 2, flexDirection: { xs: 'column', md: 'row', lg: 'column' } }}>
-          {/* Gender Distribution Chart */}
-          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', flex: 1 }}>
+      {/* Charts Section - Both charts in one line */}
+      <Box sx={{ display: 'flex', gap: 3, flexDirection: 'row', mb: 3 }}>
+        {/* Gender Distribution Chart */}
+        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', flex: 1 }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: '600', mb: 2, color: '#111827' }}>
                 Gender Distribution
@@ -278,8 +277,8 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Smoking Status Chart */}
-          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', flex: 1 }}>
+        {/* Smoking Status Chart */}
+        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', flex: 1 }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: '600', mb: 2, color: '#111827' }}>
                 Smoking Status Distribution
@@ -327,7 +326,6 @@ export default function Dashboard() {
               </Box>
             </CardContent>
           </Card>
-        </Box>
       </Box>
 
       {/* Recent Activity Section */}
