@@ -94,7 +94,7 @@ export default function MuiSidebar({
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 0.5 }}>
                   BeaverNorth
                 </Typography>
-                <Typography variant<｜tool▁calls▁end｜>caption" sx={{ opacity: 0.9 }}>
+                <Typography variant="caption" sx={{ opacity: 0.9 }}>
                   Insurance Advisors
                 </Typography>
               </Box>
