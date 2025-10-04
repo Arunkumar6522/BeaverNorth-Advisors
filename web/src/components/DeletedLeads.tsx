@@ -139,19 +139,25 @@ export default function DeletedLeads() {
   useEffect(() => {
     const fetchDeletedLeads = async () => {
       try {
+        console.log('🔄 Fetching deleted leads from Supabase...')
         const { supabase } = await import('../lib/supabase')
         const { data, error } = await supabase
           .from('leads')
           .select('*')
-          .eq('deleted', true)
+          .not('deleted_at', 'is', null)  // Get leads where deleted_at is NOT NULL
           .order('deleted_at', { ascending: false })
+
+        console.log('📊 Deleted leads data:', data)
+        console.log('📊 Deleted leads error:', error)
 
         if (error) {
           console.error('❌ Error fetching deleted leads:', error)
+          console.error('Error details:', error.message, error.details, error.hint)
           return
         }
 
         if (data && data.length > 0) {
+          console.log(`✅ ${data.length} deleted leads fetched`)
           setDeletedLeads(data.map(lead => ({
             id: lead.id.toString(),
             name: lead.name || 'Unknown',
@@ -163,11 +169,18 @@ export default function DeletedLeads() {
             insurance_product: lead.insurance_product || 'term-life',
             status: (lead.status || 'new') as 'new' | 'contacted' | 'converted',
             created_at: lead.created_at || new Date().toISOString(),
-            deleted_at: lead.deleted_at || new Date().toISOString()
+            deleted_at: lead.deleted_at || new Date().toISOString(),
+            deleted_by: lead.deleted_by || 'Unknown',
+            delete_reason: lead.delete_reason || 'No reason provided',
+            delete_comment: lead.delete_comment || 'No comment'
           })))
+        } else {
+          console.log('⚠️ No deleted leads found')
+          setDeletedLeads([])
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('❌ Error fetching deleted leads:', error)
+        console.error('Stack:', error.stack)
       }
     }
 
