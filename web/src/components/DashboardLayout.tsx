@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 import { Box, Drawer, CssBaseline, AppBar, Toolbar, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, useMediaQuery, useTheme, Avatar, Divider, Button } from '@mui/material'
-import { Dashboard as DashboardIcon, People as LeadsIcon, Assessment as AnalyticsIcon, Menu as MenuIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Logout as LogoutIcon } from '@mui/icons-material'
+import { Dashboard as DashboardIcon, People as LeadsIcon, Delete as DeletedIcon, Menu as MenuIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Logout as LogoutIcon } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
-
-interface DashboardLayoutProps {
-  children: React.ReactNode
-}
+import DashboardOverview from './Dashboard'
+import LeadsManagement from './LeadsManagement'
+import DeletedLeads from './DeletedLeads'
 
 const drawerWidth = 240
 const miniDrawerWidth = 73
@@ -19,10 +18,10 @@ interface Module {
 const modules: Module[] = [
   { id: 'dashboard', name: 'Dashboard', icon: <DashboardIcon /> },
   { id: 'leads', name: 'Leads Management', icon: <LeadsIcon /> },
-  { id: 'analytics', name: 'Analytics', icon: <AnalyticsIcon /> }
+  { id: 'deleted', name: 'Deleted Leads', icon: <DeletedIcon /> }
 ]
 
-export default function DashboardLayout({ children }: DashboardLayoutProps) {
+export default function DashboardLayout() {
   const [selectedModule, setSelectedModule] = useState('dashboard')
   const [mobileOpen, setMobileOpen] = useState(false)
   const [desktopOpen, setDesktopOpen] = useState(true)  // Desktop sidebar state
@@ -50,6 +49,19 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     localStorage.removeItem('isAuthenticated')
     localStorage.removeItem('username')
     navigate('/login')
+  }
+
+  const renderModule = () => {
+    switch (selectedModule) {
+      case 'dashboard':
+        return <DashboardOverview />
+      case 'leads':
+        return <LeadsManagement />
+      case 'deleted':
+        return <DeletedLeads />
+      default:
+        return <DashboardOverview />
+    }
   }
 
   const drawer = (open: boolean) => (
@@ -262,7 +274,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           }),
         }}
       >
-        {children}
+        {renderModule()}
       </Box>
     </Box>
   )
