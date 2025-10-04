@@ -97,43 +97,68 @@ export default function LeadsManagement() {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [selectedLead, setSelectedLead] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [debugInfo, setDebugInfo] = useState<string>('')
+
+  // Force show sample data for testing
+  useEffect(() => {
+    console.log('🔄 LeadsManagement component mounted')
+    console.log('📊 Initial leads state:', leads)
+    console.log('🔍 Filtered leads:', filteredLeads)
+    setDebugInfo(`Debug: ${leads.length} leads, ${filteredLeads.length} filtered`)
+  }, [leads])
 
   // Fetch leads from Supabase
   useEffect(() => {
     const fetchLeads = async () => {
+      console.log('🔄 Starting to fetch leads from Supabase...')
+      setLoading(true)
+      
       try {
         const { supabase } = await import('../lib/supabase')
+        console.log('✅ Supabase client loaded')
+        
         const { data, error } = await supabase
           .from('leads')
           .select('*')
           .order('created_at', { ascending: false })
 
         if (error) {
-          console.error('❌ Error fetching leads:', error)
-          // Keep sample data as fallback
+          console.error('❌ Supabase error:', error)
+          setError(`Supabase Error: ${error.message}`)
+          console.log('📊 Using sample data as fallback')
+          // Keep sample data - don't switch to empty array
           return
         }
 
-        if (data) {
-          console.log('✅ Leads fetched from Supabase:', data)
-          setLeads(data.map(lead => ({
-            id: lead.id,
-            name: lead.name,
-            email: lead.email,
-            phone: lead.phone,
-            dob: lead.dob,
-            province: lead.province,
-            smoking_status: lead.smoking_status,
-            insurance_product: lead.insurance_product,
-            status: lead.status,
-            created_at: lead.created_at,
-            last_contact_date: lead.last_contact_date
-          })))
+        if (data && data.length > 0) {
+          console.log('✅ Leads fetched from Supabase:', data.length, 'leads')
+          const mappedLeads = data.map(lead => ({
+            id: lead.id.toString(),
+            name: lead.name || 'Unknown',
+            email: lead.email || '',
+            phone: lead.phone || '',
+            dob: lead.dob || '1985-01-01',
+            province: lead.province || 'Ontario',
+            smoking_status: lead.smoking_status || 'unknown',
+            insurance_product: lead.insurance_product || 'term-life',
+            status: (lead.status || 'new') as 'new' | 'contacted' | 'converted',
+            created_at: lead.created_at || new Date().toISOString(),
+            last_contact_date: lead.last_contact_date || undefined
+          }))
+          
+          setLeads(mappedLeads)
+          setError(null)
+        } else {
+          console.log('📊 No leads in Supabase, using sample data')
+          setError('No leads found in database, showing sample data')
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error('❌ Error fetching leads:', error)
+        setError(`Connection Error: ${error.message}`)
       } finally {
         setLoading(false)
+        console.log('🔄 Fetch complete, loading set to false')
       }
     }
 
@@ -228,10 +253,31 @@ export default function LeadsManagement() {
 
   return (
     <Box sx={{ px: 2 }}>
+      {/* Debug Panel */}
+      <Box sx={{ 
+        backgroundColor: '#FEF3C7', 
+        p: 2, 
+        mb: 3, 
+        borderRadius: 2, 
+        border: '1px solid #F59E0B' 
+      }}>
+        <Typography variant="body2" sx={{ color: '#92400E', fontWeight: '600' }}>
+          🔧 Debug Info: {debugInfo}
+        </Typography>
+        <Typography variant="body2" sx={{ color: '#92400E' }}>
+          📊 Leads Count: {leads.length} | Filtered: {filteredLeads.length} | Loading: {loading ? 'Yes' : 'No'}
+        </Typography>
+        {error && (
+          <Typography variant="body2" sx={{ color: '#DC2626', fontWeight: '600' }}>
+            ❌ Error: {error}
+          </Typography>
+        )}
+      </Box>
+
       {/* Header */}
       <Box sx={{ mb: 4 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1 }}>
-          Leads Management
+          👥 Leads Management
         </Typography>
         <Typography variant="body1" sx={{ color: '#6B7280' }}>
           Manage and track your insurance leads pipeline
