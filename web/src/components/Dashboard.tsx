@@ -238,26 +238,26 @@ export default function Dashboard() {
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 1, borderTop: '1px solid #f0f0f0', alignItems: 'center' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <MaleIcon sx={{ color: '#2196F3', fontSize: 12 }} />
-                  <Typography variant="caption" sx={{ fontWeight: '600', color: '#2196F3', fontSize: '0.65rem' }}>
+                  <MaleIcon sx={{ color: '#2196F3', fontSize: 14 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '700', color: '#2196F3', fontSize: '0.85rem' }}>
                     {genderData[0].value}M
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <FemaleIcon sx={{ color: '#E91E63', fontSize: 12 }} />
-                  <Typography variant="caption" sx={{ fontWeight: '600', color: '#E91E63', fontSize: '0.65rem' }}>
+                  <FemaleIcon sx={{ color: '#E91E63', fontSize: 14 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '700', color: '#E91E63', fontSize: '0.85rem' }}>
                     {genderData[1].value}F
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <OthersIcon sx={{ color: '#9C27B0', fontSize: 12 }} />
-                  <Typography variant="caption" sx={{ fontWeight: '600', color: '#9C27B0', fontSize: '0.65rem' }}>
+                  <OthersIcon sx={{ color: '#9C27B0', fontSize: 14 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '700', color: '#9C27B0', fontSize: '0.85rem' }}>
                     {genderData[2].value}O
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <PreferNotToSayIcon sx={{ color: '#607D8B', fontSize: 12 }} />
-                  <Typography variant="caption" sx={{ fontWeight: '600', color: '#607D8B', fontSize: '0.65rem' }}>
+                  <PreferNotToSayIcon sx={{ color: '#607D8B', fontSize: 14 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '700', color: '#607D8B', fontSize: '0.85rem' }}>
                     {genderData[3].value}?
                   </Typography>
                 </Box>
