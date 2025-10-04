@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Box, AppBar, Toolbar, Typography, CssBaseline } from '@mui/material'
+import { Box, AppBar, Toolbar, Typography, CssBaseline, IconButton, Drawer, useTheme, useMediaQuery } from '@mui/material'
+import { Menu as MenuIcon } from '@mui/icons-material'
 import { customAuth, type CustomUser } from '../lib/custom-auth'
 import MuiSidebar from '../components/MuiSidebar'
 import DashboardOverview from '../components/Dashboard'
@@ -11,6 +12,8 @@ export default function Dashboard() {
   const [user, setUser] = useState<CustomUser | null>(null)
   const [currentModule, setCurrentModule] = useState('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -37,6 +40,9 @@ export default function Dashboard() {
 
   const handleModuleChange = (moduleId: string) => {
     setCurrentModule(moduleId)
+    if (isMobile) {
+      setSidebarOpen(false) // Close drawer on mobile when navigating
+    }
   }
 
   const renderModule = () => {
@@ -81,21 +87,49 @@ export default function Dashboard() {
     }}>
       <CssBaseline />
       
-      {/* Sidebar */}
-      <MuiSidebar
-        open={sidebarOpen}
-        onToggle={() => setSidebarOpen(!sidebarOpen)}
-        selectedModule={currentModule}
-        onModuleSelect={handleModuleChange}
-        onLogout={handleLogout}
-        user={user}
-      />
+      {/* Sidebar - Desktop */}
+      {!isMobile && (
+        <MuiSidebar
+          open={sidebarOpen}
+          onToggle={() => setSidebarOpen(!sidebarOpen)}
+          selectedModule={currentModule}
+          onModuleSelect={handleModuleChange}
+          onLogout={handleLogout}
+          user={user}
+        />
+      )}
+
+      {/* Mobile Drawer */}
+      <Drawer
+        variant="temporary"
+        open={sidebarOpen && isMobile}
+        onClose={() => setSidebarOpen(false)}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile
+        }}
+        sx={{
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: 240,
+          },
+        }}
+      >
+        <MuiSidebar
+          open={true}
+          onToggle={() => setSidebarOpen(false)}
+          selectedModule={currentModule}
+          onModuleSelect={handleModuleChange}
+          onLogout={handleLogout}
+          user={user}
+          mobile={true}
+        />
+      </Drawer>
 
       {/* Main Content Area */}
       <Box sx={{ 
         flex: 1,
-        marginLeft: sidebarOpen ? '240px' : '64px',
-        transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        marginLeft: !isMobile ? (sidebarOpen ? '240px' : '64px') : '0px',
+        transition: !isMobile ? 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)' : 'none',
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
@@ -120,15 +154,34 @@ export default function Dashboard() {
             py: 1,
             minHeight: '64px !important'
           }}>
-            <Typography variant="h6" sx={{ 
-              fontWeight: '600', 
-              color: '#333',
-              fontSize: '1.25rem !important'
-            }}>
-              {currentModule === 'dashboard' ? '📊 Dashboard' : 
-               currentModule === 'leads' ? '👥 Leads Management' : 
-               '🗑️ Deleted Leads'}
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              {/* Mobile Hamburger Menu */}
+              {isMobile && (
+                <IconButton
+                  edge="start"
+                  color="inherit"
+                  onClick={() => setSidebarOpen(true)}
+                  sx={{ 
+                    mr: 1,
+                    color: '#333',
+                    backgroundColor: 'transparent',
+                    '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' }
+                  }}
+                >
+                  <MenuIcon />
+                </IconButton>
+              )}
+              
+              <Typography variant="h6" sx={{ 
+                fontWeight: '600', 
+                color: '#333',
+                fontSize: '1.25rem !important'
+              }}>
+                {currentModule === 'dashboard' ? '📊 Dashboard' : 
+                 currentModule === 'leads' ? '👥 Leads Management' : 
+                 '🗑️ Deleted Leads'}
+              </Typography>
+            </Box>
 
             {/* User Info */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

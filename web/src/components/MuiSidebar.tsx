@@ -28,6 +28,7 @@ interface MuiSidebarProps {
   onModuleSelect: (module: string) => void
   onLogout: () => void
   user: { username?: string; full_name?: string }
+  mobile?: boolean
 }
 
 export default function MuiSidebar({
@@ -36,7 +37,8 @@ export default function MuiSidebar({
   selectedModule,
   onModuleSelect,
   onLogout,
-  user
+  user,
+  mobile = false
 }: MuiSidebarProps) {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
@@ -64,12 +66,14 @@ export default function MuiSidebar({
         color: 'white',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
+        justifyContent: mobile ? 'center' : 'space-between',
         minHeight: 64,
-        cursor: 'pointer'
+        cursor: mobile ? 'default' : 'pointer'
       }} onClick={() => {
-        console.log('🎯 Sidebar header clicked! Current state:', open);
-        onToggle();
+        if (!mobile) {
+          console.log('🎯 Sidebar header clicked! Current state:', open);
+          onToggle();
+        }
       }}>
         {open ? (
           <>
@@ -100,6 +104,10 @@ export default function MuiSidebar({
             </Box>
             <IconButton 
               size="small"
+              onClick={(e) => {
+                e.stopPropagation()
+                onToggle()
+              }}
               sx={{ 
                 color: 'inherit',
                 backgroundColor: 'rgba(255,255,255,0.15)',
@@ -128,6 +136,10 @@ export default function MuiSidebar({
             </Box>
             <IconButton 
               size="small"
+              onClick={(e) => {
+                e.stopPropagation()
+                onToggle()
+              }}
               sx={{ 
                 color: 'inherit',
                 backgroundColor: 'rgba(255,255,255,0.15)',
