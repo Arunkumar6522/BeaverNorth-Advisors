@@ -270,11 +270,6 @@ export default function DashboardLayout() {
               duration: theme.transitions.duration.enteringScreen,
             }),
             overflowX: 'hidden',
-            position: 'fixed',
-            height: '100%',
-            top: 0,
-            left: 0,
-            zIndex: 1200,
           },
         }}
         open={desktopOpen}
@@ -295,7 +290,7 @@ export default function DashboardLayout() {
             xs: '100%', 
             md: `calc(100% - ${currentDrawerWidth}px)` 
           },
-          ml: { md: `${currentDrawerWidth}px` },
+          ml: { md: 0 },
           transition: theme.transitions.create(['margin', 'width'], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,

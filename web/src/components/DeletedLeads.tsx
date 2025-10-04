@@ -226,9 +226,9 @@ export default function DeletedLeads() {
   }
 
   return (
-    <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', px: 2 }}>
+    <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <Box sx={{ py: 2, flexShrink: 0 }}>
+      <Box sx={{ px: 2, py: 2, flexShrink: 0 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
           🗑️ Deleted Leads
         </Typography>
@@ -238,7 +238,7 @@ export default function DeletedLeads() {
       </Box>
 
       {/* Actions */}
-      <Box sx={{ py: 1, flexShrink: 0 }}>
+      <Box sx={{ px: 2, py: 1, flexShrink: 0 }}>
         <Button
           variant="outlined"
           size="medium"
@@ -261,7 +261,7 @@ export default function DeletedLeads() {
       </Box>
 
       {/* Deleted Leads Table */}
-      <Box sx={{ flex: 1, overflow: 'hidden', mx: 0 }}>
+      <Box sx={{ flex: 1, overflow: 'hidden', px: 2 }}>
         {deletedLeads.length === 0 ? (
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', p: 4, textAlign: 'center' }}>
             <Typography variant="h6" sx={{ color: '#666666', mb: 2 }}>
@@ -272,7 +272,7 @@ export default function DeletedLeads() {
             </Typography>
           </Card>
         ) : (
-          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%', mx: 0 }}>
+          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%' }}>
             <TableContainer sx={{ height: '100%', overflow: 'auto', overflowX: 'auto', '&::-webkit-scrollbar': { height: '6px' } }}>
               <Table stickyHeader sx={{ minWidth: 600 }}>
                 <TableHead>
