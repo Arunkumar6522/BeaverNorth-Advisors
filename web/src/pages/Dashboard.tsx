@@ -7,6 +7,7 @@ import { customAuth, type CustomUser } from '../lib/custom-auth'
 import MuiSidebar from '../components/MuiSidebar'
 import DashboardOverview from '../components/Dashboard'
 import LeadsManagement from '../components/LeadsManagement'
+import DeletedLeads from '../components/DeletedLeads'
 
 export default function Dashboard() {
   const [user, setUser] = useState<CustomUser | null>(null)
@@ -38,6 +39,8 @@ export default function Dashboard() {
         return <DashboardOverview />
       case 'leads':
         return <LeadsManagement />
+      case 'deleted':
+        return <DeletedLeads />
       case 'analytics':
         return (
           <motion.div
@@ -137,6 +140,7 @@ export default function Dashboard() {
                 }}>
                   {currentModule === 'dashboard' ? '📊 Dashboard' : 
                    currentModule === 'leads' ? '👥 Leads Management' : 
+                   currentModule === 'deleted' ? '🗑️ Deleted Leads' :
                    '📈 Analytics'}
                 </Typography>
               </Box>
