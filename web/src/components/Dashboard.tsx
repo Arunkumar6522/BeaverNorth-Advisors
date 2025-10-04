@@ -211,15 +211,36 @@ export default function Dashboard() {
 
         if (error) {
           console.error('❌ Error fetching activity:', error)
+          
+          // TEMPORARY: Fallback to localStorage if table doesn't exist
+          if (error.message.includes('relation "activity_log" does not exist')) {
+            console.log('📱 Using localStorage fallback for activities')
+            const tempActivities = JSON.parse(localStorage.getItem('temp_activities') || '[]')
+            setRecentActivity(tempActivities)
+            return
+          }
           return
         }
 
         if (data) {
           console.log('✅ Activity fetched:', data)
           setRecentActivity(data)
+        } else {
+          // Check localStorage as fallback
+          const tempActivities = JSON.parse(localStorage.getItem('temp_activities') || '[]')
+          if (tempActivities.length > 0) {
+            console.log('📱 Using localStorage fallback for activities')
+            setRecentActivity(tempActivities)
+          }
         }
       } catch (error) {
         console.error('❌ Error fetching activity:', error)
+        // Fallback to localStorage
+        const tempActivities = JSON.parse(localStorage.getItem('temp_activities') || '[]')
+        if (tempActivities.length > 0) {
+          console.log('📱 Using localStorage fallback for activities')
+          setRecentActivity(tempActivities)
+        }
       }
     }
 

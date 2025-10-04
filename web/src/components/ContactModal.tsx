@@ -142,6 +142,23 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           if (logError.message.includes('relation "activity_log" does not exist')) {
             console.error('🚨 ACTIVITY_LOG TABLE DOES NOT EXIST!')
             console.error('📋 Please run the SQL script in Supabase SQL Editor first!')
+            
+            // TEMPORARY: Store in localStorage as fallback
+            const tempActivity = {
+              id: Date.now().toString(),
+              lead_id: data[0].id,
+              activity_type: 'lead_created',
+              description: `New lead submitted: ${formData.name}`,
+              new_value: formData.insuranceProduct,
+              performed_by: 'System',
+              created_at: new Date().toISOString()
+            }
+            
+            const existingActivities = JSON.parse(localStorage.getItem('temp_activities') || '[]')
+            existingActivities.unshift(tempActivity)
+            localStorage.setItem('temp_activities', JSON.stringify(existingActivities.slice(0, 20))) // Keep last 20
+            
+            console.log('💾 Activity saved to localStorage as fallback')
           }
         } else {
           console.log('✅ Activity logged: lead_created')

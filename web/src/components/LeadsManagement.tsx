@@ -415,6 +415,24 @@ export default function LeadsManagement() {
           console.error('🚨 ACTIVITY_LOG TABLE DOES NOT EXIST!')
           console.error('📋 Please run the SQL script in Supabase SQL Editor first!')
           alert('⚠️ Activity logging not set up yet. Please run the SQL script in Supabase first.')
+          
+          // TEMPORARY: Store in localStorage as fallback
+          const tempActivity = {
+            id: Date.now().toString(),
+            lead_id: leadId,
+            activity_type: activityType,
+            description: description,
+            old_value: oldValue,
+            new_value: newValue,
+            performed_by: username,
+            created_at: new Date().toISOString()
+          }
+          
+          const existingActivities = JSON.parse(localStorage.getItem('temp_activities') || '[]')
+          existingActivities.unshift(tempActivity)
+          localStorage.setItem('temp_activities', JSON.stringify(existingActivities.slice(0, 20))) // Keep last 20
+          
+          console.log('💾 Activity saved to localStorage as fallback')
         }
       } else {
         console.log('✅ Activity logged successfully:', activityType)
