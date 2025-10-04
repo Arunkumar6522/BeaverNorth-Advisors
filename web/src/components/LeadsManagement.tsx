@@ -10,7 +10,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Chip,
   Button,
   TextField,
@@ -26,7 +25,6 @@ import {
 } from '@mui/material'
 import {
   Search as SearchIcon,
-  Search as FilterIcon,
   MoreVert as MoreVertIcon,
   Phone as PhoneIcon,
   Email as EmailIcon,

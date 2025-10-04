@@ -114,8 +114,7 @@ export async function sendOTP(phoneNumber: string): Promise<{ success: boolean; 
     return {
       success: true,
       message: `Demo ready - check console for OTP: ${otp}`,
-      sessionId: 'demo_session_' + Date.now(),
-      demoOtp: otp
+      sessionId: 'demo_session_' + Date.now()
     }
   }
 }

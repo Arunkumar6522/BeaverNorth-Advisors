@@ -1,6 +1,7 @@
 import React from 'react'
-import { Box, Grid, Card, CardContent, Typography, Avatar } from '@mui/material'
-import { TrendingUp, People, PhoneIcon, CheckCircleOutline } from '@mui/icons-material'
+import { Box, Card, CardContent, Typography, Avatar } from '@mui/material'
+import Grid2 from '@mui/material/Grid2'
+import { TrendingUp, People, Phone, CheckCircleOutline } from '@mui/icons-material'
 
 interface StatCardProps {
   title: string
@@ -56,7 +57,7 @@ export default function Dashboard() {
     {
       title: 'Contacted',
       value: 28,
-      icon: <PhoneIcon />,
+      icon: <Phone />,
       color: '#F59E0B',
       change: '+5%'
     },
@@ -82,17 +83,17 @@ export default function Dashboard() {
       </Box>
 
       {/* Statistics Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      <Grid2 container spacing={3} sx={{ mb: 4 }}>
         {stats.map((stat, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
+          <Grid2 xs={12} sm={6} md={3} key={index}>
             <StatCard {...stat} />
-          </Grid>
+          </Grid2>
         ))}
-      </Grid>
+      </Grid2>
 
       {/* Recent Activity */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+      <Grid2 container spacing={3}>
+        <Grid2 xs={12} md={8}>
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: '600', mb: 3, color: '#111827' }}>
@@ -129,7 +130,7 @@ export default function Dashboard() {
                 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                   <Avatar sx={{ bgcolor: '#F59E0B', width: 32, height: 32 }}>
-                    <PhoneIcon sx={{ fontSize: 20 }} />
+                    <Phone sx={{ fontSize: 20 }} />
                   </Avatar>
                   <Box>
                     <Typography variant="body1" sx={{ fontWeight: '500' }}>
@@ -143,9 +144,9 @@ export default function Dashboard() {
               </Box>
             </CardContent>
           </Card>
-        </Grid>
+        </Grid2>
         
-        <Grid item xs={12} md={4}>
+        <Grid2 xs={12} md={4}>
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: '600', mb: 3, color: '#111827' }}>
@@ -203,8 +204,8 @@ export default function Dashboard() {
               </Box>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
     </Box>
   )
 }
