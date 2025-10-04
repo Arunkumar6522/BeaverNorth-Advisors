@@ -16,7 +16,7 @@ interface Module {
 
 const modules: Module[] = [
   { id: 'dashboard', name: 'Dashboard', icon: <DashboardIcon /> },
-  { id: 'leads', name: 'Leads Management',<｜tool▁sep｜> name: 'Leads Management', icon: <LeadsIcon /> },
+  { id: 'leads', name: 'Leads Management', icon: <LeadsIcon /> },
   { id: 'analytics', name: 'Analytics', icon: <AnalyticsIcon /> }
 ]
 
