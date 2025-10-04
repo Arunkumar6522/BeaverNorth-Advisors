@@ -228,7 +228,7 @@ export default function DeletedLeads() {
   return (
     <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <Box sx={{ px: 2, py: 2, flexShrink: 0 }}>
+      <Box sx={{ px: 1, py: 2, flexShrink: 0 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
           🗑️ Deleted Leads
         </Typography>
@@ -238,7 +238,7 @@ export default function DeletedLeads() {
       </Box>
 
       {/* Actions */}
-      <Box sx={{ px: 2, py: 1, flexShrink: 0 }}>
+      <Box sx={{ px: 1, py: 1, flexShrink: 0 }}>
         <Button
           variant="outlined"
           size="medium"
@@ -261,7 +261,7 @@ export default function DeletedLeads() {
       </Box>
 
       {/* Deleted Leads Table */}
-      <Box sx={{ flex: 1, overflow: 'hidden', px: 2 }}>
+      <Box sx={{ flex: 1, overflow: 'hidden', px: 1 }}>
         {deletedLeads.length === 0 ? (
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', p: 4, textAlign: 'center' }}>
             <Typography variant="h6" sx={{ color: '#666666', mb: 2 }}>
@@ -274,16 +274,16 @@ export default function DeletedLeads() {
         ) : (
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%' }}>
             <TableContainer sx={{ height: '100%', overflow: 'auto', overflowX: 'auto', '&::-webkit-scrollbar': { height: '6px' } }}>
-              <Table stickyHeader sx={{ minWidth: 600 }}>
+              <Table stickyHeader sx={{ minWidth: 800, width: '100%' }}>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: '#F9FAFB' }}>
-                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 120, sm: 200 } }}>Lead</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 120, sm: 180 } }}>Contact</TableCell>
-                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 150 }}>Product</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 80, sm: 120 } }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 130 }}>Deleted On</TableCell>
-                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 120 }}>Deleted By</TableCell>
-                    <TableCell sx={{ fontWeight: '600', textAlign: 'center', minWidth: { xs: 80, sm: 100 } }}>Actions</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 150, sm: 220 } }}>Lead</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 150, sm: 200 } }}>Contact</TableCell>
+                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 180 }}>Product</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 100, sm: 140 } }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 150 }}>Deleted On</TableCell>
+                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 140 }}>Deleted By</TableCell>
+                    <TableCell sx={{ fontWeight: '600', textAlign: 'center', minWidth: { xs: 100, sm: 120 } }}>Actions</TableCell>
                   </TableRow>
               </TableHead>
               <TableBody>

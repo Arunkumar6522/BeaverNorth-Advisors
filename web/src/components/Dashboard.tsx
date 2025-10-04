@@ -307,7 +307,7 @@ export default function Dashboard() {
   }
 
   return (
-    <Box sx={{ height: '100%', overflow: 'auto', px: 2 }}>
+    <Box sx={{ height: '100%', overflow: 'auto', px: 1 }}>
       {/* Header with Time Period Selector */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
