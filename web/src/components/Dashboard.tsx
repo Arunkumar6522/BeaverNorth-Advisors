@@ -7,20 +7,14 @@ import {
   Avatar,
   FormControl,
   Select,
-  MenuItem,
-  Chip,
-  LinearProgress,
-  Paper
+  MenuItem
 } from '@mui/material'
 import { 
   TrendingUp, 
   People, 
   Phone, 
   CheckCircleOutline,
-  CalendarToday,
-  TrendingDown,
-  AttachMoney,
-  PersonAdd
+  CalendarToday
 } from '@mui/icons-material'
 
 interface StatCardProps {

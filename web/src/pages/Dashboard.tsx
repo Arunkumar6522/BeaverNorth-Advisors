@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Box, AppBar, Toolbar, Typography, IconButton } from '@mui/material'
+import { Box, AppBar, Toolbar, IconButton, Typography } from '@mui/material'
 import { Menu as MenuIcon } from '@mui/icons-material'
 import { customAuth, type CustomUser } from '../lib/custom-auth'
 import MuiSidebar from '../components/MuiSidebar'
@@ -147,18 +147,4 @@ export default function Dashboard() {
       </Box>
     </Box>
   )
-}
-
-// Typography component for inline styling
-const Typography = ({ variant, children, ...props }: any) => {
-  const getStyle = () => {
-    switch (variant) {
-      case 'h6':
-        return { fontSize: '18px', fontWeight: '600' }
-      default:
-        return {}
-    }
-  }
-
-  return <div style={getStyle()} {...props}>{children}</div>
 }

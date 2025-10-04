@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Drawer,
   List,
@@ -10,7 +10,6 @@ import {
   Typography,
   Box,
   IconButton,
-  Divider,
   useTheme,
   useMediaQuery
 } from '@mui/material'
@@ -18,7 +17,6 @@ import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   Analytics as AnalyticsIcon,
-  Menu as MenuIcon,
   ChevronLeft as ChevronLeftIcon,
   Logout as LogoutIcon,
   AccountCircle as AccountIcon
@@ -36,7 +34,6 @@ interface MuiSidebarProps {
   user: { username?: string; full_name?: string }
 }
 
-const SidebarNav = Box
 
 export default function MuiSidebar({
   open,
