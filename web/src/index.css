@@ -63,7 +63,8 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
+/* Mobile-first responsive styles */
+@media (min-width: 640px) {
   :root {
     color: #213547;
     background-color: #ffffff;
@@ -73,5 +74,19 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 768px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+/* Desktop styles */
+@media (min-width: 1024px) {
+  body {
+    font-size: 18px;
   }
 }
