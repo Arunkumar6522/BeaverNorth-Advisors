@@ -278,6 +278,11 @@ export default function LeadsManagement() {
   // Handle status update
   const handleStatusUpdate = async (leadId: string, newStatus: Lead['status'], notes?: string) => {
     try {
+      // Get current lead for logging
+      const currentLead = leads.find(lead => lead.id === leadId)
+      const leadName = currentLead?.name || 'Unknown Lead'
+      const oldStatus = currentLead?.status || 'new'
+      
       const updateData: any = { status: newStatus }
       
       if (newStatus !== 'new') {
@@ -300,6 +305,17 @@ export default function LeadsManagement() {
       if (error) {
         console.error('❌ Error updating lead status:', error)
         return
+      }
+
+      // Log the status change activity
+      if (oldStatus !== newStatus) {
+        await logActivity(
+          leadId,
+          'status_changed',
+          `Status changed for ${leadName}: ${oldStatus} → ${newStatus}`,
+          oldStatus,
+          newStatus
+        )
       }
 
       // Update local state
@@ -371,6 +387,33 @@ export default function LeadsManagement() {
     setDeleteComment('')
   }
 
+  // Function to log activities manually
+  const logActivity = async (leadId: string, activityType: string, description: string, oldValue?: string, newValue?: string) => {
+    try {
+      const { supabase } = await import('../lib/supabase')
+      const username = localStorage.getItem('username') || 'Admin'
+      
+      const { error } = await supabase
+        .from('activity_log')
+        .insert({
+          lead_id: leadId,
+          activity_type: activityType,
+          description: description,
+          old_value: oldValue,
+          new_value: newValue,
+          performed_by: username
+        })
+
+      if (error) {
+        console.error('❌ Error logging activity:', error)
+      } else {
+        console.log('✅ Activity logged:', activityType)
+      }
+    } catch (error) {
+      console.error('❌ Error logging activity:', error)
+    }
+  }
+
   const confirmDelete = async () => {
     if (!deleteLeadId || !deleteReason || !deleteComment) {
       alert('Please provide both reason and comment')
@@ -382,6 +425,10 @@ export default function LeadsManagement() {
       
       // Get current user
       const username = localStorage.getItem('username') || 'Admin'
+      
+      // Get lead name for logging
+      const leadToDelete = leads.find(lead => lead.id === deleteLeadId)
+      const leadName = leadToDelete?.name || 'Unknown Lead'
       
       // Soft delete in Supabase
       const { supabase } = await import('../lib/supabase')
@@ -400,6 +447,15 @@ export default function LeadsManagement() {
         alert(`Failed to delete lead: ${error.message}`)
         return
       }
+
+      // Log the deletion activity
+      await logActivity(
+        deleteLeadId,
+        'lead_deleted',
+        `Lead deleted: ${leadName}`,
+        'active',
+        'deleted'
+      )
 
       // Remove from local state
       setLeads(leads.filter(lead => lead.id !== deleteLeadId))

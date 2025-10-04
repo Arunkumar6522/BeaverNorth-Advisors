@@ -121,6 +121,27 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       console.log('✅ Lead saved successfully to Supabase!')
       console.log('📊 Saved data:', data)
       
+      // Log the lead creation activity
+      try {
+        const { error: logError } = await supabase
+          .from('activity_log')
+          .insert({
+            lead_id: data[0].id,
+            activity_type: 'lead_created',
+            description: `New lead submitted: ${formData.name}`,
+            new_value: formData.insuranceProduct,
+            performed_by: 'System'
+          })
+
+        if (logError) {
+          console.error('❌ Error logging activity:', logError)
+        } else {
+          console.log('✅ Activity logged: lead_created')
+        }
+      } catch (logError) {
+        console.error('❌ Error logging activity:', logError)
+      }
+      
     } catch (error: any) {
       console.error('🔴 Error saving lead - Full details:', error)
       throw error
