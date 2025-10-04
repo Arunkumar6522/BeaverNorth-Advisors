@@ -44,7 +44,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            style={{ padding: '40px', textAlign: 'center' }}
+            style={{ padding: '40px', paddingTop: '70px', textAlign: 'center' }}
           >
             <h2>Analytics Coming Soon</h2>
             <p style={{ color: '#6B7280', marginTop: '16px' }}>
@@ -59,9 +59,16 @@ export default function Dashboard() {
 
   if (!user) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <p>Loading...</p>
-      </div>
+      <Box sx={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        p: 4,
+        backgroundColor: '#FAFAFA'
+      }}>
+        <Typography variant="h6" sx={{ color: '#666' }}>Loading...</Typography>
+      </Box>
     )
   }
 
@@ -69,6 +76,7 @@ export default function Dashboard() {
     <>
       <CssBaseline />
       <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#FAFAFA' }}>
+        
         {/* MUI Sidebar */}
         <MuiSidebar
           open={sidebarOpen}
@@ -86,9 +94,9 @@ export default function Dashboard() {
             flexGrow: 1,
             display: 'flex',
             flexDirection: 'column',
-            width: { xs: '100%', sm: `calc(100% - ${sidebarOpen ? '240px' : '64px'})` },
-            ml: sidebarOpen ? { xs: 0, sm: '240px' } : { xs: 0, sm: '64px' },
-            transition: 'all 0.3s ease'
+            ml: sidebarOpen ? '240px' : '64px',
+            transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            maxWidth: sidebarOpen ? 'calc(100% - 240px)' : 'calc(100% - 64px)'
           }}
         >
           {/* Top App Bar */}
@@ -99,7 +107,9 @@ export default function Dashboard() {
               color: '#333',
               boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
               zIndex: theme => theme.zIndex.drawer + 1,
-              width: { xs: '100%', sm: `calc(100% - ${sidebarOpen ? '240px' : '64px'})` }
+              ml: sidebarOpen ? '240px' : '64px',
+              width: sidebarOpen ? 'calc(100% - 240px)' : 'calc(100% - 64px)',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
           >
             <Toolbar sx={{ justifyContent: 'space-between', px: 3, py: 1 }}>
@@ -110,13 +120,21 @@ export default function Dashboard() {
                   sx={{ 
                     color: '#1976D2',
                     backgroundColor: '#F0F4FF',
-                    '&:hover': { backgroundColor: '#E3F2FD' }
+                    '&:hover': { 
+                      backgroundColor: '#E3F2FD',
+                      transform: 'scale(1.05)'
+                    },
+                    transition: 'all 0.2s ease'
                   }}
                 >
                   <MenuIcon />
                 </IconButton>
                 
-                <Typography variant="h6" sx={{ fontWeight: '600', color: '#333' }}>
+                <Typography variant="h6" sx={{ 
+                  fontWeight: '600', 
+                  color: '#333',
+                  fontSize: { xs: '1rem', sm: '1.25rem' }
+                }}>
                   {currentModule === 'dashboard' ? '📊 Dashboard' : 
                    currentModule === 'leads' ? '👥 Leads Management' : 
                    '📈 Analytics'}
@@ -132,7 +150,8 @@ export default function Dashboard() {
                   py: 1,
                   borderRadius: 2,
                   fontSize: 14,
-                  fontWeight: 600
+                  fontWeight: 600,
+                  boxShadow: '0 2px 4px rgba(25,118,210,0.3)'
                 }}>
                   👋 {user?.full_name || user?.username || 'Admin'}
                 </Box>
@@ -143,13 +162,21 @@ export default function Dashboard() {
           {/* Content */}
           <Box sx={{ 
             flexGrow: 1, 
-            mt: 8, // Account for fixed AppBar
-            p: { xs: 2, sm: 3 },
+            mt: 8.5, // Account for fixed AppBar
+            p: { xs: 2, md: 3 },
             backgroundColor: '#FAFAFA',
-            overflow: 'auto',
-            minHeight: 'calc(100vh - 64px)'
+            minHeight: 'calc(100vh - 68px)',
+            overflow: 'auto'
           }}>
-            {renderModule()}
+            <motion.div
+              key={currentModule}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3 }}
+              style={{ width: '100%' }}
+            >
+              {renderModule()}
+            </motion.div>
           </Box>
         </Box>
       </Box>
