@@ -40,60 +40,10 @@ interface DeletedLead {
   delete_comment?: string
 }
 
-// Sample deleted leads data
-const sampleDeletedLeads: DeletedLead[] = [
-  {
-    id: 'd1',
-    name: 'Sarah Wilson',
-    email: 'sarah.wilson@example.com',
-    phone: '+1 (555) 123-4567',
-    dob: '1985-03-15',
-    province: 'Ontario',
-    smoking_status: 'Non-smoker',
-    insurance_product: 'Term Life Insurance',
-    status: 'converted',
-    created_at: '2025-01-01T10:00:00Z',
-    deleted_at: '2025-01-05T14:30:00Z',
-    deleted_by: 'admin',
-    delete_reason: 'no_response',
-    delete_comment: 'No response after multiple attempts'
-  },
-  {
-    id: 'd2',
-    name: 'Robert Chen',
-    email: 'robert.chen@example.com',
-    phone: '+1 (555) 987-6543',
-    dob: '1978-11-08',
-    province: 'British Columbia',
-    smoking_status: 'Smoker',
-    insurance_product: 'Whole Life Insurance',
-    status: 'contacted',
-    created_at: '2025-01-02T16:45:00Z',
-    deleted_at: '2025-01-04T09:20:00Z',
-    deleted_by: 'admin',
-    delete_reason: 'not_qualified',
-    delete_comment: 'Does not meet qualification criteria'
-  },
-  {
-    id: 'd3',
-    name: 'Maria Garcia',
-    email: 'maria.garcia@example.com',
-    phone: '+1 (555) 456-7890',
-    dob: '1992-07-22',
-    province: 'Quebec',
-    smoking_status: 'Non-smoker',
-    insurance_product: 'Travel Insurance',
-    status: 'new',
-    created_at: '2025-01-03T12:15:00Z',
-    deleted_at: '2025-01-06T11:45:00Z',
-    deleted_by: 'admin',
-    delete_reason: 'spam',
-    delete_comment: 'Invalid contact information provided'
-  }
-]
+// Sample deleted leads data (removed - now loads from Supabase)
 
 export default function DeletedLeads() {
-  const [deletedLeads, setDeletedLeads] = useState<DeletedLead[]>(sampleDeletedLeads)
+  const [deletedLeads, setDeletedLeads] = useState<DeletedLead[]>([])
   const [viewModalOpen, setViewModalOpen] = useState(false)
   const [selectedLead, setSelectedLead] = useState<DeletedLead | null>(null)
 

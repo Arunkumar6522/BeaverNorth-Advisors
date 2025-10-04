@@ -70,6 +70,8 @@ interface ActivityLog {
 export default function Dashboard() {
   const [timePeriod, setTimePeriod] = useState('month')
   const [recentActivity, setRecentActivity] = useState<ActivityLog[]>([])
+  const [leadsData, setLeadsData] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   const timePeriods = [
     { value: 'today', label: 'Today', icon: CalendarToday },
@@ -78,19 +80,66 @@ export default function Dashboard() {
     { value: 'year', label: 'This Year', icon: CalendarToday }
   ]
 
-  // Dynamic stats based on time period
-  const getStatsForPeriod = (period: string) => {
-    const baseStats = {
-      today: { total: 8, new: 2, contacted: 3, converted: 1 },
-      week: { total: 24, new: 6, contacted: 12, converted: 3 },
-      month: { total: 42, new: 12, contacted: 28, converted: 8 },
-      year: { total: 512, new: 156, contacted: 267, converted: 89 }
+  // Fetch leads data from Supabase
+  useEffect(() => {
+    const fetchLeadsData = async () => {
+      try {
+        console.log('🔄 Fetching leads data for dashboard...')
+        const { supabase } = await import('../lib/supabase')
+        
+        const { data, error } = await supabase
+          .from('leads')
+          .select('*')
+          .is('deleted_at', null) // Only active leads
+          .order('created_at', { ascending: false })
+
+        if (error) {
+          console.error('❌ Error fetching leads:', error)
+          return
+        }
+
+        if (data) {
+          console.log('✅ Leads data fetched:', data.length, 'leads')
+          setLeadsData(data)
+        }
+        setLoading(false)
+      } catch (error) {
+        console.error('❌ Error fetching leads data:', error)
+        setLoading(false)
+      }
     }
-    
-    return baseStats[period as keyof typeof baseStats] || baseStats.month
+
+    fetchLeadsData()
+  }, [])
+
+  // Calculate stats based on time period and real data
+  const getStatsForPeriod = (period: string, leads: any[]) => {
+    const now = new Date()
+    let filteredLeads = leads
+
+    if (period === 'today') {
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+      filteredLeads = leads.filter(lead => new Date(lead.created_at) >= today)
+    } else if (period === 'week') {
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+      filteredLeads = leads.filter(lead => new Date(lead.created_at) >= weekAgo)
+    } else if (period === 'month') {
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+      filteredLeads = leads.filter(lead => new Date(lead.created_at) >= monthAgo)
+    } else if (period === 'year') {
+      const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000)
+      filteredLeads = leads.filter(lead => new Date(lead.created_at) >= yearAgo)
+    }
+
+    const total = filteredLeads.length
+    const newLeads = filteredLeads.filter(lead => lead.status === 'new').length
+    const contacted = filteredLeads.filter(lead => lead.status === 'contacted').length
+    const converted = filteredLeads.filter(lead => lead.status === 'converted').length
+
+    return { total, new: newLeads, contacted, converted }
   }
 
-  const currentStats = getStatsForPeriod(timePeriod)
+  const currentStats = getStatsForPeriod(timePeriod, leadsData)
 
   const stats = [
     {
@@ -98,44 +147,56 @@ export default function Dashboard() {
       value: currentStats.total,
       icon: <People />,
       color: '#1976D2',
-      change: timePeriod === 'today' ? '+8%' : timePeriod === 'week' ? '+12%' : '+24%'
+      change: '+0%' // Could calculate actual change if needed
     },
     {
       title: 'New Leads',
       value: currentStats.new,
       icon: <TrendingUp />,
       color: '#1976D2',
-      change: timePeriod === 'today' ? '+2%' : timePeriod === 'week' ? '+5%' : '+18%'
+      change: '+0%'
     },
     {
       title: 'Contacted',
       value: currentStats.contacted,
       icon: <Phone />,
       color: '#1976D2',
-      change: '+5%'
+      change: '+0%'
     },
     {
       title: 'Converted',
       value: currentStats.converted,
       icon: <CheckCircleOutline />,
       color: '#1976D2',
-      change: timePeriod === 'today' ? '+1%' : timePeriod === 'week' ? '+1.5%' : '+2%'
+      change: '+0%'
     }
   ]
 
-  // Smoking status data for donut chart
-  const smokingData = [
-    { name: 'Smokers', value: 45, color: '#FF5722' },
-    { name: 'Non-Smokers', value: 102, color: '#1976D2' }
-  ]
+  // Calculate smoking status data from real leads
+  const smokingData = React.useMemo(() => {
+    const smokers = leadsData.filter(lead => lead.smoking_status === 'smoker').length
+    const nonSmokers = leadsData.filter(lead => lead.smoking_status === 'non-smoker').length
+    
+    return [
+      { name: 'Smokers', value: smokers, color: '#FF5722' },
+      { name: 'Non-Smokers', value: nonSmokers, color: '#1976D2' }
+    ]
+  }, [leadsData])
 
-  // Gender status data for donut chart
-  const genderData = [
-    { name: 'Male', value: 68, color: '#2196F3' },
-    { name: 'Female', value: 59, color: '#E91E63' },
-    { name: 'Others', value: 12, color: '#9C27B0' },
-    { name: 'Prefer not to say', value: 8, color: '#607D8B' }
-  ]
+  // Calculate gender data from real leads
+  const genderData = React.useMemo(() => {
+    const male = leadsData.filter(lead => lead.gender === 'male').length
+    const female = leadsData.filter(lead => lead.gender === 'female').length
+    const others = leadsData.filter(lead => lead.gender === 'others').length
+    const preferNotToSay = leadsData.filter(lead => lead.gender === 'prefer-not-to-say').length
+    
+    return [
+      { name: 'Male', value: male, color: '#2196F3' },
+      { name: 'Female', value: female, color: '#E91E63' },
+      { name: 'Others', value: others, color: '#9C27B0' },
+      { name: 'Prefer not to say', value: preferNotToSay, color: '#607D8B' }
+    ]
+  }, [leadsData])
 
   // Fetch recent activity from Supabase
   useEffect(() => {
@@ -164,6 +225,14 @@ export default function Dashboard() {
 
     fetchActivity()
   }, [])
+
+  // Refresh data when time period changes
+  useEffect(() => {
+    if (leadsData.length > 0) {
+      console.log('📊 Time period changed to:', timePeriod)
+      console.log('📊 Current stats:', getStatsForPeriod(timePeriod, leadsData))
+    }
+  }, [timePeriod, leadsData])
 
   const getActivityIcon = (type: string) => {
     switch (type) {
@@ -225,6 +294,16 @@ export default function Dashboard() {
       )
     }
     return null
+  }
+
+  if (loading) {
+    return (
+      <Box sx={{ height: '100%', overflow: 'auto', px: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Typography variant="h6" sx={{ color: '#6B7280' }}>
+          Loading dashboard data...
+        </Typography>
+      </Box>
+    )
   }
 
   return (
