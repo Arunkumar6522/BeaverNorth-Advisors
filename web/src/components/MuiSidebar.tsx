@@ -70,7 +70,10 @@ export default function MuiSidebar({
         justifyContent: 'space-between',
         minHeight: 64,
         cursor: 'pointer'
-      }} onClick={onToggle}>
+      }} onClick={() => {
+        console.log('🎯 Sidebar header clicked! Current state:', open);
+        onToggle();
+      }}>
         {open ? (
           <>
             <Box sx={{ flex: 1 }}>

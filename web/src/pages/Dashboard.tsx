@@ -98,10 +98,11 @@ export default function Dashboard() {
       
       {/* Sidebar */}
       <MuiSidebar
-        isOpen={sidebarOpen}
-        onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
-        currentModule={currentModule}
-        onModuleChange={handleModuleChange}
+        open={sidebarOpen}
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
+        selectedModule={currentModule}
+        onModuleSelect={handleModuleChange}
+        onLogout={handleLogout}
         user={user}
       />
 
@@ -137,7 +138,10 @@ export default function Dashboard() {
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
               <IconButton
                 edge="start"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
+                onClick={() => {
+                  console.log('🍔 Hamburger clicked! Current state:', sidebarOpen);
+                  setSidebarOpen(!sidebarOpen);
+                }}
                 sx={{ 
                   color: '#1976D2',
                   backgroundColor: '#F0F4FF',
