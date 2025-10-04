@@ -123,13 +123,19 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
       console.log('💾 Saving lead to Supabase:', leadData)
       
-      // This will be implemented with Supabase client
-      // const { data, error } = await supabase
-      //   .from('leads')
-      //   .insert([leadData])
+      // Real Supabase integration
+      const { supabase } = await import('../lib/supabase')
+      const { data, error } = await supabase
+        .from('leads')
+        .insert([leadData])
+        .select()
       
-      // For now, simulate successful save
-      console.log('✅ Lead saved successfully:', leadData)
+      if (error) {
+        console.error('❌ Supabase error:', error)
+        throw new Error(`Failed to save lead: ${error.message}`)
+      }
+      
+      console.log('✅ Lead saved successfully to Supabase:', data)
       
     } catch (error) {
       console.error('❌ Error saving lead:', error)

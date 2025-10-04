@@ -96,17 +96,87 @@ export default function LeadsManagement() {
   const [statusFilter, setStatusFilter] = useState<'all' | 'new' | 'contacted' | 'converted'>('all')
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [selectedLead, setSelectedLead] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const handleStatusChange = (leadId: string, newStatus: Lead['status']) => {
-    setLeads(leads.map(lead => 
-      lead.id === leadId 
-        ? { 
-            ...lead, 
-            status: newStatus,
-            last_contact_date: newStatus !== 'new' ? new Date().toISOString() : lead.last_contact_date
-          }
-        : lead
-    ))
+  // Fetch leads from Supabase
+  useEffect(() => {
+    const fetchLeads = async () => {
+      try {
+        const { supabase } = await import('../lib/supabase')
+        const { data, error } = await supabase
+          .from('leads')
+          .select('*')
+          .order('created_at', { ascending: false })
+
+        if (error) {
+          console.error('❌ Error fetching leads:', error)
+          // Keep sample data as fallback
+          return
+        }
+
+        if (data) {
+          console.log('✅ Leads fetched from Supabase:', data)
+          setLeads(data.map(lead => ({
+            id: lead.id,
+            name: lead.name,
+            email: lead.email,
+            phone: lead.phone,
+            dob: lead.dob,
+            province: lead.province,
+            smoking_status: lead.smoking_status,
+            insurance_product: lead.insurance_product,
+            status: lead.status,
+            created_at: lead.created_at,
+            last_contact_date: lead.last_contact_date
+          })))
+        }
+      } catch (error) {
+        console.error('❌ Error fetching leads:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchLeads()
+  }, [])
+
+  const handleStatusChange = async (leadId: string, newStatus: Lead['status']) => {
+    try {
+      const updateData: any = { status: newStatus }
+      
+      if (newStatus !== 'new') {
+        updateData.last_contact_date = new Date().toISOString()
+        updateData.contacted_at = newStatus === 'contacted' ? new Date().toISOString() : undefined
+        updateData.converted_at = newStatus === 'converted' ? new Date().toISOString() : undefined
+      }
+
+      // Update in Supabase
+      const { supabase } = await import('../lib/supabase')
+      const { error } = await supabase
+        .from('leads')
+        .update(updateData)
+        .eq('id', leadId)
+
+      if (error) {
+        console.error('❌ Error updating lead status:', error)
+        return
+      }
+
+      // Update local state
+      setLeads(leads.map(lead => 
+        lead.id === leadId 
+          ? { 
+              ...lead, 
+              status: newStatus,
+              last_contact_date: newStatus !== 'new' ? new Date().toISOString() : lead.last_contact_date
+            }
+          : lead
+      ))
+
+      console.log('✅ Lead status updated successfully')
+    } catch (error) {
+      console.error('❌ Error updating lead:', error)
+    }
   }
 
   const getStatusColor = (status: Lead['status']) => {
