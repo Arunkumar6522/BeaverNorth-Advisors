@@ -505,21 +505,21 @@ export default function Dashboard() {
               Recent Lead Activity
             </Typography>
             {recentActivity.length === 0 ? (
-              <Typography variant="body2" sx={{ color: '#6B7280', textAlign: 'center', py: 4 }}>
+              <Typography variant="body2" sx={{ color: '#6B7280', textAlign: 'left', py: 4 }}>
                 No recent activity yet
               </Typography>
             ) : (
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'flex-start' }}>
                 {recentActivity.map((activity) => (
-                  <Box key={activity.id} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Avatar sx={{ bgcolor: getActivityColor(activity.activity_type), width: 32, height: 32 }}>
+                  <Box key={activity.id} sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, width: '100%' }}>
+                    <Avatar sx={{ bgcolor: getActivityColor(activity.activity_type), width: 32, height: 32, flexShrink: 0 }}>
                       {getActivityIcon(activity.activity_type)}
                     </Avatar>
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="body1" sx={{ fontWeight: '500' }}>
+                    <Box sx={{ flex: 1, textAlign: 'left' }}>
+                      <Typography variant="body1" sx={{ fontWeight: '500', textAlign: 'left' }}>
                         {activity.description}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                      <Typography variant="body2" sx={{ color: '#6B7280', textAlign: 'left' }}>
                         {activity.new_value && `${activity.new_value} - `}{formatTimeAgo(activity.created_at)}
                       </Typography>
                     </Box>
