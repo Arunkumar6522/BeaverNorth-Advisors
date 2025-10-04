@@ -175,28 +175,39 @@ export default function LeadsManagement() {
       try {
         console.log('🔄 Fetching leads from Supabase...')
         const { supabase } = await import('../lib/supabase')
+        
+        // First, let's get ALL leads to see what's in the database
         const { data, error } = await supabase
           .from('leads')
           .select('*')
-          .is('deleted_at', null)  // Changed from .eq('deleted', false)
           .order('created_at', { ascending: false })
+
+        console.log('📊 Raw data from Supabase (ALL leads):', data)
+        console.log('📊 Error (if any):', error)
 
         if (error) {
           console.error('❌ Error fetching leads:', error)
-          console.error('Error details:', error)
+          console.error('❌ Error code:', error.code)
+          console.error('❌ Error message:', error.message)
+          console.error('❌ Error details:', error.details)
+          console.error('❌ Error hint:', error.hint)
           return
         }
-
-        console.log('📊 Raw data from Supabase:', data)
 
         if (data) {
           if (data.length === 0) {
             console.log('⚠️ No leads found in database')
-            setLeads([])  // Clear sample data
+            setLeads([])
           } else {
-            console.log(`✅ ${data.length} leads fetched from Supabase:`, data)
-            setLeads(data.map(lead => ({
-              id: lead.id.toString(),
+            console.log(`✅ ${data.length} leads fetched from Supabase`)
+            console.log('📋 First lead sample:', data[0])
+            
+            // Filter out deleted leads in JavaScript (not SQL)
+            const activeLeads = data.filter(lead => !lead.deleted_at)
+            console.log(`📊 Active leads (deleted_at is null): ${activeLeads.length}`)
+            
+            setLeads(activeLeads.map(lead => ({
+              id: lead.id ? lead.id.toString() : String(Math.random()),
               name: lead.name || 'Unknown',
               email: lead.email || '',
               phone: lead.phone || '',
@@ -207,15 +218,22 @@ export default function LeadsManagement() {
               status: (lead.status || 'new') as 'new' | 'contacted' | 'converted',
               created_at: lead.created_at || new Date().toISOString(),
               last_contact_date: lead.last_contact_date || undefined,
-              notes: lead.notes || ''
+              notes: lead.notes || '',
+              deleted_at: lead.deleted_at || undefined
             })))
+            
+            console.log('✅ Leads state updated successfully')
           }
+        } else {
+          console.log('⚠️ Data is null or undefined')
         }
       } catch (error: any) {
-        console.error('❌ Error fetching leads:', error)
+        console.error('❌ Caught error in fetchLeads:', error)
+        console.error('❌ Error stack:', error.stack)
       }
     }
 
+    console.log('🚀 LeadsManagement component mounted, fetching leads...')
     fetchLeads()
   }, [])
 
