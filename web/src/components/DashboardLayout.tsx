@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { Box, Drawer, CssBaseline, AppBar, Toolbar, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Tabs, Tab } from '@mui/material'
-import { Dashboard as DashboardIcon, People as LeadsIcon, Assessment as AnalyticsIcon } from '@mui/icons-material'
+import { Box, Drawer, CssBaseline, AppBar, Toolbar, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, useMediaQuery, useTheme } from '@mui/material'
+import { Dashboard as DashboardIcon, People as LeadsIcon, Assessment as AnalyticsIcon, Menu as MenuIcon } from '@mui/icons-material'
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -22,9 +22,20 @@ const modules: Module[] = [
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [selectedModule, setSelectedModule] = useState('dashboard')
+  const [mobileOpen, setMobileOpen] = useState(false)
+  
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   const handleModuleChange = (moduleId: string) => {
     setSelectedModule(moduleId)
+    if (isMobile) {
+      setMobileOpen(false)  // Close drawer on mobile after selection
+    }
+  }
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen)
   }
 
   const drawer = (
@@ -74,44 +85,48 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       
-      {/* Sidebar */}
+      {/* Top AppBar */}
       <AppBar
         position="fixed"
         sx={{
-          width: `calc(100% - ${drawerWidth}px)`,
-          ml: `${drawerWidth}px`,
+          width: { md: `calc(100% - ${drawerWidth}px)` },
+          ml: { md: `${drawerWidth}px` },
           backgroundColor: '#ffffff',
           color: '#374151',
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
         }}
       >
         <Toolbar>
+          {/* Hamburger Menu Icon (Mobile Only) */}
+          {isMobile && (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: '600' }}>
             {modules.find(m => m.id === selectedModule)?.name || 'Dashboard'}
           </Typography>
-          
-          {/* Header tabs - only show for leads module */}
-          {selectedModule === 'leads' && (
-            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs value="all" aria-label="leads tabs">
-                <Tab label="All Leads" value="all" />
-                <Tab label="New" value="new" />
-                <Tab label="Contacted" value="contacted" />
-                <Tab label="Converted" value="converted" />
-                <Tab label="Active" value="active" />
-                <Tab label="Closed" value="closed" />
-              </Tabs>
-            </Box>
-          )}
         </Toolbar>
       </AppBar>
 
-      {/* Main Navigation */}
+      {/* Sidebar Drawer - Responsive */}
+      {/* Mobile Drawer (Temporary) */}
       <Drawer
-        variant="permanent"
+        variant="temporary"
+        open={mobileOpen}
+        onClose={handleDrawerToggle}
+        ModalProps={{
+          keepMounted: true, // Better mobile performance
+        }}
         sx={{
-          width: drawerWidth,
-          flexShrink: 0,
+          display: { xs: 'block', md: 'none' },
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
@@ -123,15 +138,35 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         {drawer}
       </Drawer>
 
+      {/* Desktop Drawer (Permanent) */}
+      <Drawer
+        variant="permanent"
+        sx={{
+          display: { xs: 'none', md: 'block' },
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+            backgroundColor: '#ffffff',
+            borderRight: '1px solid #E5E7EB',
+          },
+        }}
+        open
+      >
+        {drawer}
+      </Drawer>
+
       {/* Main Content Area */}
       <Box
         component="main"
         sx={{
           flexGrow: 1,
           pt: 8,
-          px: 3,
+          px: { xs: 2, md: 3 },
           backgroundColor: '#F9FAFB',
-          minHeight: '100vh'
+          minHeight: '100vh',
+          width: { xs: '100%', md: `calc(100% - ${drawerWidth}px)` }
         }}
       >
         {children}

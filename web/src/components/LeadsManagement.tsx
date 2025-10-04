@@ -57,8 +57,8 @@ interface Lead {
   deleted_at?: string
 }
 
-// Sample leads data
-const sampleLeads: Lead[] = [
+// Sample leads data (not used - kept for reference)
+/* const sampleLeads: Lead[] = [
   {
     id: '1',
     name: 'John Smith',
@@ -127,7 +127,7 @@ const sampleLeads: Lead[] = [
     created_at: '2025-01-05T13:45:00Z',
     notes: 'New lead, needs evaluation.'
   }
-]
+] */
 
 const DELETE_REASONS = [
   { value: 'duplicate', label: 'Duplicate Lead' },
@@ -139,7 +139,7 @@ const DELETE_REASONS = [
 ]
 
 export default function LeadsManagement() {
-  const [leads, setLeads] = useState<Lead[]>(sampleLeads)
+  const [leads, setLeads] = useState<Lead[]>([])  // Start with empty array, will load from Supabase
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setFilter] = useState<'all' | 'new' | 'contacted' | 'converted'>('all')
   const [currentTab, setCurrentTab] = useState<'active' | 'closed'>('active')
@@ -173,38 +173,46 @@ export default function LeadsManagement() {
   useEffect(() => {
     const fetchLeads = async () => {
       try {
+        console.log('🔄 Fetching leads from Supabase...')
         const { supabase } = await import('../lib/supabase')
         const { data, error } = await supabase
           .from('leads')
           .select('*')
-          .eq('deleted', false)
+          .is('deleted_at', null)  // Changed from .eq('deleted', false)
           .order('created_at', { ascending: false })
 
         if (error) {
           console.error('❌ Error fetching leads:', error)
+          console.error('Error details:', error)
           return
         }
 
-        if (data && data.length > 0) {
-          console.log('✅ Leads fetched from Supabase:', data)
-          setLeads(data.map(lead => ({
-            id: lead.id.toString(),
-            name: lead.name || 'Unknown',
-            email: lead.email || '',
-            phone: lead.phone || '',
-            dob: lead.dob || '1985-01-01',
-            province: lead.province || 'Ontario',
-            smoking_status: lead.smoking_status || 'unknown',
-            insurance_product: lead.insurance_product || 'term-life',
-            status: (lead.status || 'new') as 'new' | 'contacted' | 'converted',
-            created_at: lead.created_at || new Date().toISOString(),
-            last_contact_date: lead.last_contact_date || undefined,
-            notes: lead.notes || ''
-          })))
+        console.log('📊 Raw data from Supabase:', data)
+
+        if (data) {
+          if (data.length === 0) {
+            console.log('⚠️ No leads found in database')
+            setLeads([])  // Clear sample data
+          } else {
+            console.log(`✅ ${data.length} leads fetched from Supabase:`, data)
+            setLeads(data.map(lead => ({
+              id: lead.id.toString(),
+              name: lead.name || 'Unknown',
+              email: lead.email || '',
+              phone: lead.phone || '',
+              dob: lead.dob || '1985-01-01',
+              province: lead.province || 'Ontario',
+              smoking_status: lead.smoking_status || 'unknown',
+              insurance_product: lead.insurance_product || 'term-life',
+              status: (lead.status || 'new') as 'new' | 'contacted' | 'converted',
+              created_at: lead.created_at || new Date().toISOString(),
+              last_contact_date: lead.last_contact_date || undefined,
+              notes: lead.notes || ''
+            })))
+          }
         }
       } catch (error: any) {
         console.error('❌ Error fetching leads:', error)
-      } finally {
       }
     }
 
