@@ -226,9 +226,9 @@ export default function DeletedLeads() {
   }
 
   return (
-    <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', px: 2 }}>
       {/* Header */}
-      <Box sx={{ px: 1, py: 2, flexShrink: 0 }}>
+      <Box sx={{ py: 2, flexShrink: 0 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
           🗑️ Deleted Leads
         </Typography>
@@ -238,7 +238,7 @@ export default function DeletedLeads() {
       </Box>
 
       {/* Actions */}
-      <Box sx={{ px: 1, py: 1, flexShrink: 0 }}>
+      <Box sx={{ py: 1, flexShrink: 0 }}>
         <Button
           variant="outlined"
           size="medium"

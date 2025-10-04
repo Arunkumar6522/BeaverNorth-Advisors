@@ -270,6 +270,11 @@ export default function DashboardLayout() {
               duration: theme.transitions.duration.enteringScreen,
             }),
             overflowX: 'hidden',
+            position: 'fixed',
+            height: '100%',
+            top: 0,
+            left: 0,
+            zIndex: 1200,
           },
         }}
         open={desktopOpen}
@@ -283,14 +288,14 @@ export default function DashboardLayout() {
         sx={{
           flexGrow: 1,
           pt: 8,
-          px: { xs: 1, md: 1 },
+          px: 0,
           backgroundColor: '#F9FAFB',
           minHeight: '100vh',
           width: { 
             xs: '100%', 
             md: `calc(100% - ${currentDrawerWidth}px)` 
           },
-          ml: { md: 0 },
+          ml: { md: `${currentDrawerWidth}px` },
           transition: theme.transitions.create(['margin', 'width'], {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.leavingScreen,

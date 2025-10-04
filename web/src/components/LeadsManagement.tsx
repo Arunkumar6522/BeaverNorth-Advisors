@@ -488,9 +488,9 @@ export default function LeadsManagement() {
   }
 
   return (
-    <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '100%' }}>
+    <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '100%', px: 2 }}>
       {/* Header */}
-      <Box sx={{ px: 1, py: 2, flexShrink: 0 }}>
+      <Box sx={{ py: 2, flexShrink: 0 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
           👥 Leads Management
         </Typography>
@@ -500,7 +500,7 @@ export default function LeadsManagement() {
       </Box>
 
       {/* Tabs */}
-      <Box sx={{ px: 1, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
+      <Box sx={{ borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
         <Tabs value={currentTab === 'active' ? 0 : 1} onChange={handleTabChange}>
           <Tab 
             label={
@@ -528,7 +528,7 @@ export default function LeadsManagement() {
       </Box>
 
       {/* Filters */}
-      <Box sx={{ px: 1, py: 1, flexShrink: 0 }}>
+      <Box sx={{ py: 1, flexShrink: 0 }}>
         <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
           <CardContent sx={{ py: 2 }}>
             <Box sx={{ 
