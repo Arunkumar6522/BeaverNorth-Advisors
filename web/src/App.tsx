@@ -15,41 +15,41 @@ export default function App() {
     { 
       title: "Life Insurance", 
       desc: "Protect your family's future with comprehensive life insurance policies tailored to your needs and budget.",
-      iconComponent: <Security sx={{ fontSize: 48, color: '#8B5CF6' }} />
+      iconComponent: <Security sx={{ fontSize: 48, color: '#6983CC' }} />
     },
     { 
       title: "Business Insurance", 
       desc: "Secure your business operations with specialized coverage designed for Canadian entrepreneurs and companies.",
-      iconComponent: <Business sx={{ fontSize: 48, color: '#F59E0B' }} />
+      iconComponent: <Business sx={{ fontSize: 48, color: '#EF7F18' }} />
     },
     { 
       title: "Health Insurance", 
       desc: "Comprehensive health coverage including dental, vision, and extended care for all family members.",
-      iconComponent: <LocalHospital sx={{ fontSize: 48, color: '#EF4444' }} />
+      iconComponent: <LocalHospital sx={{ fontSize: 48, color: '#6BA336' }} />
     }
   ]
 
   return (
-    <Box sx={{ minHeight: '100vh', backgroundColor: '#FFFFFF' }}>
+    <Box sx={{ minHeight: '100vh', backgroundColor: '#F3F8FF' }}>
       <TopBar />
       <Nav />
       
-      {/* HERO Section - Smart Life Style */}
+      {/* HERO Section - Asuransi Style */}
       <Box sx={{
         minHeight: '100vh',
         position: 'relative',
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
-        backgroundColor: '#F8FAFC'
+        background: 'linear-gradient(135deg, #F3F8FF 0%, #8CB8ED 100%)',
+        py: { xs: 8, md: 12 }
       }}>
         
         <Box sx={{ 
           width: '100%', 
           maxWidth: '1400px', 
           mx: 'auto', 
-          px: { xs: 4, md: 6 },
-          py: 8
+          px: { xs: 4, md: 6 }
         }}>
           <Box sx={{ 
             display: { xs: 'block', lg: 'flex' },
@@ -72,14 +72,14 @@ export default function App() {
                 {/* Main Headline */}
                 <Typography variant="h1" sx={{ 
                   fontWeight: 800,
-                  fontSize: { xs: '3rem', md: '4rem', lg: '4.5rem' },
+                  fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4rem' },
                   lineHeight: 1.1,
                   mb: 4,
-                  color: '#1E293B'
+                  color: '#1E377C'
                 }}>
                   Smart Insurance for your{' '}
                   <span style={{ 
-                    color: '#F59E0B',
+                    color: '#EF7F18',
                     position: 'relative'
                   }}>
                     better family life
@@ -89,23 +89,23 @@ export default function App() {
                       left: 0,
                       right: 0,
                       height: '4px',
-                      background: 'linear-gradient(90deg, #F59E0B, #EF4444)',
-                      opacity: 0.7
+                      background: 'linear-gradient(90deg, #EF7F18, #FFB400)',
+                      opacity: 0.8
                     }} />
                   </span>
                 </Typography>
 
                 {/* Description */}
                 <Typography variant="h5" sx={{ 
-                  color: '#64748B', 
+                  color: '#417F73', 
                   fontWeight: 400,
                   mb: 6,
                   lineHeight: 1.6,
-                  fontSize: { xs: '1.1rem', md: '1.3rem' },
+                  fontSize: { xs: '1rem', md: '1.2rem' },
                   maxWidth: { xs: '100%', lg: '600px' }
                 }}>
                   Only BeaverNorth Advisors gives you professional insurance guidance with guaranteed safety 
-                  and comprehensive coverage options for your Canadian family.
+                  and comprehensive coverage options tailored for Canadian families.
                 </Typography>
 
                 {/* Primary CTA Buttons */}
@@ -123,7 +123,7 @@ export default function App() {
                     size="large"
                     endIcon={<ArrowForward />}
                     sx={{
-                      bgcolor: '#8B5CF6',
+                      bgcolor: '#6983CC',
                       color: 'white',
                       px: 6,
                       py: 3,
@@ -132,13 +132,13 @@ export default function App() {
                       borderRadius: 3,
                       textTransform: 'none',
                       minWidth: '240px',
-                      boxShadow: '0 8px 25px rgba(139,92,246,0.3)',
-                          '&:hover': {
-                            bgcolor: '#7C3AED',
-                                  transform: 'translateY(-2px)',
-                            boxShadow: '0 12px 35px rgba(139,92,246,0.4)'
-                          },
-                          transition: 'all 0.3s ease'
+                      boxShadow: '0 8px 25px rgba(105,131,204,0.4)',
+                      '&:hover': {
+                        bgcolor: '#1E377C',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 12px 35px rgba(105,131,204,0.5)'
+                      },
+                      transition: 'all 0.3s ease'
                     }}
                   >
                     Get Started
@@ -149,8 +149,8 @@ export default function App() {
                     size="large"
                     startIcon={<PlayArrow />}
                     sx={{
-                      borderColor: '#8B5CF6',
-                      color: '#8B5CF6',
+                      borderColor: '#6BA336',
+                      color: '#6BA336',
                       px: 5,
                       py: 3,
                       fontSize: '1rem',
@@ -160,11 +160,11 @@ export default function App() {
                       minWidth: '200px',
                       borderWidth: 2,
                       '&:hover': {
-                        bgcolor: '#8B5CF620',
+                        bgcolor: '#6BA33620',
                         borderWidth: 2
                       },
                       transition: 'all 0.3s ease'
-                          }}
+                    }}
                   >
                     Watch Video
                   </Button>
@@ -189,22 +189,22 @@ export default function App() {
                       p: 3,
                       borderRadius: 3,
                       bgcolor: 'white',
-                      border: '2px solid #E2E8F0',
+                      border: '2px solid #8CB8ED',
                       cursor: 'pointer',
                       transition: 'all 0.3s ease',
                       minWidth: '180px',
                       '&:hover': {
-                        borderColor: '#8B5CF6',
+                        borderColor: '#6983CC',
                         transform: 'translateY(-2px)',
-                        boxShadow: '0 8px 25px rgba(139,92,246,0.15)'
+                        boxShadow: '0 8px 25px rgba(105,131,204,0.15)'
                       }
                     }}>
-                      <Campaign sx={{ color: '#8B5CF6', fontSize: 28 }} />
+                      <Campaign sx={{ color: '#6983CC', fontSize: 28 }} />
                       <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 700, color: '#1E293B', mb: 0.5 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700, color: '#1E377C', mb: 0.5 }}>
                           Make a claim
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.8rem' }}>
+                        <Typography variant="caption" sx={{ color: '#417F73', fontSize: '0.8rem' }}>
                           Quick & easy process
                         </Typography>
                       </Box>
@@ -223,22 +223,22 @@ export default function App() {
                       p: 3,
                       borderRadius: 3,
                       bgcolor: 'white',
-                      border: '2px solid #E2E8F0',
+                      border: '2px solid #A4C931',
                       cursor: 'pointer',
                       transition: 'all 0.3s ease',
                       minWidth: '180px',
                       '&:hover': {
-                        borderColor: '#F59E0B',
+                        borderColor: '#6BA336',
                         transform: 'translateY(-2px)',
-                        boxShadow: '0 8px 25px rgba(245,158,11,0.15)'
+                        boxShadow: '0 8px 25px rgba(107,163,54,0.15)'
                       }
                     }}>
-                      <Person sx={{ color: '#F59E0B', fontSize: 28 }} />
+                      <Person sx={{ color: '#6BA336', fontSize: 28 }} />
                       <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 700, color: '#1E293B', mb: 0.5 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700, color: '#1E377C', mb: 0.5 }}>
                           Find an Agent
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#64748B', fontSize: '0.8rem' }}>
+                        <Typography variant="caption" sx={{ color: '#417F73', fontSize: '0.8rem' }}>
                           Local Canadian experts
                         </Typography>
                       </Box>
@@ -248,12 +248,13 @@ export default function App() {
               </motion.div>
             </Box>
 
-            {/* RIGHT SIDE - Family Image with Stats Overlay */}
+            {/* RIGHT SIDE - Asuransi Image */}
             <Box sx={{ 
               flex: 1,
               position: 'relative',
               display: 'flex',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              mt: { xs: 8, lg: 0 }
             }}>
               <motion.div
                 initial={{ opacity: 0, x: 50 }}
@@ -264,89 +265,48 @@ export default function App() {
                   position: 'relative',
                   maxWidth: '600px',
                   width: '100%',
-                  aspectRatio: '4/5',
                   borderRadius: 4,
                   overflow: 'hidden',
                   boxShadow: '0 25px 50px rgba(0,0,0,0.15)'
                 }}>
-                  {/* Main Family Image Background */}
+                  {/* Asuransi SVG as Hero Image */}
                   <Box sx={{
                     width: '100%',
-                    height: '100%',
-                    background: `
-                      linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(245,158,11,0.1) 100%),
-                      url('https://images.unsplash.com/photo-1511895426328-dc8714191300?q=80&w=1000&auto=format&fit=crop') center/cover no-repeat
-                    `,
-                    position: 'relative',
+                    height: '600px',
+                    background: 'white',
                     display: 'flex',
                     alignItems: 'center',
-                    justifyContent: 'center'
+                    justifyContent: 'center',
+                    position: 'relative'
                   }}>
+                    <img 
+                      src="/src/assets/Asuransi keluarga 1.svg" 
+                      alt="Insurance Family Illustration"
+                      style={{ 
+                        width: '100%', 
+                        height: '100%',
+                        objectFit: 'contain'
+                      }} 
+                    />
                     
-                    {/* Abstract Shapes */}
+                    {/* Stats Overlay */}
                     <Box sx={{
                       position: 'absolute',
-                      top: '20%',
-                      left: '10%',
-                      width: 120,
-                      height: 120,
-                      borderRadius: '50%',
-                      background: 'linear-gradient(45deg, rgba(139,92,246,0.3), rgba(245,158,11,0.2))',
-                      filter: 'blur(20px)'
-                    }} />
-                    <Box sx={{
-                      position: 'absolute',
-                      bottom: '30%',
-                      right: '15%',
-                      width: 80,
-                      height: 80,
-                      borderRadius: '30%',
-                      background: 'linear-gradient(45deg, rgba(245,158,11,0.3), rgba(239,68,68,0.2))',
-                      filter: 'blur(15px)'
-                    }} />
-                    <Box sx={{
-                      position: 'absolute',
-                      top: '60%',
-                      left: '5%',
-                      width: 60,
-                      height: 60,
-                      background: 'linear-gradient(45deg, rgba(249,250,251,0.8), rgba(255,255,255,0.9))',
-                      borderRadius: 3,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      backdropFilter: 'blur(10px)',
-                      border: '1px solid rgba(255,255,255,0.3)'
-                    }}>
-                      <img 
-                        src="/favicon.png" 
-                        alt="BeaverNorth" 
-                        style={{ 
-                          height: '32px', 
-                          width: '32px',
-                          filter: 'brightness(0) saturate(100%)'
-                        }} 
-                      />
-                    </Box>
-
-                    {/* Customer Stats Overlay */}
-                    <Box sx={{
-                      position: 'absolute',
-                      bottom: '15%',
-                      right: '10%',
-                      bgcolor: 'rgba(255,255,255,0.95)',
+                      bottom: '20px',
+                      right: '20px',
+                      bgcolor: 'rgba(30,55,167,0.95)',
                       borderRadius: 4,
                       p: 3,
                       backdropFilter: 'blur(10px)',
                       border: '1px solid rgba(255,255,255,0.3)',
-                      boxShadow: '0 15px 35px rgba(0,0,0,0.1)',
+                      boxShadow: '0 15px 35px rgba(30,55,167,0.3)',
                       maxWidth: '280px'
                     }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                        <Typography variant="h4" sx={{ fontWeight: 800, color: '#8B5CF6' }}>
+                        <Typography variant="h4" sx={{ fontWeight: 800, color: '#FFB400' }}>
                           26K+
                         </Typography>
-                        <Typography variant="h4" sx={{ fontWeight: 700, color: '#1E293B' }}>
+                        <Typography variant="h4" sx={{ fontWeight: 700, color: 'white' }}>
                           Happy Customers
                         </Typography>
                       </Box>
@@ -359,7 +319,7 @@ export default function App() {
                             sx={{ 
                               width: 36, 
                               height: 36,
-                              bgcolor: ['#8B5CF6', '#F59E0B', '#EF4444', '#22C55E', '#3B82F6', '#A855F7'][i-1]
+                              bgcolor: ['#6983CC', '#EF7F18', '#6BA336', '#417F73', '#FFB400', '#A4C931'][i-1]
                             }}
                           >
                             <Typography variant="caption" sx={{ color: 'white', fontWeight: 700 }}>
@@ -367,7 +327,7 @@ export default function App() {
                             </Typography>
                           </Avatar>
                         ))}
-                        <Avatar sx={{ width: 36, height: 36, bgcolor: '#64748B' }}>
+                        <Avatar sx={{ width: 36, height: 36, bgcolor: '#417F73' }}>
                           <Typography variant="caption" sx={{ color: 'white', fontWeight: 700 }}>
                             +
                           </Typography>
@@ -383,7 +343,7 @@ export default function App() {
       </Box>
 
       {/* OUR SERVICES Section */}
-      <Box sx={{ py: { xs: 16, md: 20 }, bgcolor: '#F8FAFC' }}>
+      <Box sx={{ py: { xs: 16, md: 20 }, bgcolor: 'white' }}>
         <Box sx={{ maxWidth: '1400px', mx: 'auto', px: { xs: 4, md: 6 } }}>
           <motion.div
             initial={{ opacity: 0, y: 60 }}
@@ -393,7 +353,7 @@ export default function App() {
           >
             <Box sx={{ textAlign: 'center', mb: 16 }}>
               <Typography variant="h3" sx={{ 
-                color: '#F59E0B',
+                color: '#FFB400',
                 fontWeight: 700,
                 fontSize: '0.9rem',
                 letterSpacing: '2px',
@@ -406,14 +366,14 @@ export default function App() {
               <Typography variant="h2" sx={{ 
                 fontWeight: 800, 
                 mb: 4,
-                color: '#1E293B',
+                color: '#1E377C',
                 fontSize: { xs: '2rem', md: '3rem' }
               }}>
                 Insurance that rewarding you & your family.
               </Typography>
-              
+        
               <Typography variant="h6" sx={{ 
-                color: '#64748B', 
+                color: '#417F73', 
                 fontWeight: 400,
                 maxWidth: '600px',
                 mx: 'auto',
@@ -442,22 +402,22 @@ export default function App() {
                   <Card sx={{
                     borderRadius: 4,
                     overflow: 'hidden',
-                    bgcolor: 'white',
-                    border: '1px solid #E2E8F0',
+                    bgcolor: '#F3F8FF',
+                    border: '1px solid #8CB8ED',
                     transition: 'all 0.4s ease',
                     cursor: 'pointer',
                     height: '100%',
                     '&:hover': {
                       transform: 'translateY(-8px)',
-                      boxShadow: '0 25px 50px rgba(0,0,0,0.1)',
-                      borderColor: '#8B5CF6'
+                      boxShadow: '0 25px 50px rgba(139,184,237,0.2)',
+                      borderColor: '#6983CC'
                     }
                   }}>
                     {/* Service Image Header */}
                     <Box sx={{
                       height: '220px',
                       background: `
-                        linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(245,158,11,0.1) 100%),
+                        linear-gradient(135deg, rgba(105,131,204,0.1) 0%, rgba(107,163,54,0.1) 100%),
                         url('https://images.unsplash.com/photo-${index === 0 ? '1582750433449-648ed127bb54' : index === 1 ? '1596394516099-e8d9d9c7f1b5' : '1559757178-0f49fe82d9b9'}?q=80&w=800&auto=format&fit=crop') center/cover no-repeat
                       `,
                       position: 'relative',
@@ -484,13 +444,13 @@ export default function App() {
                       <Typography variant="h4" sx={{ 
                         fontWeight: 700, 
                         mb: 3,
-                        color: '#1E293B',
+                        color: '#1E377C',
                         fontSize: { xs: '1.3rem', md: '1.5rem' }
                       }}>
                         {service.title}
                       </Typography>
                       <Typography variant="body1" sx={{ 
-                        color: '#64748B', 
+                        color: '#417F73', 
                         lineHeight: 1.6,
                         fontSize: '1rem',
                         mb: 4
@@ -502,8 +462,8 @@ export default function App() {
                         variant="outlined"
                         size="large"
                         sx={{
-                          borderColor: '#8B5CF6',
-                          color: '#8B5CF6',
+                          borderColor: '#6983CC',
+                          color: '#6983CC',
                           fontWeight: 600,
                           px: 4,
                           py: 2,
@@ -513,7 +473,7 @@ export default function App() {
                           borderWidth: 2,
                           width: '100%',
                           '&:hover': {
-                            bgcolor: '#8B5CF6',
+                            bgcolor: '#6983CC',
                             color: 'white',
                             borderWidth: 2
                           },
@@ -533,7 +493,7 @@ export default function App() {
 
       {/* FINAL CTA Section */}
       <Box sx={{ 
-        bgcolor: '#8B5CF6', 
+        bgcolor: '#6983CC', 
         py: { xs: 16, md: 20 },
         position: 'relative',
         overflow: 'hidden'
@@ -546,7 +506,7 @@ export default function App() {
           right: 0,
           bottom: 0,
           backgroundImage: `
-            radial-gradient(circle at 30% 20%, rgba(245,158,11,0.2) 0%, transparent 60%),
+            radial-gradient(circle at 30% 20%, rgba(255,180,0,0.2) 0%, transparent 60%),
             radial-gradient(circle at 70% 80%, rgba(255,255,255,0.1) 0%, transparent 60%)
           `,
           backgroundSize: '800px 800px, 600px 600px'
@@ -563,6 +523,7 @@ export default function App() {
               <Typography variant="h2" sx={{ 
                 color: 'white', 
                 fontWeight: 800, 
+
                 mb: 4,
                 fontSize: { xs: '2.2rem', md: '3rem' }
               }}>
@@ -593,8 +554,8 @@ export default function App() {
                   size="large"
                   endIcon={<ArrowForward />}
                   sx={{
-                    bgcolor: '#F59E0B',
-                    color: 'white',
+                    bgcolor: '#FFB400',
+                    color: '#1E377C',
                     px: 8,
                     py: 4,
                     fontSize: '1.2rem',
@@ -602,11 +563,11 @@ export default function App() {
                     borderRadius: 4,
                     textTransform: 'none',
                     minWidth: '300px',
-                    boxShadow: '0 12px 40px rgba(245,158,11,0.4)',
+                    boxShadow: '0 12px 40px rgba(255,180,0,0.4)',
                     '&:hover': {
-                      bgcolor: '#D97706',
+                      bgcolor: '#EF7F18',
                       transform: 'translateY(-4px)',
-                      boxShadow: '0 20px 60px rgba(245,158,11,0.5)'
+                      boxShadow: '0 20px 60px rgba(255,180,0,0.5)'
                     },
                     transition: 'all 0.4s ease'
                   }}

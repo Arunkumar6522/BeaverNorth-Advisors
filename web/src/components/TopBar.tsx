@@ -5,7 +5,7 @@ export default function TopBar() {
   return (
     <Box sx={{
       width: '100%',
-      background: 'linear-gradient(135deg, #8B5CF6 0%, #F59E0B 100%)',
+      background: 'linear-gradient(135deg, #6983CC 0%, #6BA336 100%)',
       py: 1.5,
       display: { xs: 'none', md: 'flex' },
       alignItems: 'center',
@@ -87,5 +87,3 @@ export default function TopBar() {
     </Box>
   )
 }
-
-
