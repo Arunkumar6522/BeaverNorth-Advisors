@@ -1,5 +1,4 @@
-// Twilio SMS service for OTP verification
-import { envConfig } from '../config/twilio.config'
+// Simple OTP service (No Twilio - Development Mode)
 
 export interface TwilioConfig {
   accountSid: string
@@ -41,199 +40,74 @@ export function parsePhoneNumber(phoneInput: string): PhoneNumber {
   }
 }
 
-// Real Twilio OTP sending via backend API
+// Simple OTP sending (Development Mode - No SMS)
 export async function sendOTP(phoneNumber: string): Promise<{ success: boolean; message: string; sessionId?: string }> {
   const { fullNumber } = parsePhoneNumber(phoneNumber)
   
-  console.log('📱 Sending OTP to:', fullNumber)
+  console.log('📱 OTP Ready for:', fullNumber)
   
-  try {
-    // Make API call to backend Twilio endpoint
-    const response = await fetch('/api/send-otp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        to: fullNumber,
-        serviceSid: envConfig.serviceSid
-      })
-    })
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    
-    const result = await response.json()
-    
-    if (result.success) {
-      // Store verification session for verification later
-      const sessionData = {
-        phone: fullNumber,
-        timestamp: Date.now(),
-        attempts: 0,
-        verificationSid: result.verificationSid
-      }
-      sessionStorage.setItem('twilio_otp_session', JSON.stringify(sessionData))
-      
-      console.log('✅ Twilio OTP sent successfully:', result.verificationSid)
-      
-      return {
-        success: true,
-        message: `OTP sent to ${formatPhoneNumber(fullNumber)}`,
-        sessionId: result.verificationSid
-      }
-    } else {
-      console.error('❌ Twilio OTP failed:', result.message)
-      return {
-        success: false,
-        message: result.message || 'Failed to send OTP'
-      }
-    }
-    
-  } catch (error) {
-    console.error('❌ Network error sending OTP:', error)
-    
-    // Fallback to demo mode if backend is not available
-    console.log('🔄 Falling back to demo mode...')
-    
-    const otp = Math.floor(1000 + Math.random() * 9000).toString()
-    const sessionData = {
-      otp,
-      phone: fullNumber,
-      timestamp: Date.now(),
-      attempts: 0,
-      isDemo: true
-    }
-    sessionStorage.setItem('twilio_otp_session', JSON.stringify(sessionData))
-    
-    console.log('🔐 Demo OTP generated:', otp)
-    console.log('📱 SMS simulation:', formatPhoneNumber(fullNumber))
-    console.log(`✅ OTP: ${otp} - Use this code to complete verification`)
-    
-    return {
-      success: true,
-      message: `Demo ready - check console for OTP: ${otp}`,
-      sessionId: 'demo_session_' + Date.now()
-    }
+  // Create simple session (accept any 4-digit code)
+  const sessionData = {
+    phone: fullNumber,
+    timestamp: Date.now(),
+    isDemo: true
+  }
+  sessionStorage.setItem('twilio_otp_session', JSON.stringify(sessionData))
+  
+  console.log('✅ OTP System Ready - Enter any 4-digit code to verify')
+  
+  return {
+    success: true,
+    message: 'OTP ready - enter any 4-digit code',
+    sessionId: 'demo_session_' + Date.now()
   }
 }
 
-// Verify OTP code with real Twilio API
+// Verify OTP code (Development Mode - Accept any 4-digit code)
 export async function verifyOTP(phoneNumber: string, code: string): Promise<{ success: boolean; message: string }> {
   const sessionData = sessionStorage.getItem('twilio_otp_session')
   
   if (!sessionData) {
     return {
       success: false,
-      message: 'No active session found. Please request a new OTP.'
+      message: 'No active session found. Please click "Send OTP" first.'
     }
   }
   
-  const { phone, attempts, timestamp, verificationSid, isDemo } = JSON.parse(sessionData)
+  const { phone, timestamp } = JSON.parse(sessionData)
   const { fullNumber } = parsePhoneNumber(phoneNumber)
   
-  // Check if session is expired (5 minutes)
-  if (Date.now() - timestamp > 5 * 60 * 1000) {
+  // Check if session is expired (10 minutes)
+  if (Date.now() - timestamp > 10 * 60 * 1000) {
     sessionStorage.removeItem('twilio_otp_session')
     return {
       success: false,
-      message: 'OTP expired. Please request a new OTP.'
+      message: 'Session expired. Please click "Send OTP" again.'
     }
   }
   
-  // Check attempt limit (3 attempts)
-  if (attempts >= 3) {
-    sessionStorage.removeItem('twilio_otp_session')
+  // Verify phone number matches
+  if (phone !== fullNumber) {
     return {
       success: false,
-      message: 'Too many attempts. Please request a new OTP.'
+      message: 'Phone number mismatch. Please try again.'
     }
   }
   
-  // ALWAYS accept 1234 as test OTP (Development Mode)
-  if (code === '1234') {
+  // Accept any 4-digit code (Development Mode)
+  if (/^\d{4}$/.test(code)) {
     sessionStorage.removeItem('twilio_otp_session')
+    console.log('✅ OTP Verified:', code)
     return {
       success: true,
       message: 'Phone number verified successfully! ✅'
     }
   }
   
-  // If in demo mode, verify against stored demo OTP
-  if (isDemo) {
-    const { otp } = JSON.parse(sessionData)
-    if (code === otp && phone === fullNumber) {
-      sessionStorage.removeItem('twilio_otp_session')
-      return {
-        success: true,
-        message: 'Phone number verified successfully! (Demo mode)'
-      }
-    } else {
-      // Update attempt count
-      const updatedSession = {
-        ...JSON.parse(sessionData),
-        attempts: attempts + 1
-      }
-      sessionStorage.setItem('twilio_otp_session', JSON.stringify(updatedSession))
-      
-      return {
-        success: false,
-        message: 'Invalid OTP code. Please try again.'
-      }
-    }
-  }
-  
-  // Real Twilio verification
-  try {
-    const response = await fetch('/api/verify-otp', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        to: fullNumber,
-        code: code,
-        verificationSid: verificationSid
-      })
-    })
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-    
-    const result = await response.json()
-    
-    if (result.success) {
-      sessionStorage.removeItem('twilio_otp_session')
-      return {
-        success: true,
-        message: 'Phone number verified successfully!'
-      }
-    } else {
-      // Update attempt count for real verification
-      const updatedSession = {
-        ...JSON.parse(sessionData),
-        attempts: attempts + 1
-      }
-      sessionStorage.setItem('twilio_otp_session', JSON.stringify(updatedSession))
-      
-      return {
-        success: false,
-        message: result.message || 'Invalid OTP code. Please try again.'
-      }
-    }
-    
-  } catch (error) {
-    console.error('❌ Network error verifying OTP:', error)
-    
-    // Fallback to demo verification
-    console.log('🔄 Falling back to demo verification...')
-    
-    return {
-      success: false,
-      message: 'Verification service temporarily unavailable. Please try again.'
-    }
+  // Invalid OTP format
+  return {
+    success: false,
+    message: 'Please enter a valid 4-digit code.'
   }
 }
 
