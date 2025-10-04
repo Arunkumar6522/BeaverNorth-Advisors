@@ -243,6 +243,19 @@ export default function DeletedLeads() {
     })
   }
 
+  const calculateAge = (dobString: string) => {
+    const birthDate = new Date(dobString)
+    const today = new Date()
+    let age = today.getFullYear() - birthDate.getFullYear()
+    const monthDiff = today.getMonth() - birthDate.getMonth()
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--
+    }
+    
+    return age
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'new': return '#1976D2'
@@ -326,7 +339,7 @@ export default function DeletedLeads() {
                             {lead.name}
                           </Typography>
                           <Typography variant="caption" sx={{ color: '#6B7280' }}>
-                            {lead.province} • {lead.dob}
+                            {lead.province} • {calculateAge(lead.dob)} years old
                           </Typography>
                         </Box>
                       </Box>
