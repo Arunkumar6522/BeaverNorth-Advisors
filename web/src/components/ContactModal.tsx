@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { sendOTP, verifyOTP, formatPhoneNumber, isValidPhoneNumber } from '../services/twilioService'
+import CountryCodeSelector from './CountryCodeSelector'
 
 interface ContactModalProps {
   isOpen: boolean
@@ -16,6 +18,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     insuranceProduct: '',
     email: '',
     phone: '',
+    countryCode: '+1',
     otp: ''
   })
 
@@ -35,31 +38,72 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     }
   }
 
-  const sendOTP = async () => {
+  const sendOTPCode = async () => {
+    if (!formData.phone) {
+      alert('Please enter your phone number')
+      return
+    }
+
+    if (!isValidPhoneNumber(formData.phone)) {
+      alert('Please enter a valid phone number')
+      return
+    }
+
     setLoading(true)
-    // Simulate OTP sending via Twilio
-    setTimeout(() => {
+    try {
+      const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
+      const result = await sendOTP(phoneNumber)
+      
+      if (result.success) {
+        setOtpSent(true)
+        alert(`OTP sent to ${formatPhoneNumber(phoneNumber)}`)
+      } else {
+        alert(result.message)
+      }
+    } catch (error) {
+      alert('Failed to send OTP. Please try again.')
+      console.error('OTP sending error:', error)
+    } finally {
       setLoading(false)
-      setOtpSent(true)
-    }, 1000)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!formData.otp) {
+      alert('Please enter the verification code')
+      return
+    }
+
     setLoading(true)
     
-    // Simulate form submission
-    setTimeout(() => {
+    try {
+      const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
+      const verificationResult = await verifyOTP(phoneNumber, formData.otp)
+      
+      if (verificationResult.success) {
+        // Phone verified successfully, proceed with form submission
+        setTimeout(() => {
+          setLoading(false)
+          setSubmitted(true)
+          setTimeout(() => {
+            onClose()
+            setSubmitted(false)
+            setCurrentStep(1)
+            setOtpSent(false)
+            setFormData({ name: '', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '' })
+          }, 2000)
+        }, 1000)
+      } else {
+        alert(verificationResult.message)
+      }
+    } catch (error) {
+      alert('Verification failed. Please try again.')
+      console.error('OTP verification error:', error)
+    } finally {
       setLoading(false)
-      setSubmitted(true)
-      setTimeout(() => {
-        onClose()
-        setSubmitted(false)
-        setCurrentStep(1)
-        setOtpSent(false)
-        setFormData({ name: '', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', otp: '' })
-      }, 2000)
-    }, 1000)
+    }
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -537,11 +581,15 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   }}>
                     Phone Number * (for verification)
                   </label>
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  <div style={{ display: 'flex', gap: '0' }}>
+                    <CountryCodeSelector
+                      value={formData.countryCode}
+                      onChange={(code) => setFormData(prev => ({ ...prev, countryCode: code }))}
+                    />
                     <input
                       type="tel"
                       name="phone"
-                      placeholder="+1 (555) 123-4567"
+                      placeholder="5551234567"
                       value={formData.phone}
                       onChange={handleChange}
                       required
@@ -549,19 +597,24 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         flex: 1,
                         padding: '14px 16px',
                         border: '2px solid var(--line)',
-                        borderRadius: '12px',
+                        borderLeft: 'none',
+                        borderRadius: '0 12px 12px 0',
                         fontSize: '16px',
                         background: 'var(--surface-1)',
                         color: 'var(--text-primary)',
                         outline: 'none'
                       }}
                     />
+                  </div>
+                  
+                  <div style={{ marginTop: '12px', display: 'flex', gap: '12px' }}>
                     {!otpSent ? (
                       <button
                         type="button"
-                        onClick={sendOTP}
+                        onClick={sendOTPCode}
                         disabled={loading || !formData.phone}
                         style={{
+                          flex: 1,
                           padding: '14px 16px',
                           background: loading || !formData.phone ? 'var(--line)' : 'var(--brand-green)',
                           color: 'white',
@@ -569,8 +622,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                           borderRadius: '12px',
                           fontSize: '14px',
                           fontWeight: '600',
-                          cursor: loading || !formData.phone ? 'not-allowed' : 'pointer',
-                          whiteSpace: 'nowrap'
+                          cursor: loading || !formData.phone ? 'not-allowed' : 'pointer'
                         }}
                       >
                         {loading ? 'Sending...' : 'Send OTP'}
@@ -580,6 +632,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         type="button"
                         disabled
                         style={{
+                          flex: 1,
                           padding: '14px 16px',
                           background: 'var(--brand-green)',
                           color: 'white',
@@ -590,7 +643,29 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                           opacity: 0.8
                         }}
                       >
-                        ✓ Sent
+                        ✓ OTP Sent
+                      </button>
+                    )}
+                    
+                    {otpSent && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setOtpSent(false)
+                          setFormData(prev => ({ ...prev, otp: '' }))
+                        }}
+                        style={{
+                          padding: '14px 16px',
+                          background: 'transparent',
+                          color: 'var(--text-secondary)',
+                          border: '1px solid var(--line)',
+                          borderRadius: '12px',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Resend
                       </button>
                     )}
                   </div>
