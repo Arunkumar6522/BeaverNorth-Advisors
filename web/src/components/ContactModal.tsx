@@ -58,15 +58,25 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         setCurrentStep(1)
         setFormData({ name: '', gender: '' as 'male' | 'female' | 'others' | 'prefer-not-to-say', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '', referralCode: '' })
       }, 1000)
-    } catch (error) {
-      alert('Submission failed. Please try again.')
-      console.error('Submission error:', error)
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Unknown error occurred'
+      alert(`❌ Submission Failed\n\nError: ${errorMessage}\n\nPlease check the console for more details or try again.`)
+      console.error('🔴 Submission error details:', error)
       setLoading(false)
     }
   }
 
   const saveLeadToSupabase = async () => {
     try {
+      // Validate required fields
+      if (!formData.name || !formData.email || !formData.phone) {
+        throw new Error('Missing required fields: name, email, or phone')
+      }
+
+      if (!formData.dob || !formData.smokingStatus || !formData.province || !formData.insuranceProduct) {
+        throw new Error('Missing required fields: dob, smoking status, province, or insurance product')
+      }
+
       const leadData = {
         name: formData.name,
         email: formData.email,
@@ -78,27 +88,41 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         insurance_product: formData.insuranceProduct,
         status: 'new',
         referral_code: formData.referralCode || null,
-        gender: formData.gender
+        gender: formData.gender || null
       }
 
-      console.log('💾 Saving lead to Supabase:', leadData)
+      console.log('💾 Attempting to save lead to Supabase...')
+      console.log('📋 Lead data:', leadData)
       
       // Real Supabase integration
       const { supabase } = await import('../lib/supabase')
+      
+      console.log('🔗 Supabase client loaded, inserting data...')
+      
       const { data, error } = await supabase
         .from('leads')
         .insert([leadData])
         .select()
       
       if (error) {
-        console.error('❌ Supabase error:', error)
-        throw new Error(`Failed to save lead: ${error.message}`)
+        console.error('❌ Supabase error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        })
+        throw new Error(`Database error: ${error.message}${error.hint ? ` (${error.hint})` : ''}`)
       }
       
-      console.log('✅ Lead saved successfully to Supabase:', data)
+      if (!data || data.length === 0) {
+        throw new Error('No data returned from database after insert')
+      }
       
-    } catch (error) {
-      console.error('❌ Error saving lead:', error)
+      console.log('✅ Lead saved successfully to Supabase!')
+      console.log('📊 Saved data:', data)
+      
+    } catch (error: any) {
+      console.error('🔴 Error saving lead - Full details:', error)
       throw error
     }
   }
