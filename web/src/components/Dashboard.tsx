@@ -1,6 +1,5 @@
 import React from 'react'
 import { Box, Card, CardContent, Typography, Avatar } from '@mui/material'
-import { Grid } from '@mui/material'
 import { TrendingUp, People, Phone, CheckCircleOutline } from '@mui/icons-material'
 
 interface StatCardProps {
@@ -83,17 +82,20 @@ export default function Dashboard() {
       </Box>
 
       {/* Statistics Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
+      <Box sx={{ 
+        display: 'grid', 
+        gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+        gap: 3, 
+        mb: 4 
+      }}>
         {stats.map((stat, index) => (
-          <Grid item xs={12} sm={6} md={3} key={index}>
-            <StatCard {...stat} />
-          </Grid>
+          <StatCard {...stat} key={index} />
         ))}
-      </Grid>
+      </Box>
 
       {/* Recent Activity */}
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={8}>
+      <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
+        <Box sx={{ flex: { xs: '1', md: '2' } }}>
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: '600', mb: 3, color: '#111827' }}>
@@ -144,9 +146,9 @@ export default function Dashboard() {
               </Box>
             </CardContent>
           </Card>
-        </Grid>
+        </Box>
         
-        <Grid item xs={12} md={4}>
+        <Box sx={{ flex: '1' }}>
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: '600', mb: 3, color: '#111827' }}>
@@ -204,8 +206,8 @@ export default function Dashboard() {
               </Box>
             </CardContent>
           </Card>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Box>
   )
 }
