@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Box, Drawer, CssBaseline, AppBar, Toolbar, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, useMediaQuery, useTheme, Avatar, Divider, Button } from '@mui/material'
 import { Dashboard as DashboardIcon, People as LeadsIcon, Delete as DeletedIcon, Menu as MenuIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Logout as LogoutIcon } from '@mui/icons-material'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import DashboardOverview from './Dashboard'
 import LeadsManagement from './LeadsManagement'
 import DeletedLeads from './DeletedLeads'
@@ -22,6 +22,7 @@ const modules: Module[] = [
 ]
 
 export default function DashboardLayout() {
+  const location = useLocation()
   const [selectedModule, setSelectedModule] = useState('dashboard')
   const [mobileOpen, setMobileOpen] = useState(false)
   const [desktopOpen, setDesktopOpen] = useState(true)  // Desktop sidebar state
@@ -30,8 +31,30 @@ export default function DashboardLayout() {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const navigate = useNavigate()
 
+  // Set module based on current route
+  useEffect(() => {
+    const path = location.pathname
+    if (path === '/leads') {
+      setSelectedModule('leads')
+    } else if (path === '/deleted') {
+      setSelectedModule('deleted')
+    } else {
+      setSelectedModule('dashboard')
+    }
+  }, [location])
+
   const handleModuleChange = (moduleId: string) => {
     setSelectedModule(moduleId)
+    
+    // Navigate to the appropriate route
+    if (moduleId === 'leads') {
+      navigate('/leads')
+    } else if (moduleId === 'deleted') {
+      navigate('/deleted')
+    } else {
+      navigate('/dashboard')
+    }
+    
     if (isMobile) {
       setMobileOpen(false)  // Close drawer on mobile after selection
     }
