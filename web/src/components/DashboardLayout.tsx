@@ -283,7 +283,7 @@ export default function DashboardLayout() {
         sx={{
           flexGrow: 1,
           pt: 8,
-          px: { xs: 2, md: 3 },
+          px: { xs: 1, md: 1 },
           backgroundColor: '#F9FAFB',
           minHeight: '100vh',
           width: { 
