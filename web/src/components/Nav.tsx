@@ -57,20 +57,16 @@ export default function Nav() {
                 fontWeight: 800,
                 color: '#1E377C',
                 fontSize: '1.5rem',
-                lineHeight: 1,
+                lineHeight: 1.2,
                 letterSpacing: '-0.02em'
               }}>
-                BeaverNorth
-              </Box>
-              <Box sx={{ 
-                color: '#6983CC',
-                fontWeight: 600,
-                fontSize: '0.9rem',
-                letterSpacing: '0.5px',
-                textTransform: 'uppercase',
-                mt: 0.5
-              }}>
-                Advisors
+                BeaverNorth <Box component="span" sx={{ 
+                  color: '#6983CC',
+                  fontWeight: 600,
+                  fontSize: '0.9rem',
+                  letterSpacing: '0.5px',
+                  textTransform: 'uppercase'
+                }}>ADVISORS</Box>
               </Box>
             </Box>
           </Link>

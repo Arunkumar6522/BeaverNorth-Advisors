@@ -20,7 +20,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     email: '',
     phone: '',
     countryCode: '+1',
-    otp: ''
+    otp: '',
+    referralCode: ''
   })
 
   const [loading, setLoading] = useState(false)
@@ -95,7 +96,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           setSubmitted(false)
           setCurrentStep(1)
           setOtpSent(false)
-          setFormData({ name: '', gender: '' as 'male' | 'female' | 'others' | 'prefer-not-to-say', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '' })
+          setFormData({ name: '', gender: '' as 'male' | 'female' | 'others' | 'prefer-not-to-say', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '', referralCode: '' })
         }, 2000)
       } else {
         alert(verificationResult.message)
@@ -119,7 +120,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         country_code: formData.countryCode,
         smoking_status: formData.smokingStatus,
         insurance_product: formData.insuranceProduct,
-        status: 'new'
+        status: 'new',
+        referral_code: formData.referralCode || null,
+        gender: formData.gender
       }
 
       console.log('💾 Saving lead to Supabase:', leadData)
@@ -401,6 +404,36 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     value={formData.dob}
                     onChange={handleChange}
                     max="2005-12-31"
+                    style={{
+                      width: '100%',
+                      padding: '14px 16px',
+                      border: '2px solid var(--line)',
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      background: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+
+                {/* Referral Code Field */}
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '14px', 
+                    fontWeight: 600, 
+                    color: 'var(--text-primary)',
+                    marginBottom: '8px'
+                  }}>
+                    Referral Code (Optional)
+                  </label>
+                  <input
+                    type="text"
+                    name="referralCode"
+                    placeholder="Enter code if you have one"
+                    value={formData.referralCode}
+                    onChange={handleChange}
                     style={{
                       width: '100%',
                       padding: '14px 16px',
