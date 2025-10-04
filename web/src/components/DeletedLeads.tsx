@@ -91,7 +91,7 @@ export default function DeletedLeads() {
         const { data, error } = await supabase
           .from('leads')
           .select('*')
-          .eq('deleted', true) // Assuming we add a deleted field
+          .eq('deleted', true)
           .order('deleted_at', { ascending: false })
 
         if (error) {
@@ -100,7 +100,19 @@ export default function DeletedLeads() {
         }
 
         if (data && data.length > 0) {
-          setDeletedLeads(data)
+          setDeletedLeads(data.map(lead => ({
+            id: lead.id.toString(),
+            name: lead.name || 'Unknown',
+            email: lead.email || '',
+            phone: lead.phone || '',
+            dob: lead.dob || '1985-01-01',
+            province: lead.province || 'Ontario',
+            smoking_status: lead.smoking_status || 'unknown',
+            insurance_product: lead.insurance_product || 'term-life',
+            status: (lead.status || 'new') as 'new' | 'contacted' | 'converted',
+            created_at: lead.created_at || new Date().toISOString(),
+            deleted_at: lead.deleted_at || new Date().toISOString()
+          })))
         }
       } catch (error) {
         console.error('❌ Error fetching deleted leads:', error)

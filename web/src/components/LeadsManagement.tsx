@@ -28,7 +28,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  DialogContentText
+  DialogContentText,
+  TablePagination
 } from '@mui/material'
 import {
   Search as SearchIcon,
@@ -36,7 +37,8 @@ import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Phone as PhoneIcon,
-  Email as EmailIcon
+  Email as EmailIcon,
+  Close as CloseIcon
 } from '@mui/icons-material'
 
 interface Lead {
@@ -52,6 +54,7 @@ interface Lead {
   created_at: string
   last_contact_date?: string
   notes?: string
+  deleted_at?: string
 }
 
 // Sample leads data
@@ -101,7 +104,7 @@ const sampleLeads: Lead[] = [
     id: '4',
     name: 'Emily Davis',
     email: 'emily@example.com',
-    phone: '+15551234570',
+    phone: '+15591234570',
     dob: '1992-05-14',
     province: 'Alberta',
     smoking_status: 'Non-smoker',
@@ -126,22 +129,45 @@ const sampleLeads: Lead[] = [
   }
 ]
 
+const DELETE_REASONS = [
+  { value: 'duplicate', label: 'Duplicate Lead' },
+  { value: 'no_response', label: 'No Response' },
+  { value: 'not_qualified', label: 'Not Qualified' },
+  { value: 'wrong_number', label: 'Wrong Phone Number' },
+  { value: 'spam', label: 'Spam/Invalid' },
+  { value: 'other', label: 'Other' }
+]
+
 export default function LeadsManagement() {
   const [leads, setLeads] = useState<Lead[]>(sampleLeads)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setFilter] = useState<'all' | 'new' | 'contacted' | 'converted'>('all')
   const [currentTab, setCurrentTab] = useState<'active' | 'closed'>(0)
   const [loading, setLoading] = useState(true)
+  
+  // Modal states
+  const [viewModalOpen, setViewModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  
+  // Edit modal states
   const [editLeadId, setEditLeadId] = useState<string | null>(null)
   const [editStatus, setEditStatus] = useState<'new' | 'contacted' | 'converted'>('new')
   const [editNotes, setEditNotes] = useState('')
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  
+  // Delete modal states
   const [deleteLeadId, setDeleteLeadId] = useState<string | null>(null)
+  const [deleteReason, setDeleteReason] = useState('')
+  const [deleteComment, setDeleteComment] = useState('')
+  
+  // Pagination
+  const [page, setPage] = useState(0)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
 
   // Tab change handler
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue === 0 ? 'active' : 'closed')
+    setPage(0) // Reset to first page when switching tabs
   }
 
   // Fetch leads from Supabase
@@ -152,6 +178,7 @@ export default function LeadsManagement() {
         const { data, error } = await supabase
           .from('leads')
           .select('*')
+          .eq('deleted', false)
           .order('created_at', { ascending: false })
 
         if (error) {
@@ -188,7 +215,7 @@ export default function LeadsManagement() {
 
   // Filter leads based on active/closed status
   const getFilteredLeads = () => {
-    let filtered = leads
+    let filtered = leads.filter(lead => !lead.deleted_at) // Only show non-deleted leads
 
     // Filter by active/closed
     if (currentTab === 'active') {
@@ -201,7 +228,7 @@ export default function LeadsManagement() {
     if (searchTerm) {
       filtered = filtered.filter(lead =>
         lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        kead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         lead.phone.includes(searchTerm) ||
         lead.province.toLowerCase().includes(searchTerm.toLowerCase()) ||
         lead.insurance_product.toLowerCase().includes(searchTerm.toLowerCase())
@@ -217,6 +244,12 @@ export default function LeadsManagement() {
   }
 
   const filteredLeads = getFilteredLeads()
+
+  // Pagination
+  const paginatedLeads = filteredLeads.slice(
+    page * rowsPerPage,
+    page * rowsPerPage + rowsPerPage
+  )
 
   // Handle status update
   const handleStatusUpdate = async (leadId: string, newStatus: Lead['status'], notes?: string) => {
@@ -263,7 +296,18 @@ export default function LeadsManagement() {
     }
   }
 
-  // Handle edit modal
+  // View modal handlers
+  const openViewModal = (leadId: string) => {
+    setEditLeadId(leadId)
+    setViewModalOpen(true)
+  }
+
+  const closeViewModal = () => {
+    setViewModalOpen(false)
+    setEditLeadId(null)
+  }
+
+  // Edit modal handlers
   const openEditModal = (leadId: string) => {
     const lead = leads.find(l => l.id === leadId)
     if (lead) {
@@ -288,31 +332,56 @@ export default function LeadsManagement() {
     }
   }
 
-  // Handle delete
+  // Delete handlers
   const openDeleteDialog = (leadId: string) => {
     setDeleteLeadId(leadId)
+    setDeleteReason('')
+    setDeleteComment('')
     setDeleteDialogOpen(true)
   }
 
   const closeDeleteDialog = () => {
     setDeleteDialogOpen(false)
     setDeleteLeadId(null)
+    setDeleteReason('')
+    setDeleteComment('')
   }
 
-  const confirmDelete = () => {
-    if (deleteLeadId) {
-      // In real implementation, you'd update Supabase to mark as deleted
+  const confirmDelete = async () => {
+    if (!deleteLeadId || !deleteReason || !deleteComment) {
+      return
+    }
+
+    try {
+      // Soft delete in Supabase
+      const { supabase } = await import('../lib/supabase')
+      const { error } = await supabase
+        .from('leads')
+        .update({
+          deleted: true,
+          deleted_at: new Date().toISOString(),
+          delete_reason: deleteReason,
+          delete_comment: deleteComment
+        })
+        .eq('id', deleteLeadId)
+
+      if (error) {
+        console.error('❌ Error deleting lead:', error)
+        return
+      }
+
+      // Remove from local state
       setLeads(leads.filter(lead => lead.id !== deleteLeadId))
-      closeDeleteDialog()
+      console.log('✅ Lead soft deleted successfully')
+    } catch (error) {
+      console.error('❌ Error deleting lead:', error)
     }
+
+    closeDeleteDialog()
   }
 
-  // View details handler
-  const viewLeadDetails = (leadId: string) => {
-    const lead = leads.find(l => l.id === leadId)
-    if (lead) {
-      alert(`Lead Details:\n\nName: ${lead.name}\nEmail: ${lead.email}\nPhone: ${lead.phone}\nDOB: ${lead.dob}\nProvince: ${lead.province}\nSmoking Status: ${lead.smoking_status}\nInsurance Product: ${lead.insurance_product}\nStatus: ${lead.status}\nNotes: ${lead.notes || 'No notes'}`)
-    }
+  const getSelectedLead = () => {
+    return leads.find(lead => lead.id === editLeadId)
   }
 
   const getStatusColor = (status: Lead['status']) => {
@@ -332,10 +401,14 @@ export default function LeadsManagement() {
     })
   }
 
+  const canDelete = () => {
+    return deleteLeadId && deleteReason && deleteComment.trim().length > 0
+  }
+
   return (
-    <Box sx={{ px: 2 }}>
+    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
+      <Box sx={{ mb: 3, px: 2 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1 }}>
           👥 Leads Management
         </Typography>
@@ -345,17 +418,16 @@ export default function LeadsManagement() {
       </Box>
 
       {/* Tabs */}
-      <Box sx={{ mb: 3, borderBottom: 1, borderColor: 'divider' }}>
+      <Box sx={{ mb: 3, px: 2, borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={currentTab === 'active' ? 0 : 1} onChange={handleTabChange}>
           <Tab 
             label={
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Typography>Active Leads</Typography>
                 <Chip 
-                  label={leads.filter(l => l.status !== 'converted').length} 
+                  label={leads.filter(l => l.status !== 'converted' && !l.deleted_at).length} 
                   size="small" 
-                  sx={{ backgroundColor: '#1976D2', color: 'white', fontSize: '0.75rem' }}
-                />
+                  sx={{ backgroundColor: '#1976D2', color: 'white', fontSize: '0.75rem' }} />
               </Stack>
             }
           />
@@ -364,10 +436,9 @@ export default function LeadsManagement() {
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Typography>Closed Leads</Typography>
                 <Chip 
-                  label={leads.filter(l => l.status === 'converted').length} 
+                  label={leads.filter(l => l.status === 'converted' && !l.deleted_at).length} 
                   size="small" 
-                  sx={{ backgroundColor: '#10B981', color: 'white', fontSize: '0.75rem' }}
-                />
+                  sx={{ backgroundColor: '#10B981', color: 'white', fontSize: '0.75rem' }} />
               </Stack>
             }
           />
@@ -375,7 +446,7 @@ export default function LeadsManagement() {
       </Box>
 
       {/* Filters */}
-      <Card sx={{ borderRadius: 2, mb: 3, backgroundColor: '#ffffff' }}>
+      <Card sx={{ borderRadius: 2, mb: 3, mx: 2, backgroundColor: '#ffffff' }}>
         <CardContent>
           <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
             <TextField
@@ -410,133 +481,248 @@ export default function LeadsManagement() {
         </CardContent>
       </Card>
 
-      {/* Leads Table */}
-      <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: '#F9FAFB' }}>
-                <TableCell sx={{ fontWeight: '600' }}>Lead</TableCell>
-                <TableCell sx={{ fontWeight: '600' }}>Contact</TableCell>
-                <TableCell sx={{ fontWeight: '600' }}>Product</TableCell>
-                <TableCell sx={{ fontWeight: '600' }}>Status</TableCell>
-                <TableCell sx={{ fontWeight: '600' }}>Created</TableCell>
-                <TableCell sx={{ fontWeight: '600', textAlign: 'center' }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {filteredLeads.map((lead, index) => (
-                <TableRow key={lead.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                  <TableCell>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Avatar sx={{ bgcolor: '#1976D2', width: 40, height: 40 }}>
-                        {lead.name.split(' ').map(n => n[0]).join('')}
-                      </Avatar>
-                      <Box>
-                        <Typography variant="body1" sx={{ fontWeight: '500' }}>
-                          {lead.name}
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                          {lead.province} • {lead.dob}
-                        </Typography>
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  
-                  <TableCell>
-                    <Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                        <EmailIcon sx={{ fontSize: 16, color: '#6B7280' }} />
-                        <Typography variant="body2">{lead.email}</Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <PhoneIcon sx={{ fontSize: 16, color: '#6B7280' }} />
-                        <Typography variant="body2">{lead.phone}</Typography>
-                      </Box>
-                    </Box>
-                  </TableCell>
-
-                  <TableCell>
-                    <Typography variant="body2" sx={{ fontWeight: '500' }}>
-                      {lead.insurance_product}
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.75rem' }}>
-                      {lead.smoking_status}
-                    </Typography>
-                  </TableCell>
-
-                  <TableCell>
-                    <Chip
-                      label={lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
-                      size="small"
-                      sx={{
-                        backgroundColor: `${getStatusColor(lead.status)}20`,
-                        color: getStatusColor(lead.status),
-                        fontWeight: '600',
-                        fontSize: '0.75rem'
-                      }}
-                    />
-                  </TableCell>
-
-                  <TableCell>
-                    <Typography variant="body2" sx={{ fontWeight: '500' }}>
-                      {formatDate(lead.created_at)}
-                    </Typography>
-                    {lead.last_contact_date && (
-                      <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
-                        Last: {formatDate(lead.last_contact_date)}
-                      </Typography>
-                    )}
-                  </TableCell>
-
-                  <TableCell align="center">
-                    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
-                      <IconButton
-                        size="small"
-                        onClick={() => viewLeadDetails(lead.id)}
-                        sx={{
-                          color: '#1976D2',
-                          backgroundColor: '#f0f4ff',
-                          '&:hover': { backgroundColor: '#e3f2fd' }
-                        }}
-                        title="View Details"
-                      >
-                        <ViewIcon />
-                      </IconButton>
-                      
-                      <IconButton
-                        size="small"
-                        onClick={() => openEditModal(lead.id)}
-                        sx={{
-                          color: '#F59E0B',
-                          backgroundColor: '#fff8f0',
-                          '&:hover': { backgroundColor: '#ffebd6' }
-                        }}
-                        title="Edit Lead"
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      
-                      <IconButton
-                        size="small"
-                        onClick={() => openDeleteDialog(lead.id)}
-                        sx={{
-                          color: '#F44336',
-                          backgroundColor: '#fff5f5',
-                          '&:hover': { backgroundColor: '#ffebee' }
-                        }}
-                        title="Delete Lead"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  </TableCell>
+      {/* Full Screen Table */}
+      <Box sx={{ flex: 1, overflow: 'hidden', mx: 2 }}>
+        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%', display: 'flex', flexDirection: 'column' }}>
+          <TableContainer sx={{ flex: 1 }}>
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: '#F9FAFB' }}>
+                  <TableCell sx={{ fontWeight: '600' }}>Lead</TableCell>
+                  <TableCell sx={{ fontWeight: '600' }}>Contact</TableCell>
+                  <TableCell sx={{ fontWeight: '600' }}>Product</TableCell>
+                  <TableCell sx={{ fontWeight: '600' }}>Status</TableCell>
+                  <TableCell sx={{ fontWeight: '600' }}>Created</TableCell>
+                  <TableCell sx={{ fontWeight: '600', textAlign: 'center' }}>Actions</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
+              </TableHead>
+              <TableBody>
+                {paginatedLeads.map((lead, index) => (
+                  <TableRow key={lead.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Avatar sx={{ bgcolor: '#1976D2', width: 40, height: 40 }}>
+                          {lead.name.split(' ').map(n => n[0]).join('')}
+                        </Avatar>
+                        <Box>
+                          <Typography variant="body1" sx={{ fontWeight: '500' }}>
+                            {lead.name}
+                          </Typography>
+                          <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                            {lead.province} • {lead.dob}
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </TableCell>
+                    
+                    <TableCell>
+                      <Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                          <EmailIcon sx={{ fontSize: 16, color: '#6B7280' }} />
+                          <Typography variant="body2">{lead.email}</Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <PhoneIcon sx={{ fontSize: 16, color: '#6B7280' }} />
+                          <Typography variant="body2">{lead.phone}</Typography>
+                        </Box>
+                      </Box>
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography variant="body2" sx={{ fontWeight: '500' }}>
+                        {lead.insurance_product}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.75rem' }}>
+                        {lead.smoking_status}
+                      </Typography>
+                    </TableCell>
+
+                    <TableCell>
+                      <Chip
+                        label={lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
+                        size="small"
+                        sx={{
+                          backgroundColor: `${getStatusColor(lead.status)}20`,
+                          color: getStatusColor(lead.status),
+                          fontWeight: '600',
+                          fontSize: '0.75rem'
+                        }}
+                      />
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography variant="body2" sx={{ fontWeight: '500' }}>
+                        {formatDate(lead.created_at)}
+                      </Typography>
+                      {lead.last_contact_date && (
+                        <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                          Last: {formatDate(lead.last_contact_date)}
+                        </Typography>
+                      )}
+                    </TableCell>
+
+                    <TableCell align="center">
+                      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+                        <IconButton
+                          size="small"
+                          onClick={() => openViewModal(lead.id)}
+                          sx={{
+                            color: '#1976D2',
+                            backgroundColor: '#f0f4ff',
+                            '&:hover': { backgroundColor: '#e3f2fd' }
+                          }}
+                          title="View Details"
+                        >
+                          <ViewIcon />
+                        </IconButton>
+                        
+                        <IconButton
+                          size="small"
+                          onClick={() => openEditModal(lead.id)}
+                          sx={{
+                            color: '#F59E0B',
+                            backgroundColor: '#fff8f0',
+                            '&:hover': { backgroundColor: '#ffebd6' }
+                          }}
+                          title="Edit Lead"
+                        >
+                          <EditIcon />
+                        </IconButton>
+                        
+                        <IconButton
+                          size="small"
+                          onClick={() => openDeleteDialog(lead.id)}
+                          sx={{
+                            color: '#F44336',
+                            backgroundColor: '#fff5f5',
+                            '&:hover': { backgroundColor: '#ffebee' }
+                          }}
+                          title="Delete Lead"
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          
+          {/* Pagination */}
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={filteredLeads.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={(event, newPage) => setPage(newPage)}
+            onRowsPerPageChange={(event) => {
+              setRowsPerPage(parseInt(event.target.value, 10))
+              setPage(0)
+            }}
+          />
+        </Card>
+      </Box>
+
+      {/* View Details Modal */}
+      <Modal open={viewModalOpen} onClose={closeViewModal}>
+        <Box sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: { xs: '90%', sm: 600 },
+          maxHeight: '80vh',
+          overflow: 'auto',
+          bgcolor: 'background.paper',
+          borderRadius: 2,
+          boxShadow: 24,
+          p: 0
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 3, borderBottom: 1, borderColor: 'divider' }}>
+            <Typography variant="h5" sx={{ fontWeight: '600' }}>
+              Lead Details
+            </Typography>
+            <IconButton onClick={closeViewModal} sx={{ color: '#6B7280' }}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          
+          {getSelectedLead() && (
+            <Box sx={{ p: 3 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+                <Avatar sx={{ bgcolor: '#1976D2', width: 60, height: 60 }}>
+                  {getSelectedLead()!.name.split(' ').map(n => n[0]).join('')}
+                </Avatar>
+                <Box>
+                  <Typography variant="h5" sx={{ fontWeight: '600', mb: 0.5 }}>
+                    {getSelectedLead()!.name}
+                  </Typography>
+                  <Chip
+                    label={getSelectedLead()!.status.charAt(0).toUpperCase() + getSelectedLead()!.status.slice(1)}
+                    sx={{
+                      backgroundColor: `${getStatusColor(getSelectedLead()!.status)}20`,
+                      color: getStatusColor(getSelectedLead()!.status),
+                      fontWeight: '600'
+                    }}
+                  />
+                </Box>
+              </Box>
+
+              <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 3, mb: 3 }}>
+                <Box>
+                  <Typography variant="body2" sx={{ color: '#6B7280', mb: 1 }}>Contact Information</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    📧 <strong>Email:</strong> {getSelectedLead()!.email}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    📱 <strong>Phone:</strong> {getSelectedLead()!.phone}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    📅 <strong>DOB:</strong> {getSelectedLead()!.dob}
+                  </Typography>
+                  <Typography variant="body1">
+                    🌍 <strong>Province:</strong> {getSelectedLead()!.province}
+                  </Typography>
+                </Box>
+
+                <Box>
+                  <Typography variant="body2" sx={{ color: '#6B7280', mb: 1 }}>Insurance Information</Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    🏥 <strong>Product:</strong> {getSelectedLead()!.insurance_product}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    🚭 <strong>Smoking Status:</strong> {getSelectedLead()!.smoking_status}
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 1 }}>
+                    📅 <strong>Created:</strong> {formatDate(getSelectedLead()!.created_at)}
+                  </Typography>
+                  {getSelectedLead()!.last_contact_date && (
+                    <Typography variant="body1">
+                      📅 <strong>Last Contacted:</strong> {formatDate(getSelectedLead()!.last_contact_date)}
+                    </Typography>
+                  )}
+                </Box>
+              </Box>
+
+              {getSelectedLead()!.notes && (
+                <Box>
+                  <Typography variant="body2" sx={{ color: '#6B7280', mb: 1 }}>Notes</Typography>
+                  <Typography variant="body1" sx={{ 
+                    backgroundColor: '#F9FAFB', 
+                    p: 2, 
+                    borderRadius: 1,
+                    fontStyle: 'italic'
+                  }}>
+                    "{getSelectedLead()!.notes}"
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+          )}
+        </Box>
+      </Modal>
 
       {/* Edit Modal */}
       <Dialog open={editModalOpen} onClose={closeEditModal} maxWidth="sm" fullWidth>
@@ -573,16 +759,54 @@ export default function LeadsManagement() {
       </Dialog>
 
       {/* Delete Confirmation Dialog */}
-      <Dialog open={deleteDialogOpen} onClose={closeDeleteDialog}>
-        <DialogTitle>Delete Lead</DialogTitle>
+      <Dialog open={deleteDialogOpen} onClose={closeDeleteDialog} maxWidth="md" fullWidth>
+        <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <DeleteIcon sx={{ color: '#F44336' }} />
+          Delete Lead
+        </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this lead? This action cannot be undone.
-          </DialogContentText>
+          <Box sx={{ pt: 2 }}>
+            <DialogContentText sx={{ mb: 3 }}>
+              Are you sure you want to delete this lead? Please provide a reason and comment. 
+              This will move the lead to the Deleted Leads module.
+            </DialogContentText>
+            
+            <FormControl fullWidth sx={{ mb: 3 }}>
+              <InputLabel>Delete Reason *</InputLabel>
+              <Select
+                value={deleteReason}
+                label="Delete Reason *"
+                onChange={(e) => setDeleteReason(e.target.value)}
+              >
+                {DELETE_REASONS.map(reason => (
+                  <MenuItem key={reason.value} value={reason.value}>
+                    {reason.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            
+            <TextField
+              fullWidth
+              multiline
+              rows={3}
+              placeholder="Please provide additional comments about why you're deleting this lead..."
+              value={deleteComment}
+              onChange={(e) => setDeleteComment(e.target.value)}
+              helperText={!deleteComment && "Comment is required to delete the lead"}
+            />
+          </Box>
         </DialogContent>
         <DialogActions>
           <Button onClick={closeDeleteDialog}>Cancel</Button>
-          <Button onClick={confirmDelete} color="error">Delete</Button>
+          <Button 
+            onClick={confirmDelete} 
+            color="error" 
+            variant="contained"
+            disabled={!canDelete()}
+          >
+            Delete Lead
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>
