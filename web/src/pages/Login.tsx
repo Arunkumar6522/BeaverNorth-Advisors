@@ -22,13 +22,18 @@ export default function Login() {
     setLoading(true)
     setMessage('')
 
-    const result = await customAuth.login(username, password)
-    
-    if (result.success) {
-      setMessage('Login successful! Redirecting...')
-      setTimeout(() => navigate('/dashboard'), 1000)
-    } else {
-      setMessage(result.error || 'Login failed')
+    try {
+      const result = await customAuth.login(username, password)
+      
+      if (result.success) {
+        setMessage('Login successful! Redirecting...')
+        setTimeout(() => navigate('/dashboard'), 1000)
+      } else {
+        setMessage(result.error || 'Login failed')
+      }
+    } catch (error) {
+      console.error('Login error:', error)
+      setMessage('Network error. Please try again.')
     }
     setLoading(false)
   }
@@ -44,6 +49,20 @@ export default function Login() {
       >
         <h2 style={{ marginTop: 0, marginBottom: 16 }}>BeaverNorth Advisors</h2>
         <p style={{ marginTop: 0, color: '#555', marginBottom: 16 }}>Admin Login</p>
+        
+        <div style={{ 
+          background: '#f8fafc', 
+          padding: 12, 
+          borderRadius: 8, 
+          marginBottom: 16,
+          fontSize: 12,
+          color: '#475569',
+          border: '1px solid #e2e8f0'
+        }}>
+          <strong>Demo Credentials:</strong><br/>
+          Username: <code>admin</code><br/>
+          Password: <code>admin</code>
+        </div>
         
         {message && (
           <div style={{ 
@@ -95,6 +114,32 @@ export default function Login() {
             {loading ? 'Signing in...' : 'Login'}
           </button>
         </form>
+        
+        <div style={{ marginTop: 16, fontSize: 12, color: '#666', textAlign: 'center' }}>
+          <button 
+            type="button"
+            onClick={() => {
+              console.log('Testing admin login...')
+              customAuth.login('admin', 'admin').then(result => {
+                console.log('Login result:', result)
+                if (result.success) {
+                  navigate('/dashboard')
+                }
+              })
+            }}
+            style={{
+              background: 'transparent',
+              color: '#0a2540',
+              border: '1px solid #0a2540',
+              padding: '8px 16px',
+              borderRadius: 6,
+              cursor: 'pointer',
+              fontSize: 12
+            }}
+          >
+            Quick Test Login (admin/admin)
+          </button>
+        </div>
       </motion.div>
     </div>
   )
