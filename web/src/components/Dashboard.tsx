@@ -207,10 +207,10 @@ export default function Dashboard() {
         ))}
       </Box>
 
-      {/* Charts Section - Both charts in one line */}
-      <Box sx={{ display: 'flex', gap: 3, flexDirection: 'row', mb: 3 }}>
+      {/* Charts Section - Stack on mobile, side-by-side on desktop */}
+      <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' }, mb: 3 }}>
         {/* Gender Distribution Chart */}
-        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', flex: 1 }}>
+        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', flex: 1, minWidth: { xs: '100%', md: 0 } }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: '600', mb: 2, color: '#111827' }}>
                 Gender Distribution
@@ -266,7 +266,7 @@ export default function Dashboard() {
           </Card>
 
         {/* Smoking Status Chart */}
-        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', flex: 1 }}>
+        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', flex: 1, minWidth: { xs: '100%', md: 0 } }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: '600', mb: 2, color: '#111827' }}>
                 Smoking Status Distribution

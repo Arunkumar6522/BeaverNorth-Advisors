@@ -493,7 +493,13 @@ export default function LeadsManagement() {
       <Box sx={{ px: 2, py: 2, flexShrink: 0 }}>
         <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
           <CardContent sx={{ py: 2 }}>
-            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+            <Box sx={{ 
+              display: 'flex', 
+              gap: { xs: 2, sm: 2 }, 
+              flexWrap: 'wrap', 
+              alignItems: 'center',
+              flexDirection: { xs: 'column', sm: 'row' }
+            }}>
               <TextField
                 size="medium"
                 placeholder="Search leads..."
@@ -506,10 +512,10 @@ export default function LeadsManagement() {
                     </InputAdornment>
                   ),
                 }}
-                sx={{ minWidth: 300 }}
+                sx={{ minWidth: { xs: '100%', sm: 300 }, width: { xs: '100%', sm: 'auto' } }}
               />
               
-              <FormControl size="medium" sx={{ minWidth: 180 }}>
+              <FormControl size="medium" sx={{ minWidth: { xs: '100%', sm: 180 }, width: { xs: '100%', sm: 'auto' } }}>
                 <InputLabel>Status Filter</InputLabel>
                 <Select
                   value={statusFilter}
@@ -528,18 +534,18 @@ export default function LeadsManagement() {
       </Box>
 
       {/* Full Screen Table */}
-      <Box sx={{ flex: 1, overflow: 'hidden', mx: 2 }}>
-        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%', display: 'flex', flexDirection: 'column' }}>
-          <TableContainer sx={{ flex: 1, overflow: 'auto' }}>
-            <Table stickyHeader>
+      <Box sx={{ flex: 1, overflow: 'hidden', mx: { xs: 0, sm: 2 } }}>
+        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%', display: 'flex', flexDirection: 'column', mx: { xs: 1, sm: 0 } }}>
+          <TableContainer sx={{ flex: 1, overflow: 'auto', '&::-webkit-scrollbar': { height: '6px' }, overflowX: 'auto' }}>
+            <Table stickyHeader sx={{ minWidth: 600 }}>
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#F9FAFB' }}>
-                  <TableCell sx={{ fontWeight: '600' }}>Lead</TableCell>
-                  <TableCell sx={{ fontWeight: '600' }}>Contact</TableCell>
-                  <TableCell sx={{ fontWeight: '600' }}>Product</TableCell>
-                  <TableCell sx={{ fontWeight: '600' }}>Status</TableCell>
-                  <TableCell sx={{ fontWeight: '600' }}>Created</TableCell>
-                  <TableCell sx={{ fontWeight: '600', textAlign: 'center' }}>Actions</TableCell>
+                  <TableCell sx={{ fontWeight: '600', minWidth: { xs: 80, sm: 100 } }}>Lead</TableCell>
+                  <TableCell sx={{ fontWeight: '600', minWidth: { xs: 120, sm: 140 } }}>Contact</TableCell>
+                  <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 120 }}>Product</TableCell>
+                  <TableCell sx={{ fontWeight: '600', minWidth: { xs: 60, sm: 80 } }}>Status</TableCell>
+                  <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 110 }}>Created</TableCell>
+                  <TableCell sx={{ fontWeight: '600', textAlign: 'center', minWidth: { xs: 100, sm: 120 } }}>Actions</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -613,7 +619,7 @@ export default function LeadsManagement() {
                       </Box>
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                       <Typography variant="body2" sx={{ fontWeight: '500' }}>
                         {lead.insurance_product}
                       </Typography>
@@ -635,7 +641,7 @@ export default function LeadsManagement() {
                       />
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                       <Typography variant="body2" sx={{ fontWeight: '500' }}>
                         {formatDate(lead.created_at)}
                       </Typography>

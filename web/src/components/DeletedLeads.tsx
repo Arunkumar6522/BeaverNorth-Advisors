@@ -298,7 +298,7 @@ export default function DeletedLeads() {
       </Box>
 
       {/* Deleted Leads Table */}
-      <Box sx={{ flex: 1, overflow: 'hidden', mx: 2 }}>
+      <Box sx={{ flex: 1, overflow: 'hidden', mx: { xs: 0, sm: 2 } }}>
         {deletedLeads.length === 0 ? (
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', p: 4, textAlign: 'center' }}>
             <Typography variant="h6" sx={{ color: '#666666', mb: 2 }}>
@@ -309,19 +309,19 @@ export default function DeletedLeads() {
             </Typography>
           </Card>
         ) : (
-          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%' }}>
-            <TableContainer sx={{ height: '100%', overflow: 'auto' }}>
-              <Table stickyHeader>
+          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%', mx: { xs: 1, sm: 0 } }}>
+            <TableContainer sx={{ height: '100%', overflow: 'auto', overflowX: 'auto', '&::-webkit-scrollbar': { height: '6px' } }}>
+              <Table stickyHeader sx={{ minWidth: 600 }}>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: '#F9FAFB' }}>
-                    <TableCell sx={{ fontWeight: '600', minWidth: 200 }}>Lead</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: 180 }}>Contact</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: 150 }}>Product</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: 120 }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: 130 }}>Deleted On</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: 120 }}>Deleted By</TableCell>
-                    <TableCell sx={{ fontWeight: '600', textAlign: 'center', minWidth: 100 }}>Actions</TableCell>
-                </TableRow>
+                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 120, sm: 200 } }}>Lead</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 120, sm: 180 } }}>Contact</TableCell>
+                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 150 }}>Product</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 80, sm: 120 } }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 130 }}>Deleted On</TableCell>
+                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 120 }}>Deleted By</TableCell>
+                    <TableCell sx={{ fontWeight: '600', textAlign: 'center', minWidth: { xs: 80, sm: 100 } }}>Actions</TableCell>
+                  </TableRow>
               </TableHead>
               <TableBody>
                 {deletedLeads.map((lead, _index) => (
@@ -390,7 +390,7 @@ export default function DeletedLeads() {
                         </Box>
                       </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                       <Typography variant="caption" sx={{ fontWeight: '500' }}>
                         {lead.insurance_product}
                       </Typography>
@@ -412,13 +412,13 @@ export default function DeletedLeads() {
                       />
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                       <Typography variant="caption" sx={{ fontWeight: '500' }}>
                         {formatDate(lead.deleted_at)}
                       </Typography>
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Avatar sx={{ 
                           bgcolor: '#FF9800', 
