@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
-import { Box, Typography, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material'
+import { Box, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material'
 import { Menu as MenuIcon, Close as CloseIcon, Language } from '@mui/icons-material'
 
 export default function Nav() {
@@ -39,53 +39,16 @@ export default function Nav() {
           mx: 'auto'
         }}>
           
-          {/* Logo - Professional & Clean */}
-          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box sx={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1.5
-            }}>
-              <Box sx={{
-                width: 42,
-                height: 42,
-                borderRadius: 2,
-                background: '#6983CC',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <img 
-                  src="/favicon.png" 
-                  alt="BeaverNorth" 
-                  style={{ 
-                    height: '24px', 
-                    width: '24px',
-                    filter: 'brightness(0) invert(1)'
-                  }} 
-                />
-              </Box>
-              <Box>
-                <Typography sx={{ 
-                  fontWeight: 800,
-                  color: '#1E377C',
-                  fontSize: '1.3rem',
-                  lineHeight: 1,
-                  letterSpacing: '-0.02em'
-                }}>
-                  BeaverNorth
-                </Typography>
-                <Typography sx={{ 
-                  color: '#6983CC',
-                  fontWeight: 600,
-                  fontSize: '0.75rem',
-                  letterSpacing: '0.5px',
-                  textTransform: 'uppercase'
-                }}>
-                  Advisors
-                </Typography>
-              </Box>
-            </Box>
+          {/* Logo - Using actual BNA logo */}
+          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+            <img 
+              src="/src/assets/bna logo.png" 
+              alt="BeaverNorth Advisors" 
+              style={{ 
+                height: '50px',
+                width: 'auto'
+              }} 
+            />
           </Link>
 
           {/* Desktop Navigation - Clean & Simple */}
@@ -211,46 +174,14 @@ export default function Nav() {
           p: 3,
           borderBottom: '1px solid rgba(105,131,204,0.1)'
         }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Box sx={{
-              width: 36,
-              height: 36,
-              borderRadius: 2,
-              background: '#6983CC',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <img 
-                src="/favicon.png" 
-                alt="BeaverNorth" 
-                style={{ 
-                  height: '20px', 
-                  width: '20px',
-                  filter: 'brightness(0) invert(1)'
-                }} 
-              />
-            </Box>
-            <Box>
-              <Typography sx={{ 
-                fontWeight: 800,
-                color: '#1E377C',
-                fontSize: '1.1rem',
-                lineHeight: 1
-              }}>
-                BeaverNorth
-              </Typography>
-              <Typography sx={{ 
-                color: '#6983CC',
-                fontWeight: 600,
-                fontSize: '0.7rem',
-                letterSpacing: '0.5px',
-                textTransform: 'uppercase'
-              }}>
-                Advisors
-              </Typography>
-            </Box>
-          </Box>
+          <img 
+            src="/src/assets/bna logo.png" 
+            alt="BeaverNorth Advisors" 
+            style={{ 
+              height: '40px',
+              width: 'auto'
+            }} 
+          />
           <IconButton
             onClick={toggleMenu}
             sx={{
