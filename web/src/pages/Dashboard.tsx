@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Box, AppBar, Toolbar, IconButton, Typography, CssBaseline } from '@mui/material'
-import { Menu as MenuIcon } from '@mui/icons-material'
+import { Box, AppBar, Toolbar, Typography, CssBaseline } from '@mui/material'
 import { customAuth, type CustomUser } from '../lib/custom-auth'
 import MuiSidebar from '../components/MuiSidebar'
 import DashboardOverview from '../components/Dashboard'
@@ -135,39 +134,16 @@ export default function Dashboard() {
             py: 1,
             minHeight: '64px !important'
           }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <IconButton
-                edge="start"
-                onClick={() => {
-                  console.log('🍔 Hamburger clicked! Current state:', sidebarOpen);
-                  setSidebarOpen(!sidebarOpen);
-                }}
-                sx={{ 
-                  color: '#1976D2',
-                  backgroundColor: '#F0F4FF',
-                  '&:hover': { 
-                    backgroundColor: '#E3F2FD',
-                    transform: 'scale(1.05)'
-                  },
-                  transition: 'all 0.2s ease',
-                  width: 40,
-                  height: 40
-                }}
-              >
-                <MenuIcon sx={{ fontSize: 20 }} />
-              </IconButton>
-              
-              <Typography variant="h6" sx={{ 
-                fontWeight: '600', 
-                color: '#333',
-                fontSize: '1.25rem !important'
-              }}>
-                {currentModule === 'dashboard' ? '📊 Dashboard' : 
-                 currentModule === 'leads' ? '👥 Leads Management' : 
-                 currentModule === 'deleted' ? '🗑️ Deleted Leads' :
-                 '📈 Analytics'}
-              </Typography>
-            </Box>
+            <Typography variant="h6" sx={{ 
+              fontWeight: '600', 
+              color: '#333',
+              fontSize: '1.25rem !important'
+            }}>
+              {currentModule === 'dashboard' ? '📊 Dashboard' : 
+               currentModule === 'leads' ? '👥 Leads Management' : 
+               currentModule === 'deleted' ? '🗑️ Deleted Leads' :
+               '📈 Analytics'}
+            </Typography>
 
             {/* User Info */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
