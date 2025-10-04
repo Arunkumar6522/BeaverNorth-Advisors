@@ -62,3 +62,54 @@ VALUES ('your_username', 'password_hash', 'email@domain.com', 'Full Name', 'user
 ```
 
 **Note**: Replace `password_hash` with actual bcrypt hash of the password.
+
+---
+
+## Update Leads Table - Add Missing Columns
+
+### Add Gender Column
+
+Run this SQL in Supabase SQL Editor:
+
+```sql
+-- Add gender column to leads table
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS gender TEXT;
+
+-- Add a check constraint to ensure valid gender values
+ALTER TABLE leads ADD CONSTRAINT leads_gender_check 
+  CHECK (gender IN ('male', 'female', 'others', 'prefer-not-to-say') OR gender IS NULL);
+
+-- Add a comment to document the column
+COMMENT ON COLUMN leads.gender IS 'Gender of the lead: male, female, others, prefer-not-to-say, or null';
+
+-- Optional: Add an index for faster gender-based queries (for analytics)
+CREATE INDEX IF NOT EXISTS idx_leads_gender ON leads(gender);
+```
+
+### Add Referral Code Column
+
+Run this SQL in Supabase SQL Editor:
+
+```sql
+-- Add referral_code column to leads table
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS referral_code TEXT;
+
+-- Optional: Add an index for faster referral code lookups
+CREATE INDEX IF NOT EXISTS idx_leads_referral_code ON leads(referral_code);
+
+-- Add a comment to document the column
+COMMENT ON COLUMN leads.referral_code IS 'Optional referral code provided by the lead';
+```
+
+### Verify Columns
+
+After running the above SQL, verify the columns exist:
+
+```sql
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'leads'
+ORDER BY ordinal_position;
+```
+
+You should see both `gender` and `referral_code` columns in the results.
