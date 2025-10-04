@@ -7,6 +7,7 @@ interface ContactModalProps {
 }
 
 export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
+  const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
     name: '',
     dob: '',
@@ -14,26 +15,51 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     province: '',
     insuranceProduct: '',
     email: '',
-    phone: ''
+    phone: '',
+    otp: ''
   })
 
   const [loading, setLoading] = useState(false)
+  const [otpSent, setOtpSent] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+
+  const nextStep = () => {
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1)
+    }
+  }
+
+  const prevStep = () => {
+    if (currentStep > 1) {
+      setCurrentStep(currentStep - 1)
+    }
+  }
+
+  const sendOTP = async () => {
+    setLoading(true)
+    // Simulate OTP sending via Twilio
+    setTimeout(() => {
+      setLoading(false)
+      setOtpSent(true)
+    }, 1000)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     
     // Simulate form submission
-        setTimeout(() => {
-        setLoading(false)
-        setSubmitted(true)
-        setTimeout(() => {
-          onClose()
-          setSubmitted(false)
-          setFormData({ name: '', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '' })
-        }, 2000)
-      }, 1000)
+    setTimeout(() => {
+      setLoading(false)
+      setSubmitted(true)
+      setTimeout(() => {
+        onClose()
+        setSubmitted(false)
+        setCurrentStep(1)
+        setOtpSent(false)
+        setFormData({ name: '', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', otp: '' })
+      }, 2000)
+    }, 1000)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -110,11 +136,49 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             style={{ height: '40px', width: '40px', marginBottom: '12px' }}
           />
           <h2 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)' }}>
-            Get Your Insurance Quote
+            {currentStep === 1 ? 'Personal Information' : 
+             currentStep === 2 ? `${formData.name}, tell us about you` :
+             'Verify Your Contact'}
           </h2>
-          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '16px' }}>
-            Licensed Canadian insurance advisors ready to help
+          <p style={{ margin: '0 0 16px 0', color: 'var(--text-secondary)', fontSize: '16px' }}>
+            Step {currentStep} of 3
           </p>
+          
+          {/* Progress Bar */}
+          <div style={{ 
+            width: '100%', 
+            height: '4px', 
+            background: 'var(--surface-2)', 
+            borderRadius: '2px', 
+            overflow: 'hidden',
+            marginBottom: '8px'
+          }}>
+            <motion.div
+              initial={{ width: '0%' }}
+              animate={{ width: `${(currentStep / 3) * 100}%` }}
+              transition={{ duration: 0.3 }}
+              style={{
+                height: '100%',
+                background: 'var(--brand-green)',
+                borderRadius: '2px'
+              }}
+            />
+          </div>
+          
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+            {[1, 2, 3].map((step) => (
+              <div
+                key={step}
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '50%',
+                  background: step <= currentStep ? 'var(--brand-green)' : 'var(--line)',
+                  transition: 'background 0.3s ease'
+                }}
+              />
+            ))}
+          </div>
         </div>
 
         {submitted ? (
@@ -145,208 +209,479 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             </p>
           </motion.div>
         ) : (
-          <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '16px' }}>
-            <div style={{ display: 'grid', gap: '16px' }}>
-              {/* Full Name */}
-              <input
-                type="text"
-                name="name"
-                placeholder="Full Name *"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                style={{
-                  padding: '14px 16px',
-                  border: '2px solid var(--line)',
-                  borderRadius: '12px',
-                  fontSize: '16px',
-                  background: 'var(--surface-1)',
-                  color: 'var(--text-primary)',
-                  outline: 'none',
-                  transition: 'border-color 0.2s'
-                }}
-              />
-
-              {/* Date of Birth */}
-              <input
-                type="date"
-                name="dob"
-                placeholder="Date of Birth *"
-                value={formData.dob}
-                onChange={handleChange}
-                required
-                style={{
-                  padding: '14px 16px',
-                  border: '2px solid var(--line)',
-                  borderRadius: '12px',
-                  fontSize: '16px',
-                  background: 'var(--surface-1)',
-                  color: 'var(--text-primary)',
-                  outline: 'none'
-                }}
-              />
-
-              {/* Smoking Status */}
-              <div style={{ display: 'grid', gap: '8px' }}>
-                <label style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                  Smoking Status *
-                </label>
-                <div style={{ display: 'flex', gap: '12px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input
-                      type="radio"
-                      name="smokingStatus"
-                      value="non-smoker"
-                      checked={formData.smokingStatus === 'non-smoker'}
-                      onChange={handleChange}
-                      required
-                      style={{ width: '18px', height: '18px' }}
-                    />
-                    <span style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Non-Smoker</span>
+          <div>
+            {/* Step 1: Personal Information */}
+            {currentStep === 1 && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                style={{ display: 'grid', gap: '20px' }}
+              >
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '14px', 
+                    fontWeight: 600, 
+                    color: 'var(--text-primary)',
+                    marginBottom: '8px'
+                  }}>
+                    What's your full name? *
                   </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input
-                      type="radio"
-                      name="smokingStatus"
-                      value="smoker"
-                      checked={formData.smokingStatus === 'smoker'}
-                      onChange={handleChange}
-                      required
-                      style={{ width: '18px', height: '18px' }}
-                    />
-                    <span style={{ fontSize: '14px', color: 'var(--text-primary)' }}>Smoker</span>
-                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Enter your full name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '14px 16px',
+                      border: '2px solid var(--line)',
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      background: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      outline: 'none',
+                      transition: 'border-color 0.2s'
+                    }}
+                  />
                 </div>
-              </div>
 
-              {/* Province */}
-              <select
-                name="province"
-                value={formData.province}
-                onChange={handleChange}
-                required
-                style={{
-                  padding: '14px 16px',
-                  border: '2px solid var(--line)',
-                  borderRadius: '12px',
-                  fontSize: '16px',
-                  background: 'var(--surface-1)',
-                  color: 'var(--text-primary)',
-                  outline: 'none',
-                  cursor: 'pointer'
-                }}
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '14px', 
+                    fontWeight: 600, 
+                    color: 'var(--text-primary)',
+                    marginBottom: '8px'
+                  }}>
+                    When were you born? *
+                  </label>
+                  <input
+                    type="date"
+                    name="dob"
+                    value={formData.dob}
+                    onChange={handleChange}
+                    max="2005-12-31"
+                    style={{
+                      width: '100%',
+                      padding: '14px 16px',
+                      border: '2px solid var(--line)',
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      background: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
+
+                <button
+                  type="button"
+                  onClick={nextStep}
+                  disabled={!formData.name || !formData.dob}
+                  style={{
+                    width: '100%',
+                    background: !formData.name || !formData.dob ? 'var(--line)' : 'var(--brand-green)',
+                    color: 'white',
+                    padding: '16px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: !formData.name || !formData.dob ? 'not-allowed' : 'pointer',
+                    marginTop: '12px'
+                  }}
+                >
+                  Next Step
+                </button>
+              </motion.div>
+            )}
+
+            {/* Step 2: Insurance Preferences */}
+            {currentStep === 2 && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                style={{ display: 'grid', gap: '20px' }}
               >
-                <option value="">Select Province *</option>
-                <option value="Alberta">Alberta</option>
-                <option value="British Columbia">British Columbia</option>
-                <option value="Manitoba">Manitoba</option>
-                <option value="New Brunswick">New Brunswick</option>
-                <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
-                <option value="Northwest Territories">Northwest Territories</option>
-                <option value="Nova Scotia">Nova Scotia</option>
-                <option value="Nunavut">Nunavut</option>
-                <option value="Ontario">Ontario</option>
-                <option value="Prince Edward Island">Prince Edward Island</option>
-                <option value="Quebec">Quebec</option>
-                <option value="Saskatchewan">Saskatchewan</option>
-                <option value="Yukon">Yukon</option>
-              </select>
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '14px', 
+                    fontWeight: 600, 
+                    color: 'var(--text-primary)',
+                    marginBottom: '12px'
+                  }}>
+                    Are you a smoker or non-smoker? *
+                  </label>
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <label style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      cursor: 'pointer',
+                      padding: '12px 16px',
+                      border: `2px solid ${formData.smokingStatus === 'non-smoker' ? 'var(--brand-green)' : 'var(--line)'}`,
+                      borderRadius: '8px',
+                      background: formData.smokingStatus === 'non-smoker' ? 'var(--brand-green)' : 'var(--surface-1)',
+                      color: formData.smokingStatus === 'non-smoker' ? 'white' : 'var(--text-primary)',
+                      transition: 'all 0.2s'
+                    }}>
+                      <input
+                        type="radio"
+                        name="smokingStatus"
+                        value="non-smoker"
+                        checked={formData.smokingStatus === 'non-smoker'}
+                        onChange={handleChange}
+                        required
+                        style={{ display: 'none' }}
+                      />
+                      <span style={{ fontSize: '14px', fontWeight: 500 }}>Non-Smoker</span>
+                    </label>
+                    <label style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '8px', 
+                      cursor: 'pointer',
+                      padding: '12px 16px',
+                      border: `2px solid ${formData.smokingStatus === 'smoker' ? 'var(--brand-yellow)' : 'var(--line)'}`,
+                      borderRadius: '8px',
+                      background: formData.smokingStatus === 'smoker' ? 'var(--brand-yellow)' : 'var(--surface-1)',
+                      color: formData.smokingStatus === 'smoker' ? 'white' : 'var(--text-primary)',
+                      transition: 'all 0.2s'
+                    }}>
+                      <input
+                        type="radio"
+                        name="smokingStatus"
+                        value="smoker"
+                        checked={formData.smokingStatus === 'smoker'}
+                        onChange={handleChange}
+                        required
+                        style={{ display: 'none' }}
+                      />
+                      <span style={{ fontSize: '14px', fontWeight: 500 }}>Smoker</span>
+                    </label>
+                  </div>
+                </div>
 
-              {/* Insurance Product */}
-              <select
-                name="insuranceProduct"
-                value={formData.insuranceProduct}
-                onChange={handleChange}
-                required
-                style={{
-                  padding: '14px 16px',
-                  border: '2px solid var(--line)',
-                  borderRadius: '12px',
-                  fontSize: '16px',
-                  background: 'var(--surface-1)',
-                  color: 'var(--text-primary)',
-                  outline: 'none',
-                  cursor: 'pointer'
-                }}
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '14px', 
+                    fontWeight: 600, 
+                    color: 'var(--text-primary)',
+                    marginBottom: '8px'
+                  }}>
+                    What type of insurance are you looking for? *
+                  </label>
+                  <select
+                    name="insuranceProduct"
+                    value={formData.insuranceProduct}
+                    onChange={handleChange}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '14px 16px',
+                      border: '2px solid var(--line)',
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      background: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      outline: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="">Select insurance type</option>
+                    <option value="term-life">Term Life Insurance</option>
+                    <option value="whole-life">Whole Life Insurance</option>
+                    <option value="non-medical">Non-Medical Life Insurance</option>
+                    <option value="mortgage-life">Mortgage Life Insurance</option>
+                    <option value="senior-life">Senior Life Insurance</option>
+                    <option value="travel">Travel Insurance</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '14px', 
+                    fontWeight: 600, 
+                    color: 'var(--text-primary)',
+                    marginBottom: '8px'
+                  }}>
+                    Which province are you in? *
+                  </label>
+                  <select
+                    name="province"
+                    value={formData.province}
+                    onChange={handleChange}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '14px 16px',
+                      border: '2px solid var(--line)',
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      background: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      outline: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="">Select your province</option>
+                    <option value="Alberta">Alberta</option>
+                    <option value="British Columbia">British Columbia</option>
+                    <option value="Manitoba">Manitoba</option>
+                    <option value="New Brunswick">New Brunswick</option>
+                    <option value="Newfoundland and Labrador">Newfoundland and Labrador</option>
+                    <option value="Northwest Territories">Northwest Territories</option>
+                    <option value="Nova Scotia">Nova Scotia</option>
+                    <option value="Nunavut">Nunavut</option>
+                    <option value="Ontario">Ontario</option>
+                    <option value="Prince Edward Island">Prince Edward Island</option>
+                    <option value="Quebec">Quebec</option>
+                    <option value="Saskatchewan">Saskatchewan</option>
+                    <option value="Yukon">Yukon</option>
+                  </select>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+                  <button
+                    type="button"
+                    onClick={prevStep}
+                    style={{
+                      flex: 1,
+                      background: 'transparent',
+                      color: 'var(--text-primary)',
+                      padding: '16px',
+                      borderRadius: '12px',
+                      border: '2px solid var(--line)',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={nextStep}
+                    disabled={!formData.smokingStatus || !formData.insuranceProduct || !formData.province}
+                    style={{
+                      flex: 2,
+                      background: !formData.smokingStatus || !formData.insuranceProduct || !formData.province ? 'var(--line)' : 'var(--brand-green)',
+                      color: 'white',
+                      padding: '16px',
+                      borderRadius: '12px',
+                      border: 'none',
+                      fontSize: '16px',
+                      fontWeight: '600',
+                      cursor: !formData.smokingStatus || !formData.insuranceProduct || !formData.province ? 'not-allowed' : 'pointer'
+                    }}
+                  >
+                    Next Step
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Step 3: Contact Verification */}
+            {currentStep === 3 && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                style={{ display: 'grid', gap: '20px' }}
               >
-                <option value="">What type of life insurance are you looking for? *</option>
-                <option value="term-life">Term Life Insurance</option>
-                <option value="whole-life">Whole Life Insurance</option>
-                <option value="non-medical">Non-Medical Life Insurance</option>
-                <option value="mortgage-life">Mortgage Life Insurance</option>
-                <option value="senior-life">Senior Life Insurance</option>
-                <option value="travel">Travel Insurance</option>
-              </select>
-              
-              {/* Email */}
-              <input
-                type="email"
-                name="email"
-                placeholder="Email Address *"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                style={{
-                  padding: '14px 16px',
-                  border: '2px solid var(--line)',
-                  borderRadius: '12px',
-                  fontSize: '16px',
-                  background: 'var(--surface-1)',
-                  color: 'var(--text-primary)',
-                  outline: 'none'
-                }}
-              />
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '14px', 
+                    fontWeight: 600, 
+                    color: 'var(--text-primary)',
+                    marginBottom: '8px'
+                  }}>
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="your.email@example.com"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '14px 16px',
+                      border: '2px solid var(--line)',
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      background: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      outline: 'none'
+                    }}
+                  />
+                </div>
 
-              {/* Phone */}
-              <input
-                type="tel"
-                name="phone"
-                placeholder="Phone Number *"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-                style={{
-                  padding: '14px 16px',
-                  border: '2px solid var(--line)',
-                  borderRadius: '12px',
-                  fontSize: '16px',
-                  background: 'var(--surface-1)',
-                  color: 'var(--text-primary)',
-                  outline: 'none'
-                }}
-              />
-            </div>
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '14px', 
+                    fontWeight: 600, 
+                    color: 'var(--text-primary)',
+                    marginBottom: '8px'
+                  }}>
+                    Phone Number * (for verification)
+                  </label>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <input
+                      type="tel"
+                      name="phone"
+                      placeholder="+1 (555) 123-4567"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                      style={{
+                        flex: 1,
+                        padding: '14px 16px',
+                        border: '2px solid var(--line)',
+                        borderRadius: '12px',
+                        fontSize: '16px',
+                        background: 'var(--surface-1)',
+                        color: 'var(--text-primary)',
+                        outline: 'none'
+                      }}
+                    />
+                    {!otpSent ? (
+                      <button
+                        type="button"
+                        onClick={sendOTP}
+                        disabled={loading || !formData.phone}
+                        style={{
+                          padding: '14px 16px',
+                          background: loading || !formData.phone ? 'var(--line)' : 'var(--brand-green)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '12px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          cursor: loading || !formData.phone ? 'not-allowed' : 'pointer',
+                          whiteSpace: 'nowrap'
+                        }}
+                      >
+                        {loading ? 'Sending...' : 'Send OTP'}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled
+                        style={{
+                          padding: '14px 16px',
+                          background: 'var(--brand-green)',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '12px',
+                          fontSize: '14px',
+                          fontWeight: '600',
+                          opacity: 0.8
+                        }}
+                      >
+                        ✓ Sent
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                background: loading ? 'var(--text-secondary)' : 'var(--brand-green)',
-                color: 'white',
-                padding: '16px 24px',
-                borderRadius: '12px',
-                border: 'none',
-                fontSize: '16px',
-                fontWeight: '600',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                transition: 'all 0.2s',
-                marginTop: '8px'
-              }}
-            >
-              {loading ? 'Getting Quote...' : 'Get My Quote'}
-            </button>
+                {otpSent && (
+                  <div>
+                    <label style={{ 
+                      display: 'block', 
+                      fontSize: '14px', 
+                      fontWeight: 600, 
+                      color: 'var(--text-primary)',
+                      marginBottom: '8px'
+                    }}>
+                      Enter verification code
+                    </label>
+                    <input
+                      type="text"
+                      name="otp"
+                      placeholder="Enter 6-digit code"
+                      value={formData.otp}
+                      onChange={handleChange}
+                      maxLength={6}
+                      style={{
+                        width: '100%',
+                        padding: '14px 16px',
+                        border: '2px solid var(--line)',
+                        borderRadius: '12px',
+                        fontSize: '16px',
+                        background: 'var(--surface-1)',
+                        color: 'var(--text-primary)',
+                        outline: 'none',
+                        textAlign: 'center',
+                        letterSpacing: '8px'
+                      }}
+                    />
+                  </div>
+                )}
 
-            <p style={{ 
-              fontSize: '14px', 
-              color: 'var(--text-secondary)', 
-              textAlign: 'center', 
-              margin: '16px 0 0 0',
-              lineHeight: 1.5
-            }}>
-              Your information is secure and confidential.<br/>
-              Licensed Canadian insurance advisors respond within 24 hours.
-            </p>
-          </form>
+                <form onSubmit={handleSubmit} style={{ marginTop: '24px' }}>
+                  <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
+                    <button
+                      type="button"
+                      onClick={prevStep}
+                      style={{
+                        flex: 1,
+                        background: 'transparent',
+                        color: 'var(--text-primary)',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        border: '2px solid var(--line)',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Back
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={loading || !formData.email || !formData.otp}
+                      style={{
+                        flex: 2,
+                        background: loading || !formData.email || !formData.otp ? 'var(--line)' : 'var(--brand-green)',
+                        color: 'white',
+                        padding: '16px',
+                        borderRadius: '12px',
+                        border: 'none',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        cursor: loading || !formData.email || !formData.otp ? 'not-allowed' : 'pointer'
+                      }}
+                    >
+                      {loading ? 'Getting Quote...' : 'Get My Quote'}
+                    </button>
+                  </div>
+                </form>
+
+                <p style={{ 
+                  fontSize: '14px', 
+                  color: 'var(--text-secondary)', 
+                  textAlign: 'center', 
+                  margin: '0',
+                  lineHeight: 1.5
+                }}>
+                  Your information is secure and confidential.<br/>
+                  Licensed Canadian insurance advisors respond within 24 hours.
+                </p>
+              </motion.div>
+            )}
+          </div>
         )}
       </motion.div>
     </div>
