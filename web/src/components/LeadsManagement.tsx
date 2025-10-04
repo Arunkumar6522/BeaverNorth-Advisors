@@ -405,6 +405,39 @@ export default function LeadsManagement() {
     return deleteLeadId && deleteReason && deleteComment.trim().length > 0
   }
 
+  // Clickable contact functions
+  const handleEmailClick = async (email: string) => {
+    try {
+      // Copy email to clipboard
+      await navigator.clipboard.writeText(email)
+      alert(`📧 Email copied to clipboard: ${email}`)
+      
+      // Also try to open default email client
+      window.location.href = `mailto:${email}`
+    } catch (error) {
+      // Fallback: just copy to clipboard
+      navigator.clipboard.writeText(email).then(() => {
+        alert(`📧 Email copied to clipboard: ${email}`)
+      })
+    }
+  }
+
+  const handlePhoneClick = async (phone: string) => {
+    try {
+      // Copy phone to clipboard
+      await navigator.clipboard.writeText(phone)
+      alert(`📱 Phone copied to clipboard: ${phone}`)
+      
+      // Also try to open phone dialer
+      window.location.href = `tel:${phone}`
+    } catch (error) {
+      // Fallback: just copy to clipboard
+      navigator.clipboard.writeText(phone).then(() => {
+        alert(`📱 Phone copied to clipboard: ${phone}`)
+      })
+    }
+  }
+
   return (
     <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Header */}
@@ -519,13 +552,52 @@ export default function LeadsManagement() {
                     
                     <TableCell>
                       <Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
-                          <EmailIcon sx={{ fontSize: 16, color: '#6B7280' }} />
-                          <Typography variant="body2">{lead.email}</Typography>
+                        <Box sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 1, 
+                          mb: 0.5,
+                          cursor: 'pointer',
+                          px: 1,
+                          borderRadius: 1,
+                          '&:hover': { backgroundColor: '#f5f5f5' }
+                        }}
+                        onClick={() => handleEmailClick(lead.email)}
+                        >
+                          <EmailIcon sx={{ fontSize: 16, color: '#1976D2' }} />
+                          <Typography 
+                            variant="body2"
+                            sx={{ 
+                              color: '#1976D2',
+                              textDecoration: 'underline',
+                              '&:hover': { fontWeight: 'bold' }
+                            }}
+                          >
+                            {lead.email}
+                          </Typography>
                         </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <PhoneIcon sx={{ fontSize: 16, color: '#6B7280' }} />
-                          <Typography variant="body2">{lead.phone}</Typography>
+                        <Box sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: 1,
+                          cursor: 'pointer',
+                          px: 1,
+                          borderRadius: 1,
+                          '&:hover': { backgroundColor: '#f5f5f5' }
+                        }}
+                        onClick={() => handlePhoneClick(lead.phone)}
+                        >
+                          <PhoneIcon sx={{ fontSize: 16, color: '#1976D2' }} />
+                          <Typography 
+                            variant="body2"
+                            sx={{ 
+                              color: '#1976D2',
+                              textDecoration: 'underline',
+                              '&:hover': { fontWeight: 'bold' }
+                            }}
+                          >
+                            {lead.phone}
+                          </Typography>
                         </Box>
                       </Box>
                     </TableCell>
@@ -676,10 +748,36 @@ export default function LeadsManagement() {
                 <Box>
                   <Typography variant="body2" sx={{ color: '#6B7280', mb: 1 }}>Contact Information</Typography>
                   <Typography variant="body1" sx={{ mb: 1 }}>
-                    📧 <strong>Email:</strong> {getSelectedLead()!.email}
+                    📧 <strong>Email:</strong> 
+                    <Typography 
+                      component="span" 
+                      sx={{ 
+                        color: '#1976D2', 
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                        ml: 1,
+                        '&:hover': { fontWeight: 'bold' }
+                      }}
+                      onClick={() => handleEmailClick(getSelectedLead()!.email)}
+                    >
+                      {getSelectedLead()!.email}
+                    </Typography>
                   </Typography>
                   <Typography variant="body1" sx={{ mb: 1 }}>
-                    📱 <strong>Phone:</strong> {getSelectedLead()!.phone}
+                    📱 <strong>Phone:</strong> 
+                    <Typography 
+                      component="span" 
+                      sx={{ 
+                        color: '#1976D2', 
+                        textDecoration: 'underline',
+                        cursor: 'pointer',
+                        ml: 1,
+                        '&:hover': { fontWeight: 'bold' }
+                      }}
+                      onClick={() => handlePhoneClick(getSelectedLead()!.phone)}
+                    >
+                      {getSelectedLead()!.phone}
+                    </Typography>
                   </Typography>
                   <Typography variant="body1" sx={{ mb: 1 }}>
                     📅 <strong>DOB:</strong> {getSelectedLead()!.dob}
