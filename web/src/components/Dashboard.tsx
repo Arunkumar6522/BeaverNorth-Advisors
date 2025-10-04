@@ -7,8 +7,7 @@ import {
   Avatar,
   FormControl,
   Select,
-  MenuItem,
-  Grid
+  MenuItem
 } from '@mui/material'
 import { 
   TrendingUp, 
@@ -17,9 +16,13 @@ import {
   CheckCircleOutline,
   CalendarToday,
   SmokingRooms,
-  NoSmoking
+  Block as NoSmoking,
+  Male as MaleIcon,
+  Female as FemaleIcon,
+  Help as OthersIcon,
+  VisibilityOff as PreferNotToSayIcon
 } from '@mui/icons-material'
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts'
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 
 interface StatCardProps {
   title: string
@@ -117,6 +120,14 @@ export default function Dashboard() {
     { name: 'Non-Smokers', value: 102, color: '#1976D2' }
   ]
 
+  // Gender status data for donut chart
+  const genderData = [
+    { name: 'Male', value: 68, color: '#2196F3' },
+    { name: 'Female', value: 59, color: '#E91E63' },
+    { name: 'Others', value: 12, color: '#9C27B0' },
+    { name: 'Prefer not to say', value: 8, color: '#607D8B' }
+  ]
+
   const CustomTooltip = ({ active, payload }: any) => {
       if (active && payload && payload.length) {
         return (
@@ -196,9 +207,9 @@ export default function Dashboard() {
         ))}
       </Box>
 
-      {/* Recent Activity */}
-      <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', md: 'row' } }}>
-        <Box sx={{ flex: { xs: '1', md: '3' } }}>
+      {/* Recent Activity & Charts */}
+      <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', lg: 'row' } }}>
+        <Box sx={{ flex: { xs: '1', lg: '4' } }}>
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: '600', mb: 3, color: '#111827' }}>
@@ -251,21 +262,90 @@ export default function Dashboard() {
           </Card>
         </Box>
         
-        <Box sx={{ flex: '1', minWidth: '300px' }}>
-          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
+        <Box sx={{ flex: { xs: '1', lg: '2' }, display: 'flex', gap: 2, flexDirection: { xs: 'column', md: 'row', lg: 'column' } }}>
+          {/* Gender Distribution Chart */}
+          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', flex: 1 }}>
+            <CardContent>
+              <Typography variant="h6" sx={{ fontWeight: '600', mb: 2, color: '#111827' }}>
+                Gender Distribution
+              </Typography>
+              <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                <ResponsiveContainer width="100%" height={180}>
+                  <PieChart>
+                    <Pie
+                      data={genderData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}
+                      outerRadius={70}
+                      paddingAngle={3}
+                      dataKey="value"
+                      label={false}
+                    >
+                      {genderData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', pt: 1, borderTop: '1px solid #f0f0f0' }}>
+                <Box sx={{ textAlign: 'center', minWidth: '45%', mb: 1 }}>
+                  <MaleIcon sx={{ color: '#2196F3', fontSize: 16, mb: 0.5 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#2196F3', fontSize: '0.8rem' }}>
+                    {genderData[0].value} Male
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                    {(genderData[0].value / (genderData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)}%
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center', minWidth: '45%', mb: 1 }}>
+                  <FemaleIcon sx={{ color: '#E91E63', fontSize: 16, mb: 0.5 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#E91E63', fontSize: '0.8rem' }}>
+                    {genderData[1].value} Female
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                    {(genderData[1].value / (genderData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)}%
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center', minWidth: '45%', mb: 1 }}>
+                  <OthersIcon sx={{ color: '#9C27B0', fontSize: 16, mb: 0.5 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#9C27B0', fontSize: '0.8rem' }}>
+                    {genderData[2].value} Others
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                    {(genderData[2].value / (genderData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)}%
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center', minWidth: '45%', mb: 1 }}>
+                  <PreferNotToSayIcon sx={{ color: '#607D8B', fontSize: 16, mb: 0.5 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#607D8B', fontSize: '0.8rem' }}>
+                    {genderData[3].value} Prefer not to say
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                    {(genderData[3].value / (genderData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)}%
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Smoking Status Chart */}
+          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', flex: 1 }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: '600', mb: 2, color: '#111827' }}>
                 Smoking Status Distribution
               </Typography>
               <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
-                <ResponsiveContainer width="100%" height={200}>
+                <ResponsiveContainer width="100%" height={180}>
                   <PieChart>
                     <Pie
                       data={smokingData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={60}
-                      outerRadius={90}
+                      innerRadius={40}
+                      outerRadius={70}
                       paddingAngle={5}
                       dataKey="value"
                       label={false}
@@ -275,27 +355,94 @@ export default function Dashboard() {
                       ))}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
-                    <Legend />
                   </PieChart>
                 </ResponsiveContainer>
               </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-around', pt: 2, borderTop: '1px solid #f0f0f0' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-around', pt: 1, borderTop: '1px solid #f0f0f0' }}>
                 <Box sx={{ textAlign: 'center' }}>
-                  <SmokingRooms sx={{ color: '#FF5722', fontSize: 20, mb: 1 }} />
-                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#FF5722' }}>
+                  <SmokingRooms sx={{ color: '#FF5722', fontSize: 18, mb: 0.5 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#FF5722', fontSize: '0.8rem' }}>
                     {smokingData[0].value} Smokers
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
                     {(smokingData[0].value / (smokingData[0].value + smokingData[1].value) * 100).toFixed(1)}%
                   </Typography>
                 </Box>
                 <Box sx={{ textAlign: 'center' }}>
-                  <NoSmoking sx={{ color: '#1976D2', fontSize: 20, mb: 1 }} />
-                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#1976D2' }}>
+                  <NoSmoking sx={{ color: '#1976D2', fontSize: 18, mb: 0.5 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#1976D2', fontSize: '0.8rem' }}>
                     {smokingData[1].value} Non-Smokers
                   </Typography>
-                  <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
                     {(smokingData[1].value / (smokingData[0].value + smokingData[1].value) * 100).toFixed(1)}%
+                  </Typography>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+
+          {/* Gender Distribution Chart */}
+          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', flex: 1 }}>
+            <CardContent>
+              <Typography variant="h6" sx={{ fontWeight: '600', mb: 2, color: '#111827' }}>
+                Gender Distribution
+              </Typography>
+              <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
+                <ResponsiveContainer width="100%" height={180}>
+                  <PieChart>
+                    <Pie
+                      data={genderData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}
+                      outerRadius={70}
+                      paddingAngle={3}
+                      dataKey="value"
+                      label={false}
+                    >
+                      {genderData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Box>
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-around', pt: 1, borderTop: '1px solid #f0f0f0' }}>
+                <Box sx={{ textAlign: 'center', minWidth: '45%', mb: 1 }}>
+                  <MaleIcon sx={{ color: '#2196F3', fontSize: 16, mb: 0.5 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#2196F3', fontSize: '0.8rem' }}>
+                    {genderData[0].value} Male
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                    {(genderData[0].value / (genderData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)}%
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center', minWidth: '45%', mb: 1 }}>
+                  <FemaleIcon sx={{ color: '#E91E63', fontSize: 16, mb: 0.5 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#E91E63', fontSize: '0.8rem' }}>
+                    {genderData[1].value} Female
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                    {(genderData[1].value / (genderData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)}%
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center', minWidth: '45%', mb: 1 }}>
+                  <OthersIcon sx={{ color: '#9C27B0', fontSize: 16, mb: 0.5 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#9C27B0', fontSize: '0.8rem' }}>
+                    {genderData[2].value} Others
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                    {(genderData[2].value / (genderData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)}%
+                  </Typography>
+                </Box>
+                <Box sx={{ textAlign: 'center', minWidth: '45%', mb: 1 }}>
+                  <PreferNotToSayIcon sx={{ color: '#607D8B', fontSize: 16, mb: 0.5 }} />
+                  <Typography variant="body2" sx={{ fontWeight: '600', color: '#607D8B', fontSize: '0.8rem' }}>
+                    {genderData[3].value} Prefer not to say
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                    {(genderData[3].value / (genderData.reduce((sum, item) => sum + item.value, 0)) * 100).toFixed(1)}%
                   </Typography>
                 </Box>
               </Box>

@@ -12,6 +12,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
     name: '',
+    gender: '' as 'male' | 'female' | 'others' | 'prefer-not-to-say',
     dob: '',
     smokingStatus: '',
     province: '',
@@ -94,7 +95,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           setSubmitted(false)
           setCurrentStep(1)
           setOtpSent(false)
-          setFormData({ name: '', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '' })
+          setFormData({ name: '', gender: '' as 'male' | 'female' | 'others' | 'prefer-not-to-say', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '' })
         }, 2000)
       } else {
         alert(verificationResult.message)
@@ -353,6 +354,41 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   <label style={{ 
                     display: 'block', 
                     fontSize: '14px', 
+                    fontWeight: '500', 
+                    color: '#374151',
+                    marginBottom: '8px'
+                  }}>
+                    Gender *
+                  </label>
+                  <select
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    required
+                    style={{
+                      width: '100%',
+                      padding: '16px',
+                      border: '1px solid #D1D5DB',
+                      borderRadius: '8px',
+                      fontSize: '16px',
+                      background: '#ffffff',
+                      color: '#111827',
+                      outline: 'none',
+                      transition: 'border-color 0.2s'
+                    }}
+                  >
+                    <option value="">Select your gender</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="others">Others</option>
+                    <option value="prefer-not-to-say">Prefer not to say</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '14px', 
                     fontWeight: 600, 
                     color: 'var(--text-primary)',
                     marginBottom: '8px'
@@ -381,10 +417,10 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <button
                   type="button"
                   onClick={nextStep}
-                  disabled={!formData.name || !formData.dob}
+                  disabled={!formData.name || !formData.gender || !formData.dob}
                   style={{
                     width: '100%',
-                    background: !formData.name || !formData.dob ? 'var(--line)' : 'var(--brand-green)',
+                    background: !formData.name || !formData.gender || !formData.dob ? 'var(--line)' : 'var(--brand-green)',
                     color: 'white',
                     padding: '16px',
                     borderRadius: '12px',

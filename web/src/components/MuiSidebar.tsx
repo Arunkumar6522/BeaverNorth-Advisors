@@ -5,7 +5,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  ListItemSecondaryAction,
   Box,
   Typography,
   useTheme,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   Card,
@@ -16,13 +16,10 @@ import {
   Modal
 } from '@mui/material'
 import {
-  DeleteForever,
-  RestoreFromTrash,
   Refresh as RestoreIcon,
   Email as EmailIcon,
   Phone as PhoneIcon,
   Visibility as ViewIcon,
-  ContentCopy,
   Close as CloseIcon
 } from '@mui/icons-material'
 
@@ -327,7 +324,7 @@ export default function DeletedLeads() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {deletedLeads.map((lead, index) => (
+                {deletedLeads.map((lead, _index) => (
                   <TableRow key={lead.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

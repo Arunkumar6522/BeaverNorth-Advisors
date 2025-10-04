@@ -142,8 +142,7 @@ export default function LeadsManagement() {
   const [leads, setLeads] = useState<Lead[]>(sampleLeads)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setFilter] = useState<'all' | 'new' | 'contacted' | 'converted'>('all')
-  const [currentTab, setCurrentTab] = useState<'active' | 'closed'>(0)
-  const [loading, setLoading] = useState(true)
+  const [currentTab, setCurrentTab] = useState<'active' | 'closed'>('active')
   
   // Modal states
   const [viewModalOpen, setViewModalOpen] = useState(false)
@@ -165,7 +164,7 @@ export default function LeadsManagement() {
   const [rowsPerPage, setRowsPerPage] = useState(10)
 
   // Tab change handler
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue === 0 ? 'active' : 'closed')
     setPage(0) // Reset to first page when switching tabs
   }
@@ -206,7 +205,6 @@ export default function LeadsManagement() {
       } catch (error: any) {
         console.error('❌ Error fetching leads:', error)
       } finally {
-        setLoading(false)
       }
     }
 
@@ -228,7 +226,7 @@ export default function LeadsManagement() {
     if (searchTerm) {
       filtered = filtered.filter(lead =>
         lead.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        kead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         lead.phone.includes(searchTerm) ||
         lead.province.toLowerCase().includes(searchTerm.toLowerCase()) ||
         lead.insurance_product.toLowerCase().includes(searchTerm.toLowerCase())
@@ -545,7 +543,7 @@ export default function LeadsManagement() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {paginatedLeads.map((lead, index) => (
+                {paginatedLeads.map((lead, _index) => (
                   <TableRow key={lead.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -703,7 +701,7 @@ export default function LeadsManagement() {
             count={filteredLeads.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onPageChange={(event, newPage) => setPage(newPage)}
+            onPageChange={(_event, newPage) => setPage(newPage)}
             onRowsPerPageChange={(event) => {
               setRowsPerPage(parseInt(event.target.value, 10))
               setPage(0)
@@ -813,7 +811,7 @@ export default function LeadsManagement() {
                   </Typography>
                   {getSelectedLead()!.last_contact_date && (
                     <Typography variant="body1">
-                      📅 <strong>Last Contacted:</strong> {formatDate(getSelectedLead()!.last_contact_date)}
+                      📅 <strong>Last Contacted:</strong> {formatDate(getSelectedLead()!.last_contact_date || getSelectedLead()!.created_at)}
                     </Typography>
                   )}
                 </Box>
