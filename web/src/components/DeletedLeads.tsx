@@ -2,24 +2,24 @@ import React, { useState, useEffect } from 'react'
 import {
   Box,
   Card,
-  CardContent,
   Typography,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  ListItemSecondaryAction,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Chip,
   IconButton,
   Avatar,
-  Chip,
-  Paper,
   Button
 } from '@mui/material'
 import {
   DeleteForever,
   RestoreFromTrash,
   Refresh as RestoreIcon,
-  Undo as UndoIcon
+  Email as EmailIcon,
+  Phone as PhoneIcon
 } from '@mui/icons-material'
 
 interface DeletedLead {
@@ -81,7 +81,6 @@ const sampleDeletedLeads: DeletedLead[] = [
 
 export default function DeletedLeads() {
   const [deletedLeads, setDeletedLeads] = useState<DeletedLead[]>(sampleDeletedLeads)
-  const [selectedLead, setSelectedLead] = useState<string | null>(null)
 
   // Fetch deleted leads from Supabase
   useEffect(() => {
@@ -194,22 +193,22 @@ export default function DeletedLeads() {
   }
 
   return (
-    <Box sx={{ px: 2 }}>
+    <Box sx={{ height: '100vh', overflow: 'hidden' }}>
       {/* Header */}
-      <Box sx={{ mb: 4 }}>
+      <Box sx={{ mb: 3, px: 2 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1 }}>
           🗑️ Deleted Leads
         </Typography>
-        <Typography variant="body1" sx={{ color: '#6B9280' }}>
+        <Typography variant="body1" sx={{ color: '#6B7280' }}>
           View and manage deleted leads. You can restore them or permanently delete them.
         </Typography>
       </Box>
 
       {/* Actions */}
-      <Box sx={{ mb: 3 }}>
+      <Box sx={{ mb: 3, px: 2 }}>
         <Button
           variant="outlined"
-          startIcon={<RefreshIcon />}
+          startIcon={<RestoreIcon />}
           sx={{
             borderColor: '#1976D2',
             color: '#1976D2',
@@ -224,129 +223,132 @@ export default function DeletedLeads() {
         </Button>
       </Box>
 
-      {/* Deleted Leads List */}
-      {deletedLeads.length === 0 ? (
-        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', p: 4, textAlign: 'center' }}>
-          <Typography variant="h6" sx={{ color: '#666666', mb: 2 }}>
-            No Deleted Leads
-          </Typography>
-          <Typography variant="body2" sx={{ color: '#999999' }}>
-            All your deleted leads will appear here. You can restore them or permanently delete them.
-          </Typography>
-        </Card>
-      ) : (
-        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
-          <CardContent sx={{ p: 0 }}>
-            <List sx={{ py: 1 }}>
-              {deletedLeads.map((lead, index) => (
-                <ListItem
-                  key={lead.id}
-                  divider={index < deletedLeads.length - 1}
-                  sx={{ px: 3, py: 2 }}
-                >
-                  <ListItemButton
-                    selected={selectedLead === lead.id}
-                    onClick={() => setSelectedLead(selectedLead === lead.id ? null : lead.id)}
-                    sx={{
-                      borderRadius: 1.5,
-                      backgroundColor: selectedLead === lead.id ? '#f0f4ff' : 'transparent',
-                      '&:hover': {
-                        backgroundColor: selectedLead === lead.id ? '#e3f2fd' : '#f9f9f9'
-                      },
-                      '&.Mui-selected': {
-                        backgroundColor: '#f0f4ff'
-                      }
-                    }}
-                  >
-                    <Avatar sx={{ 
-                      bgcolor: '#FF5722', 
-                      width: 48, 
-                      height: 48,
-                      fontSize: 16,
-                      fontWeight: 'bold',
-                      mr: 2
-                    }}>
-                      {(lead.name.split(' ').map(n => n[0]).join('')).substring(0, 2)}
-                    </Avatar>
-                    
-                    <ListItemText
-                      primary={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 0.5 }}>
-                          <Typography variant="body1" sx={{ fontWeight: '600', color: '#333' }}>
+      {/* Deleted Leads Table */}
+      <Box sx={{ height: 'calc(100vh - 200px)', overflow: 'hidden', mx: 2 }}>
+        {deletedLeads.length === 0 ? (
+          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', p: 4, textAlign: 'center' }}>
+            <Typography variant="h6" sx={{ color: '#666666', mb: 2 }}>
+              No Deleted Leads
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#999999' }}>
+              All your deleted leads will appear here. You can restore them or permanently delete them.
+            </Typography>
+          </Card>
+        ) : (
+          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%' }}>
+            <TableContainer sx={{ height: '100%', overflow: 'auto' }}>
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: '#F9FAFB' }}>
+                    <TableCell sx={{ fontWeight: '600', minWidth: 200 }}>Lead</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: 180 }}>Contact</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: 150 }}>Product</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: 120 }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: 130 }}>Deleted On</TableCell>
+                    <TableCell sx={{ fontWeight: '600', textAlign: 'center', minWidth: 140 }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {deletedLeads.map((lead, index) => (
+                  <TableRow key={lead.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Avatar sx={{ bgcolor: '#FF5722', width: 40, height: 40 }}>
+                          {lead.name.split(' ').map(n => n[0]).join('')}
+                        </Avatar>
+                        <Box>
+                          <Typography variant="body2" sx={{ fontWeight: '500' }}>
                             {lead.name}
                           </Typography>
-                          <Chip
-                            label={lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
-                            size="small"
-                            sx={{
-                              backgroundColor: `${getStatusColor(lead.status)}20`,
-                              color: getStatusColor(lead.status),
-                              fontWeight: '600',
-                              fontSize: '0.75rem'
-                            }}
-                          />
-                        </Box>
-                      }
-                      secondary={
-                        <Box sx={{ mt: 1 }}>
-                          <Typography variant="body2" sx={{ color: '#666', mb: 0.5 }}>
-                            📧 {lead.email} • 📱 {lead.phone}
-                          </Typography>
-                          <Typography variant="body2" sx={{ color: '#666', mb: 0.5 }}>
-                            📅 DOB: {lead.dob} • 🌍 {lead.province} • 🚭 {lead.smoking_status}
-                          </Typography>
-                          <Typography variant="body2" sx={{ color: '#666', mb: 1 }}>
-                            🏥 {lead.insurance_product}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: '#999' }}>
-                            Deleted on: {formatDate(lead.deleted_at)}
+                          <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                            {lead.province} • {lead.dob}
                           </Typography>
                         </Box>
-                      }
-                    />
+                      </Box>
+                    </TableCell>
                     
-                    <ListItemSecondaryAction sx={{ gap: 1 }}>
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleRestoreLead(lead.id)
-                        }}
+                    <TableCell>
+                      <Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}>
+                          <EmailIcon sx={{ fontSize: 14, color: '#6B7280' }} />
+                          <Typography variant="caption">{lead.email}</Typography>
+                        </Box>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <PhoneIcon sx={{ fontSize: 14, color: '#6B7280' }} />
+                          <Typography variant="caption">{lead.phone}</Typography>
+                        </Box>
+                      </Box>
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography variant="caption" sx={{ fontWeight: '500' }}>
+                        {lead.insurance_product}
+                      </Typography>
+                      <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                        {lead.smoking_status}
+                      </Typography>
+                    </TableCell>
+
+                    <TableCell>
+                      <Chip
+                        label={lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
+                        size="small"
                         sx={{
-                          color: '#1976D2',
-                          backgroundColor: '#f0f4ff',
-                          '&:hover': {
-                            backgroundColor: '#e3f2fd'
-                          }
+                          backgroundColor: `${getStatusColor(lead.status)}20`,
+                          color: getStatusColor(lead.status),
+                          fontWeight: '600',
+                          fontSize: '0.7rem'
                         }}
-                        title="Restore Lead"
-                      >
-                        <RestoreFromTrash />
-                      </IconButton>
-                      
-                      <IconButton
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handlePermanentDelete(lead.id)
-                        }}
-                        sx={{
-                          color: '#F44336',
-                          backgroundColor: '#fff5f5',
-                          '&:hover': {
-                            backgroundColor: '#ffebee'
-                          }
-                        }}
-                        title="Permanently Delete"
-                      >
-                        <DeleteForever />
-                      </IconButton>
-                    </ListItemSecondaryAction>
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </CardContent>
-        </Card>
-      )}
+                      />
+                    </TableCell>
+
+                    <TableCell>
+                      <Typography variant="caption" sx={{ fontWeight: '500' }}>
+                        {formatDate(lead.deleted_at)}
+                      </Typography>
+                    </TableCell>
+
+                    <TableCell align="center">
+                      <Box sx={{ display: 'flex', justifyContent: 'center', gap: 0.5 }}>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleRestoreLead(lead.id)}
+                          sx={{
+                            color: '#1976D2',
+                            backgroundColor: '#f0f4ff',
+                            '&:hover': { backgroundColor: '#e3f2fd' },
+                            width: 32,
+                            height: 32
+                          }}
+                          title="Restore Lead"
+                        >
+                          <RestoreFromTrash sx={{ fontSize: 16 }} />
+                        </IconButton>
+                        
+                        <IconButton
+                          size="small"
+                          onClick={() => handlePermanentDelete(lead.id)}
+                          sx={{
+                            color: '#F44336',
+                            backgroundColor: '#fff5f5',
+                            '&:hover': { backgroundColor: '#ffebee' },
+                            width: 32,
+                            height: 32
+                          }}
+                          title="Permanently Delete"
+                        >
+                          <DeleteForever sx={{ fontSize: 16 }} />
+                        </IconButton>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          </Card>
+        )}
+      </Box>
     </Box>
   )
 }

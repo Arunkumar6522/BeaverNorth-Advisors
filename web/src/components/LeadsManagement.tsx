@@ -406,7 +406,7 @@ export default function LeadsManagement() {
   }
 
   return (
-    <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100vh', overflow: 'hidden' }}>
       {/* Header */}
       <Box sx={{ mb: 3, px: 2 }}>
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1 }}>
@@ -482,9 +482,9 @@ export default function LeadsManagement() {
       </Card>
 
       {/* Full Screen Table */}
-      <Box sx={{ flex: 1, overflow: 'hidden', mx: 2 }}>
+      <Box sx={{ height: 'calc(100vh - 200px)', overflow: 'hidden', mx: 2 }}>
         <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%', display: 'flex', flexDirection: 'column' }}>
-          <TableContainer sx={{ flex: 1 }}>
+          <TableContainer sx={{ flex: 1, overflow: 'auto' }}>
             <Table stickyHeader>
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#F9FAFB' }}>

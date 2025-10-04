@@ -110,7 +110,7 @@ export default function Dashboard() {
               color: '#333',
               boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
               zIndex: theme => theme.zIndex.drawer + 1,
-              ml: sidebarOpen ? '240px' : '64px',
+              ml: 0,
               width: sidebarOpen ? 'calc(100% - 240px)' : 'calc(100% - 64px)',
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
