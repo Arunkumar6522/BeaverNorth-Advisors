@@ -138,14 +138,15 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         exit={{ opacity: 0, scale: 0.9, y: 20 }}
         transition={{ duration: 0.3 }}
         style={{
-          background: 'var(--surface-1)',
-          borderRadius: '20px',
-          padding: '32px',
+          background: '#ffffff',
+          borderRadius: '24px',
+          padding: '40px',
           width: '100%',
-          maxWidth: '500px',
+          maxWidth: '420px',
           maxHeight: '90vh',
           overflow: 'auto',
-          boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+          boxShadow: '0 32px 64px rgba(0,0,0,0.12)',
+          border: '1px solid rgba(0,0,0,0.08)',
           position: 'relative'
         }}
         onClick={(e) => e.stopPropagation()}
@@ -155,37 +156,54 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           onClick={onClose}
           style={{
             position: 'absolute',
-            top: '16px',
-            right: '16px',
+            top: '20px',
+            right: '20px',
             border: 'none',
-            fontSize: '24px',
+            fontSize: '20px',
             cursor: 'pointer',
-            color: 'var(--text-secondary)',
+            color: '#9CA3AF',
             width: '32px',
             height: '32px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: '50%',
-            background: 'var(--surface-2)'
+            background: 'transparent',
+            transition: 'all 0.2s ease'
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = '#F3F4F6'
+            e.currentTarget.style.color = '#374151'
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = 'transparent'
+            e.currentTarget.style.color = '#9CA3AF'
           }}
         >
           ×
         </button>
 
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <img 
-            src="/favicon.png" 
-            alt="BeaverNorth Advisors" 
-            style={{ height: '40px', width: '40px', marginBottom: '12px' }}
-          />
-          <h2 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)' }}>
-            {currentStep === 1 ? 'Personal Information' : 
-             currentStep === 2 ? `${formData.name}, tell us about you` :
-             'Verify Your Contact'}
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <h2 style={{ 
+            margin: '0 0 8px 0', 
+            color: '#111827', 
+            fontSize: '24px',
+            fontWeight: '600',
+            letterSpacing: '-0.02em'
+          }}>
+            {currentStep === 1 ? 'Get Started' : 
+             currentStep === 2 ? `Hi ${formData.name} 👋` :
+             'Almost Done'}
           </h2>
-          <p style={{ margin: '0 0 16px 0', color: 'var(--text-secondary)', fontSize: '16px' }}>
-            Step {currentStep} of 3
+          <p style={{ 
+            margin: '0 0 24px 0', 
+            color: '#6B7280', 
+            fontSize: '15px',
+            fontWeight: '400'
+          }}>
+            {currentStep === 1 ? 'Tell us about yourself' : 
+             currentStep === 2 ? 'Help us personalize your quote' :
+             'Verify your contact information'}
           </p>
           
           {/* Progress Bar */}
@@ -209,16 +227,16 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             />
           </div>
           
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '6px' }}>
             {[1, 2, 3].map((step) => (
               <div
                 key={step}
                 style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '50%',
-                  background: step <= currentStep ? 'var(--brand-green)' : 'var(--line)',
-                  transition: 'background 0.3s ease'
+                  width: step === currentStep ? '24px' : '8px',
+                  height: '3px',
+                  borderRadius: '2px',
+                  background: step <= currentStep ? '#22C55E' : '#E5E7EB',
+                  transition: 'all 0.3s ease'
                 }}
               />
             ))}
@@ -263,34 +281,36 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 style={{ display: 'grid', gap: '20px' }}
               >
                 <div>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '14px', 
-                    fontWeight: 600, 
-                    color: 'var(--text-primary)',
-                    marginBottom: '8px'
-                  }}>
-                    What's your full name? *
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Enter your full name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '2px solid var(--line)',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      background: 'var(--surface-1)',
-                      color: 'var(--text-primary)',
-                      outline: 'none',
-                      transition: 'border-color 0.2s'
-                    }}
-                  />
+                          <label style={{ 
+                            display: 'block', 
+                            fontSize: '14px', 
+                            fontWeight: '500', 
+                            color: '#374151',
+                            marginBottom: '8px'
+                          }}>
+                            Full name
+                          </label>
+                          <input
+                            type="text"
+                            name="name"
+                            placeholder="John Doe"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                            style={{
+                              width: '100%',
+                              padding: '16px',
+                              border: '1px solid #D1D5DB',
+                              borderRadius: '8px',
+                              fontSize: '16px',
+                              background: '#ffffff',
+                              color: '#111827',
+                              outline: 'none',
+                              transition: 'border-color 0.2s'
+                            }}
+                            onFocus={(e) => e.target.style.borderColor = '#22C55E'}
+                            onBlur={(e) => e.target.style.borderColor = '#D1D5DB'}
+                          />
                 </div>
 
                 <div>
@@ -726,15 +746,15 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       color: 'var(--text-secondary)',
                       marginBottom: '12px'
                     }}>
-                      🔐 Enter the 6-digit code from your SMS
+                      🔐 Enter the 4-digit code from your SMS
                     </p>
                     <input
                       type="text"
                       name="otp"
-                      placeholder="123456"
+                      placeholder="1234"
                       value={formData.otp}
                       onChange={handleChange}
-                      maxLength={6}
+                      maxLength={4}
                       style={{
                         width: '100%',
                         padding: '14px 16px',

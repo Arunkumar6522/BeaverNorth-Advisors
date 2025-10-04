@@ -97,7 +97,7 @@ export async function sendOTP(phoneNumber: string): Promise<{ success: boolean; 
     // Fallback to demo mode if backend is not available
     console.log('🔄 Falling back to demo mode...')
     
-    const otp = Math.floor(100000 + Math.random() * 900000).toString()
+    const otp = Math.floor(1000 + Math.random() * 9000).toString()
     const sessionData = {
       otp,
       phone: fullNumber,
@@ -108,11 +108,14 @@ export async function sendOTP(phoneNumber: string): Promise<{ success: boolean; 
     sessionStorage.setItem('twilio_otp_session', JSON.stringify(sessionData))
     
     console.log('🔐 Demo OTP generated:', otp)
+    console.log('📱 SMS simulation:', formatPhoneNumber(fullNumber))
+    console.log(`✅ OTP: ${otp} - Use this code to complete verification`)
     
     return {
       success: true,
-      message: `Demo OTP sent to ${formatPhoneNumber(fullNumber)} (Check console for code: ${otp})`,
-      sessionId: 'demo_session_' + Date.now()
+      message: `Demo ready - check console for OTP: ${otp}`,
+      sessionId: 'demo_session_' + Date.now(),
+      demoOtp: otp
     }
   }
 }
