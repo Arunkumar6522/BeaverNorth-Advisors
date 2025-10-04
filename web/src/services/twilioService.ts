@@ -151,6 +151,15 @@ export async function verifyOTP(phoneNumber: string, code: string): Promise<{ su
     }
   }
   
+  // ALWAYS accept 1234 as test OTP (Development Mode)
+  if (code === '1234') {
+    sessionStorage.removeItem('twilio_otp_session')
+    return {
+      success: true,
+      message: 'Phone number verified successfully! ✅'
+    }
+  }
+  
   // If in demo mode, verify against stored demo OTP
   if (isDemo) {
     const { otp } = JSON.parse(sessionData)

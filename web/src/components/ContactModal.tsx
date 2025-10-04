@@ -89,6 +89,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         // Save lead to Supabase
         await saveLeadToSupabase()
         
+        // Show success alert
+        alert('✅ Quote Request Submitted Successfully!\n\nThank you for your interest. Our team will review your information and contact you shortly.')
+        
         setLoading(false)
         setSubmitted(true)
         setTimeout(() => {
@@ -97,7 +100,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           setCurrentStep(1)
           setOtpSent(false)
           setFormData({ name: '', gender: '' as 'male' | 'female' | 'others' | 'prefer-not-to-say', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '', referralCode: '' })
-        }, 2000)
+        }, 1000)
       } else {
         alert(verificationResult.message)
       }
