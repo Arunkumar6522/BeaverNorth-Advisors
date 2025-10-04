@@ -373,32 +373,44 @@ export default function LeadsManagement() {
 
   const confirmDelete = async () => {
     if (!deleteLeadId || !deleteReason || !deleteComment) {
+      alert('Please provide both reason and comment')
       return
     }
 
     try {
+      console.log('🗑️ Deleting lead:', deleteLeadId)
+      
+      // Get current user
+      const username = localStorage.getItem('username') || 'Admin'
+      
       // Soft delete in Supabase
       const { supabase } = await import('../lib/supabase')
       const { error } = await supabase
         .from('leads')
         .update({
-          deleted: true,
           deleted_at: new Date().toISOString(),
           delete_reason: deleteReason,
-          delete_comment: deleteComment
+          delete_comment: deleteComment,
+          deleted_by: username
         })
         .eq('id', deleteLeadId)
 
       if (error) {
         console.error('❌ Error deleting lead:', error)
+        alert(`Failed to delete lead: ${error.message}`)
         return
       }
 
       // Remove from local state
       setLeads(leads.filter(lead => lead.id !== deleteLeadId))
       console.log('✅ Lead soft deleted successfully')
-    } catch (error) {
+      alert('Lead moved to Deleted Leads successfully!')
+      
+      // Refresh leads to get updated data
+      window.location.reload()
+    } catch (error: any) {
       console.error('❌ Error deleting lead:', error)
+      alert(`Error: ${error.message}`)
     }
 
     closeDeleteDialog()

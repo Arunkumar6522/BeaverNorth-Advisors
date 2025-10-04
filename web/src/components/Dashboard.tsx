@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { 
   Box, 
   Card, 
@@ -59,8 +59,17 @@ function StatCard({ title, value, icon, color, change }: StatCardProps) {
   )
 }
 
+interface ActivityLog {
+  id: string
+  activity_type: string
+  description: string
+  created_at: string
+  new_value?: string
+}
+
 export default function Dashboard() {
   const [timePeriod, setTimePeriod] = useState('month')
+  const [recentActivity, setRecentActivity] = useState<ActivityLog[]>([])
 
   const timePeriods = [
     { value: 'today', label: 'Today', icon: CalendarToday },
@@ -127,6 +136,78 @@ export default function Dashboard() {
     { name: 'Others', value: 12, color: '#9C27B0' },
     { name: 'Prefer not to say', value: 8, color: '#607D8B' }
   ]
+
+  // Fetch recent activity from Supabase
+  useEffect(() => {
+    const fetchActivity = async () => {
+      try {
+        const { supabase } = await import('../lib/supabase')
+        const { data, error } = await supabase
+          .from('activity_log')
+          .select('*')
+          .order('created_at', { ascending: false })
+          .limit(10)
+
+        if (error) {
+          console.error('❌ Error fetching activity:', error)
+          return
+        }
+
+        if (data) {
+          console.log('✅ Activity fetched:', data)
+          setRecentActivity(data)
+        }
+      } catch (error) {
+        console.error('❌ Error fetching activity:', error)
+      }
+    }
+
+    fetchActivity()
+  }, [])
+
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case 'lead_created':
+        return <People sx={{ fontSize: 20 }} />
+      case 'status_changed':
+        return <TrendingUp sx={{ fontSize: 20 }} />
+      case 'lead_deleted':
+        return <CheckCircleOutline sx={{ fontSize: 20 }} />
+      case 'contact_made':
+        return <Phone sx={{ fontSize: 20 }} />
+      default:
+        return <People sx={{ fontSize: 20 }} />
+    }
+  }
+
+  const getActivityColor = (type: string) => {
+    switch (type) {
+      case 'lead_created':
+        return '#22C55E'
+      case 'status_changed':
+        return '#3B82F6'
+      case 'lead_deleted':
+        return '#EF4444'
+      case 'contact_made':
+        return '#F59E0B'
+      default:
+        return '#6B7280'
+    }
+  }
+
+  const formatTimeAgo = (dateString: string) => {
+    const now = new Date()
+    const then = new Date(dateString)
+    const diffMs = now.getTime() - then.getTime()
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
+
+    if (diffMins < 1) return 'Just now'
+    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
+    return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`
+  }
 
   const CustomTooltip = ({ active, payload }: any) => {
       if (active && payload && payload.length) {
@@ -323,50 +404,30 @@ export default function Dashboard() {
             <Typography variant="h6" sx={{ fontWeight: '600', mb: 3, color: '#111827' }}>
               Recent Lead Activity
             </Typography>
+            {recentActivity.length === 0 ? (
+              <Typography variant="body2" sx={{ color: '#6B7280', textAlign: 'center', py: 4 }}>
+                No recent activity yet
+              </Typography>
+            ) : (
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Avatar sx={{ bgcolor: '#22C55E', width: 32, height: 32 }}>
-                    <People sx={{ fontSize: 20 }} />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="body1" sx={{ fontWeight: '500' }}>
-                      John Smith submitted a quote request
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                      Term Life Insurance - 2 minutes ago
-                    </Typography>
+                {recentActivity.map((activity) => (
+                  <Box key={activity.id} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Avatar sx={{ bgcolor: getActivityColor(activity.activity_type), width: 32, height: 32 }}>
+                      {getActivityIcon(activity.activity_type)}
+                    </Avatar>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="body1" sx={{ fontWeight: '500' }}>
+                        {activity.description}
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                        {activity.new_value && `${activity.new_value} - `}{formatTimeAgo(activity.created_at)}
+                      </Typography>
+                    </Box>
                   </Box>
-                </Box>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Avatar sx={{ bgcolor: '#3B82F6', width: 32, height: 32 }}>
-                    <CheckCircleOutline sx={{ fontSize: 20 }} />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="body1" sx={{ fontWeight: '500' }}>
-                      Sarah Johnson converted to client
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                      Whole Life Insurance - 15 minutes ago
-                    </Typography>
-                  </Box>
-                </Box>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Avatar sx={{ bgcolor: '#F59E0B', width: 32, height: 32 }}>
-                    <Phone sx={{ fontSize: 20 }} />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="body1" sx={{ fontWeight: '500' }}>
-                      Follow-up call with Michael Brown
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                      Travel Insurance - 1 hour ago
-                    </Typography>
-                  </Box>
-                </Box>
+                ))}
               </Box>
-            </CardContent>
+            )}
+          </CardContent>
           </Card>
       </Box>
     </Box>
