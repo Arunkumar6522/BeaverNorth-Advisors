@@ -1,124 +1,237 @@
 import './App.css'
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useI18n } from './i18n'
 import Nav from './components/Nav'
 import TopBar from './components/TopBar'
 import Footer from './components/Footer'
+import ContactModal from './components/ContactModal'
 
 export default function App() {
   const { t } = useI18n()
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false)
+  
   return (
     <div style={{ minHeight: '100vh', color: 'var(--text-primary)' }}>
       <TopBar />
       <Nav />
-      <main style={{ maxWidth: 1200, margin: '0 auto', padding: '16px 12px' }}>
-        {/* HERO – rounded visual banner with overlay card and CTAs */}
-        <section style={{ marginTop: 8 }}>
+      <main style={{ padding: '20px' }}>
+        {/* HERO Section - Mobile First Design */}
+        <section style={{ marginBottom: '40px' }}>
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.8 }}
             style={{
               position: 'relative',
-              borderRadius: 16,
+              borderRadius: '24px',
               overflow: 'hidden',
-              height: '320px',
-              border: '1px solid var(--line)',
-              background: `url(https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=2000&auto=format&fit=crop) center/cover no-repeat`,
-              boxShadow: '0 10px 40px rgba(0,0,0,0.25)'
+              minHeight: '500px',
+              background: `
+                linear-gradient(135deg, 
+                  rgba(10,37,64,0.9) 0%, 
+                  rgba(34,197,94,0.8) 50%,
+                  rgba(242,169,0,0.7) 100%
+                ),
+                url(https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=2000&auto=format&fit=crop) 
+                center/cover no-repeat`
             }}
           >
-            {/* gradient for readability */}
-            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(10,37,64,0.65) 0%, rgba(10,37,64,0.25) 60%, rgba(10,37,64,0.0) 100%)' }} />
+            {/* Content Container */}
+            <div style={{ 
+              position: 'absolute', 
+              inset: 0, 
+              display: 'flex', 
+              flexDirection: 'column', 
+              justifyContent: 'center', 
+              padding: '40px 24px',
+              textAlign: 'center'
+            }}>
+              {/* Logo and Brand */}
+              <div style={{ marginBottom: '24px' }}>
+                <img 
+                  src="/favicon.png" 
+                  alt="BeaverNorth Advisors" 
+                  style={{ 
+                    height: '48px', 
+                    width: '48px', 
+                    marginBottom: '12px',
+                    filter: 'brightness(0) invert(1)'
+                  }} 
+                />
+                <p style={{ 
+                  margin: 0, 
+                  color: 'white', 
+                  fontSize: '14px', 
+                  opacity: 0.9,
+                  fontWeight: 500,
+                  letterSpacing: '0.5px'
+                }}>
+                  {t('hero_tag')}
+                </p>
+              </div>
 
-            {/* Headline + CTAs */}
-            <div style={{ position: 'absolute', left: '16px', top: '16px', right: '16px' }}>
-              <p style={{ margin: 0, color: 'white', fontSize: '14px', opacity: 0.9 }}>{t('hero_tag')}</p>
-              <h1 style={{ color: 'white', fontSize: '28px', lineHeight: 1.1, margin: '6px 0 12px 0' }}>
+              {/* Main Headline */}
+              <h1 style={{ 
+                color: 'white', 
+                fontSize: '32px', 
+                lineHeight: 1.2, 
+                margin: '0 0 16px 0',
+                fontWeight: 800,
+                textShadow: '0 2px 10px rgba(0,0,0,0.3)'
+              }}>
                 {t('hero_headline_1')}<br />{t('hero_headline_2')}
               </h1>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxWidth: '400px' }}>
-                <Link to="/contact" style={{ background: 'var(--brand-green)', color: 'white', padding: '12px 16px', borderRadius: 999, textDecoration: 'none', fontWeight: 700, textAlign: 'center' }}>{t('cta_get_in_touch')} ↗</Link>
-                <a href="#services" style={{ color: 'white', padding: '12px 16px', borderRadius: 999, textDecoration: 'none', border: '1px solid rgba(255,255,255,0.6)', textAlign: 'center' }}>{t('cta_our_services')} →</a>
+
+              {/* Subheading */}
+              <p style={{ 
+                color: 'rgba(255,255,255,0.95)', 
+                fontSize: '18px', 
+                marginBottom: '32px',
+                fontWeight: 400,
+                maxWidth: '300px',
+                margin: '0 auto 32px'
+              }}>
+                Expert insurance guidance for Canadian families and businesses
+              </p>
+
+              {/* CTA Buttons */}
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                gap: '12px',
+                alignItems: 'center'
+              }}>
+                <button
+                  onClick={() => setIsContactModalOpen(true)}
+                  style={{ 
+                    background: 'white', 
+                    color: 'var(--brand-green)', 
+                    padding: '16px 32px', 
+                    borderRadius: '999px', 
+                    border: 'none',
+                    fontWeight: 700, 
+                    fontSize: '16px',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.2)',
+                    transition: 'all 0.3s ease',
+                    minWidth: '200px'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)'
+                    e.currentTarget.style.boxShadow = '0 6px 25px rgba(0,0,0,0.3)'
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.2)'
+                  }}
+                >
+                  {t('cta_get_in_touch')} ↗
+                </button>
+                
+                <button
+                  onClick={() => document.getElementById('services')?.scrollIntoView({ behavior: 'smooth' })}
+                  style={{ 
+                    color: 'white', 
+                    background: 'transparent',
+                    padding: '12px 24px', 
+                    borderRadius: '999px', 
+                    textDecoration: 'none', 
+                    border: '2px solid rgba(255,255,255,0.6)',
+                    fontWeight: 500,
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    minWidth: '150px'
+                  }}
+                >
+                  {t('cta_our_services')} →
+                </button>
               </div>
             </div>
 
-            {/* Glass card on right - hidden on mobile */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
-              style={{
-                position: 'absolute',
-                right: '16px',
-                top: '80px',
-                width: '220px',
-                borderRadius: 16,
-                padding: 16,
-                backdropFilter: 'blur(10px)',
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid var(--line)',
-                display: 'none'
-              }}
-            >
-              <div style={{
-                height: 120,
-                borderRadius: 12,
-                background: `url(https://images.unsplash.com/photo-1581092772835-8d1600a3b8aa?q=80&w=800&auto=format&fit=crop) center/cover no-repeat`,
-                border: '1px solid var(--line)'
-              }} />
-              <div style={{ marginTop: 10, color: 'white', fontSize: '12px', opacity: 0.9 }}>Discover Our Recent Project</div>
-            </motion.div>
           </motion.div>
 
-          {/* Partner insurers carousel placeholder */}
-          <div style={{
-            marginTop: 16,
-            display: 'flex',
-            gap: 16,
-            padding: '12px 16px',
-            alignItems: 'center',
-            overflowX: 'auto',
-            scrollbarWidth: 'none',
-            color: '#6b7280',
-            background: 'var(--surface-1)',
-            border: '1px solid var(--line)',
-            borderRadius: 12,
-            fontSize: '14px'
-          }}>
-            {['Manulife','Sun Life','Canada Life','Desjardins','iA Financial','RBC Insurance'].map((n) => (
-              <div key={n} style={{ whiteSpace: 'nowrap', fontWeight: 600, fontSize: '12px' }}>{n}</div>
-            ))}
-          </div>
-
-          {/* Metrics strip overlay */}
+          {/* Trust Badge & Partners */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
             style={{
-              marginTop: -20,
+              marginTop: '24px',
               background: 'var(--surface-1)',
-              color: 'var(--text-primary)',
-              borderRadius: 16,
+              borderRadius: '16px',
+              padding: '24px',
               border: '1px solid var(--line)',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
+              textAlign: 'center'
+            }}
+          >
+            <h3 style={{ margin: '0 0 16px 0', fontSize: '18px', color: 'var(--text-primary)' }}>
+              Trusted by Leading Canadian Insurers
+            </h3>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+              gap: '16px',
+              alignItems: 'center'
+            }}>
+              {['Manulife', 'Sun Life', 'Canada Life', 'Desjardins', 'iA Financial', 'RBC Insurance'].map((insurer) => (
+                <div key={insurer} style={{
+                  padding: '8px 16px',
+                  background: 'var(--surface-2)',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: 600,
+                  color: 'var(--text-secondary)',
+                  border: '1px solid var(--line)'
+                }}>
+                  {insurer}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Key Stats */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.6 }}
+            style={{
+              marginTop: '24px',
               display: 'grid',
-              gridTemplateColumns: 'repeat(1, 1fr)',
-              gap: 16,
-              padding: 20
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '16px'
             }}
           >
             {[
-              { value: '6 mil', label: t('metrics_1_label') },
-              { value: '315', label: t('metrics_2_label') },
-              { value: '120K', label: t('metrics_3_label') },
-            ].map((m) => (
-              <div key={m.value}>
-                <div style={{ fontSize: 36, fontWeight: 700 }}>{m.value}</div>
-                <div style={{ color: '#4b5563' }}>{m.label}</div>
+              { value: '6M+', label: 'Coverage Managed', color: 'var(--brand-green)' },
+              { value: '315', label: 'Families Protected', color: 'var(--brand-yellow)' },
+              { value: '120K+', label: 'Claims Processed', color: 'var(--brand-orange)' },
+            ].map((stat) => (
+              <div key={stat.value} style={{
+                textAlign: 'center',
+                padding: '20px 12px',
+                background: 'var(--surface-1)',
+                borderRadius: '12px',
+                border: '1px solid var(--line)'
+              }}>
+                <div style={{ 
+                  fontSize: '24px', 
+                  fontWeight: 800, 
+                  color: stat.color,
+                  marginBottom: '4px'
+                }}>
+                  {stat.value}
+                </div>
+                <div style={{ 
+                  fontSize: '12px',
+                  color: 'var(--text-secondary)',
+                  fontWeight: 500
+                }}>
+                  {stat.label}
+                </div>
               </div>
             ))}
           </motion.div>
@@ -167,15 +280,57 @@ export default function App() {
           </div>
         </section>
 
-        <section style={{ marginTop: 32, display: 'flex', alignItems: 'center', flexDirection: 'column', textAlign: 'center', gap: 16, background: 'var(--surface-2)', border: '1px solid var(--line)', borderRadius: 16, padding: 20 }}>
+        {/* Final CTA Section */}
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{ 
+            marginTop: '48px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            flexDirection: 'column', 
+            textAlign: 'center', 
+            gap: '24px', 
+            background: 'var(--surface-1)', 
+            border: '1px solid var(--line)', 
+            borderRadius: '20px', 
+            padding: '40px 24px' 
+          }}
+        >
           <div>
-            <h3 style={{ marginTop: 0, fontSize: '20px' }}>Ready to protect what matters?</h3>
-            <p style={{ color: 'var(--text-secondary)', margin: 0 }}>Talk to a licensed advisor today.</p>
+            <h3 style={{ marginTop: 0, fontSize: '24px', fontWeight: 700 }}>Ready to protect what matters most?</h3>
+            <p style={{ color: 'var(--text-secondary)', margin: '8px 0 0 0', fontSize: '16px' }}>
+              Get personalized insurance advice from licensed Canadian advisors.
+            </p>
           </div>
-          <Link to="/contact" style={{ background: 'var(--brand-yellow)', color: '#0a2540', padding: '12px 24px', borderRadius: 8, textDecoration: 'none', fontWeight: 700 }}>Contact Us</Link>
-        </section>
+          <button
+            onClick={() => setIsContactModalOpen(true)}
+            style={{ 
+              background: 'var(--brand-green)', 
+              color: 'white', 
+              padding: '16px 32px', 
+              borderRadius: '999px', 
+              border: 'none',
+              fontWeight: 700, 
+              fontSize: '16px',
+              cursor: 'pointer',
+              boxShadow: '0 4px 20px rgba(34,197,94,0.3)',
+              transition: 'all 0.3s ease'
+            }}
+          >
+            Get Free Quote Today
+          </button>
+        </motion.section>
       </main>
+      
       <Footer />
+      
+      {/* Contact Modal */}
+      <ContactModal 
+        isOpen={isContactModalOpen} 
+        onClose={() => setIsContactModalOpen(false)} 
+      />
     </div>
   )
 }

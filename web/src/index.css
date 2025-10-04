@@ -64,6 +64,18 @@ button:focus-visible {
 }
 
 /* Mobile-first responsive styles */
+@media screen and (max-width: 640px) {
+  /* Mobile-specific styles */
+  body {
+    font-size: 14px;
+  }
+  
+  /* Mobile grid adjustments */
+  .mobile-grid-single {
+    grid-template-columns: repeat(1, 1fr) !important;
+  }
+}
+
 @media (min-width: 640px) {
   :root {
     color: #213547;
@@ -82,6 +94,15 @@ button:focus-visible {
   body {
     font-size: 16px;
   }
+  
+  /* Show desktop nav, hide mobile */
+  .desktop-nav {
+    display: flex !important;
+  }
+  
+  .mobile-nav {
+    display: none !important;
+  }
 }
 
 /* Desktop styles */
@@ -89,4 +110,42 @@ button:focus-visible {
   body {
     font-size: 18px;
   }
+  
+  /* Larger hero sections on desktop */
+  .hero-desktop {
+    min-height: 600px !important;
+  }
+  
+  /* Better grid layouts */
+  .desktop-grid-three {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+  
+  .desktop-grid-four {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* Mobile Menu Animation */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Focus styles for accessibility */
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--brand-green);
+  outline-offset: 2px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
