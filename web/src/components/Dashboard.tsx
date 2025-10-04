@@ -1,6 +1,27 @@
-import React from 'react'
-import { Box, Card, CardContent, Typography, Avatar } from '@mui/material'
-import { TrendingUp, People, Phone, CheckCircleOutline } from '@mui/icons-material'
+import React, { useState } from 'react'
+import { 
+  Box, 
+  Card, 
+  CardContent, 
+  Typography, 
+  Avatar,
+  FormControl,
+  Select,
+  MenuItem,
+  Chip,
+  LinearProgress,
+  Paper
+} from '@mui/material'
+import { 
+  TrendingUp, 
+  People, 
+  Phone, 
+  CheckCircleOutline,
+  CalendarToday,
+  TrendingDown,
+  AttachMoney,
+  PersonAdd
+} from '@mui/icons-material'
 
 interface StatCardProps {
   title: string
@@ -38,47 +59,107 @@ function StatCard({ title, value, icon, color, change }: StatCardProps) {
 }
 
 export default function Dashboard() {
+  const [timePeriod, setTimePeriod] = useState('month')
+
+  const timePeriods = [
+    { value: 'today', label: 'Today', icon: CalendarToday },
+    { value: 'week', label: 'This Week', icon: CalendarToday },
+    { value: 'month', label: 'This Month', icon: CalendarToday },
+    { value: 'year', label: 'This Year', icon: CalendarToday }
+  ]
+
+  // Dynamic stats based on time period
+  const getStatsForPeriod = (period: string) => {
+    const baseStats = {
+      today: { total: 8, new: 2, contacted: 3, converted: 1 },
+      week: { total: 24, new: 6, contacted: 12, converted: 3 },
+      month: { total: 42, new: 12, contacted: 28, converted: 8 },
+      year: { total: 512, new: 156, contacted: 267, converted: 89 }
+    }
+    
+    return baseStats[period as keyof typeof baseStats] || baseStats.month
+  }
+
+  const currentStats = getStatsForPeriod(timePeriod)
+
   const stats = [
     {
       title: 'Total Leads',
-      value: 42,
+      value: currentStats.total,
       icon: <People />,
       color: '#22C55E',
-      change: '+24%'
+      change: timePeriod === 'today' ? '+8%' : timePeriod === 'week' ? '+12%' : '+24%'
     },
     {
-      title: 'New This Month',
-      value: 12,
+      title: 'New Leads',
+      value: currentStats.new,
       icon: <TrendingUp />,
       color: '#3B82F6',
-      change: '+18%'
+      change: timePeriod === 'today' ? '+2%' : timePeriod === 'week' ? '+5%' : '+18%'
     },
     {
       title: 'Contacted',
-      value: 28,
+      value: currentStats.contacted,
       icon: <Phone />,
       color: '#F59E0B',
       change: '+5%'
     },
     {
       title: 'Converted',
-      value: 8,
+      value: currentStats.converted,
       icon: <CheckCircleOutline />,
       color: '#10B981',
-      change: '+2%'
+      change: timePeriod === 'today' ? '+1%' : timePeriod === 'week' ? '+1.5%' : '+2%'
     }
   ]
 
   return (
     <Box sx={{ px: 2 }}>
-      {/* Welcome Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1 }}>
-          Welcome back! 👋
-        </Typography>
-        <Typography variant="body1" sx={{ color: '#6B7280' }}>
-          Here's what's happening with your insurance leads today.
-        </Typography>
+      {/* Header with Time Period Selector */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Box>
+          <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1 }}>
+            Welcome back! 👋
+          </Typography>
+          <Typography variant="body1" sx={{ color: '#6B7280' }}>
+            Here's your insurance leads performance.
+          </Typography>
+        </Box>
+        
+        {/* Time Period Selector */}
+        <FormControl size="small" sx={{ minWidth: 160 }}>
+          <Select
+            value={timePeriod}
+            onChange={(e) => setTimePeriod(e.target.value)}
+            sx={{
+              backgroundColor: '#ffffff',
+              borderRadius: 2,
+              boxShadow: 1,
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#E2E8F0'
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#22C55E'
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#22C55E',
+                borderWidth: 2
+              }
+            }}
+          >
+            {timePeriods.map((period) => {
+              const Icon = period.icon
+              return (
+                <MenuItem key={period.value} value={period.value}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Icon sx={{ fontSize: 18, color: '#6B7280' }} />
+                    <Typography variant="body2">{period.label}</Typography>
+                  </Box>
+                </MenuItem>
+              )
+            })}
+          </Select>
+        </FormControl>
       </Box>
 
       {/* Statistics Cards */}

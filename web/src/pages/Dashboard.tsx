@@ -1,13 +1,17 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Box, AppBar, Toolbar, Typography, IconButton } from '@mui/material'
+import { Menu as MenuIcon } from '@mui/icons-material'
 import { customAuth, type CustomUser } from '../lib/custom-auth'
+import MuiSidebar from '../components/MuiSidebar'
 import DashboardOverview from '../components/Dashboard'
-import LeadsManagement from '../components/LeadsManagement'
+import LeadsManagement from '../components/LeadsManagement' 
 
 export default function Dashboard() {
   const [user, setUser] = useState<CustomUser | null>(null)
   const [currentModule, setCurrentModule] = useState('dashboard')
+  const [sidebarOpen, setSidebarOpen] = useState(true)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -62,113 +66,86 @@ export default function Dashboard() {
   }
 
   return (
-    <div>
-      {/* Custom Layout Wrapper */}
-      <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F9FAFB' }}>
-        
-        {/* Sidebar */}
-        <div style={{ 
-          width: 240, 
-          backgroundColor: '#ffffff', 
-          borderRight: '1px solid #E5E7EB',
-          paddingTop: 64 // Account for top bar
-        }}>
-          <div style={{ padding: 16 }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#22C55E', mb: 3 }}>
-              BeaverNorth Advisors
-            </Typography>
-            
-            <nav>
-              {[
-                { id: 'dashboard', name: 'Dashboard', icon: '📊' },
-                { id: 'leads', name: 'Leads Management', icon: '👥' },
-                { id: 'analytics', name: 'Analytics', icon: '📈' }
-              ].map((module) => (
-                <div
-                  key={module.id}
-                  onClick={() => handleModuleChange(module.id)}
-                  style={{
-                    padding: '12px 16px',
-                    borderRadius: module.id === currentModule ? '12px' : '8px',
-                    backgroundColor: module.id === currentModule ? '#22C55E' : 'transparent',
-                    color: module.id === currentModule ? 'white' : '#374151',
-                    cursor: 'pointer',
-                    marginBottom: 4,
-                    fontWeight: module.id === currentModule ? '600' : '500',
-                    transition: 'all 0.2s',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 12
-                  }}
-                >
-                  <span style={{ fontSize: 20 }}>{module.icon}</span>
-                  {module.name}
-                </div>
-              ))}
-            </nav>
-          </div>
-        </div>
+    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#F9FAFB' }}>
+      {/* MUI Sidebar */}
+      <MuiSidebar
+        open={sidebarOpen}
+        onToggle={() => setSidebarOpen(!sidebarOpen)}
+        selectedModule={currentModule}
+        onModuleSelect={handleModuleChange}
+        onLogout={handleLogout}
+        user={user || { username: 'Admin' }}
+      />
 
-        {/* Main Content */}
-        <div style={{ flex: 1, paddingTop: 64 }}>
-          
-          {/* Top Bar */}
-          <div style={{
-            position: 'fixed',
-            top: 0,
-            left: 240,
-            right: 0,
+      {/* Main Content Area */}
+      <Box sx={{ 
+        flexGrow: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        ml: sidebarOpen ? { xs: 0, lg: '240px' } : { xs: 0, lg: '64px' },
+        transition: 'margin-left 0.3s ease'
+      }}>
+        {/* Top App Bar */}
+        <AppBar 
+          position="sticky"
+          sx={{ 
             backgroundColor: '#ffffff',
-            borderBottom: '1px solid #E5E7EB',
-            padding: '16px 24px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            zIndex: 1000
-          }}>
-            <h2 style={{ margin: 0, color: '#111827', fontWeight: '600' }}>
-              📊 {currentModule === 'dashboard' ? 'Dashboard' : 
-                  currentModule === 'leads' ? 'Leads Management' : 'Analytics'}
-            </h2>
-            
-            {/* Welcome & Logout */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <div style={{
-                background: '#22C55E',
+            color: '#111827',
+            borderBottom: '1px solid #E2E8F0',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+            ml: sidebarOpen ? { xs: 0, lg: '-240px' } : { xs: 0, lg: '-64px' },
+            transition: 'margin-left 0.3s ease'
+          }}
+        >
+          <Toolbar sx={{ justifyContent: 'space-between', px: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <IconButton
+                edge="start"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                sx={{ 
+                  color: '#6B7280',
+                  backgroundColor: '#F3F4F6',
+                  '&:hover': { backgroundColor: '#E5E7EB' }
+                }}
+              >
+                <MenuIcon />
+              </IconButton>
+              
+              <Typography variant="h6" sx={{ fontWeight: '600', color: '#111827' }}>
+                {currentModule === 'dashboard' ? '📊 Dashboard' : 
+                 currentModule === 'leads' ? '👥 Leads Management' : 
+                 '📈 Analytics'}
+              </Typography>
+            </Box>
+
+            {/* User Info */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{
+                background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
                 color: 'white',
-                padding: '8px 16px',
-                borderRadius: '20px',
+                px: 2,
+                py: 1,
+                borderRadius: 6,
                 fontSize: 14,
                 fontWeight: 600
               }}>
-                👋 {user.full_name || user.username}
-              </div>
-              
-              <button
-                onClick={handleLogout}
-                style={{
-                  background: '#EF4444',
-                  color: 'white',
-                  padding: '8px 16px',
-                  borderRadius: '8px',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: 14,
-                  fontWeight: 600
-                }}
-              >
-                Logout
-              </button>
-            </div>
-          </div>
+                👋 {user?.full_name || user?.username || 'Admin'}
+              </Box>
+            </Box>
+          </Toolbar>
+        </AppBar>
 
-          {/* Module Content */}
-          <div style={{ padding: '32px 24px' }}>
-            {renderModule()}
-          </div>
-        </div>
-      </div>
-    </div>
+        {/* Content */}
+        <Box sx={{ 
+          flexGrow: 1, 
+          p: 3,
+          ml: sidebarOpen ? { xs: 0, lg: '240px' } : { xs: 0, lg: '64px' },
+          transition: 'margin-left 0.3s ease'
+        }}>
+          {renderModule()}
+        </Box>
+      </Box>
+    </Box>
   )
 }
 
