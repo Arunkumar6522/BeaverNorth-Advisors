@@ -17,7 +17,6 @@ import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   DeleteForever as DeletedLeadsIcon,
-  Analytics as AnalyticsIcon,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
   Logout as LogoutIcon
@@ -46,8 +45,7 @@ export default function MuiSidebar({
   const modules = [
     { id: 'dashboard', name: 'Dashboard', icon: DashboardIcon, tooltip: 'Dashboard Overview' },
     { id: 'leads', name: 'Leads Management', icon: PeopleIcon, tooltip: 'Manage Leads' },
-    { id: 'deleted', name: 'Deleted Leads', icon: DeletedLeadsIcon, tooltip: 'View Deleted Leads' },
-    { id: 'analytics', name: 'Analytics', icon: AnalyticsIcon, tooltip: 'View Analytics' }
+    { id: 'deleted', name: 'Deleted Leads', icon: DeletedLeadsIcon, tooltip: 'View Deleted Leads' }
   ]
 
   const drawerContent = (

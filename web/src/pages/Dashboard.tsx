@@ -47,20 +47,6 @@ export default function Dashboard() {
         return <LeadsManagement />
       case 'deleted':
         return <DeletedLeads />
-      case 'analytics':
-        return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            style={{ padding: '40px', paddingTop: '70px', textAlign: 'center', height: '100%' }}
-          >
-            <h2>Analytics Coming Soon</h2>
-            <p style={{ color: '#6B7280', marginTop: '16px' }}>
-              Advanced reporting and insights will be available here.
-            </p>
-          </motion.div>
-        )
       default:
         return <DashboardOverview />
     }
@@ -141,8 +127,7 @@ export default function Dashboard() {
             }}>
               {currentModule === 'dashboard' ? '📊 Dashboard' : 
                currentModule === 'leads' ? '👥 Leads Management' : 
-               currentModule === 'deleted' ? '🗑️ Deleted Leads' :
-               '📈 Analytics'}
+               '🗑️ Deleted Leads'}
             </Typography>
 
             {/* User Info */}

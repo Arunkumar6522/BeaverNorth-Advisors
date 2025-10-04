@@ -12,7 +12,8 @@ import {
   Chip,
   IconButton,
   Avatar,
-  Button
+  Button,
+  Modal
 } from '@mui/material'
 import {
   DeleteForever,
@@ -176,6 +177,7 @@ export default function DeletedLeads() {
     fetchDeletedLeads()
   }, [])
 
+  /* DISABLED: Restore functionality removed per requirement
   const handleRestoreLead = async (leadId: string) => {
     try {
       const { supabase } = await import('../lib/supabase')
@@ -199,7 +201,9 @@ export default function DeletedLeads() {
     // Update local state for demo
     setDeletedLeads(deletedLeads.filter(lead => lead.id !== leadId))
   }
+  */
 
+  /* DISAB LED: Delete functionality removed per requirement  
   const handlePermanentDelete = async (leadId: string) => {
     if (!confirm('Are you sure you want to permanently delete this lead? This action cannot be undone.')) {
       return
@@ -227,6 +231,7 @@ export default function DeletedLeads() {
     // Update local state for demo
     setDeletedLeads(deletedLeads.filter(lead => lead.id !== leadId))
   }
+  */
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
