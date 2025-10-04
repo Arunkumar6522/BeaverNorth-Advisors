@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
-import { Box, Typography, IconButton, Drawer, List, ListItem, ListItemText, Divider } from '@mui/material'
+import { Box, Typography, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material'
 import { Menu as MenuIcon, Close as CloseIcon, Language } from '@mui/icons-material'
 
 export default function Nav() {
@@ -11,11 +11,9 @@ export default function Nav() {
 
   const navItems = [
     { label: 'Home', path: '/' },
-    { label: 'Features', path: '/features' },
+    { label: 'About', path: '/about' },
     { label: 'Services', path: '/services' },
-    { label: 'About us', path: '/about' },
-    { label: 'Contact us', path: '/contact' },
-    { label: 'FAQ', path: '/faq' }
+    { label: 'Contact', path: '/contact' }
   ]
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
@@ -26,9 +24,10 @@ export default function Nav() {
         position: 'sticky',
         top: 0,
         zIndex: 1000,
-        bgcolor: 'rgba(255,255,255,0.95)',
+        bgcolor: 'rgba(255,255,255,0.98)',
         backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid rgba(139,184,237,0.1)',
+        borderBottom: '1px solid rgba(105,131,204,0.1)',
+        boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
         px: { xs: 3, md: 6 },
         py: 2
       }}>
@@ -40,45 +39,56 @@ export default function Nav() {
           mx: 'auto'
         }}>
           
-          {/* Logo */}
+          {/* Logo - Professional & Clean */}
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 2 }}>
             <Box sx={{
-              width: 48,
-              height: 48,
-              borderRadius: 2,
-              background: 'linear-gradient(135deg, #6983CC 0%, #6BA336 100%)',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(105,131,204,0.3)'
+              gap: 1.5
             }}>
-              <img 
-                src="/favicon.png" 
-                alt="BeaverNorth" 
-                style={{ 
-                  height: '28px', 
-                  width: '28px',
-                  filter: 'brightness(0) invert(1)'
-                }} 
-              />
-            </Box>
-            <Typography variant="h6" sx={{ 
-              fontWeight: 800,
-              color: '#1E377C',
-              fontSize: '1.3rem',
-              letterSpacing: '-0.02em'
-            }}>
-              BeaverNorth
-              <Typography component="span" sx={{ 
-                color: '#EF7F18',
-                fontWeight: 800
+              <Box sx={{
+                width: 42,
+                height: 42,
+                borderRadius: 2,
+                background: '#6983CC',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}>
-                Advisors
-              </Typography>
-            </Typography>
+                <img 
+                  src="/favicon.png" 
+                  alt="BeaverNorth" 
+                  style={{ 
+                    height: '24px', 
+                    width: '24px',
+                    filter: 'brightness(0) invert(1)'
+                  }} 
+                />
+              </Box>
+              <Box>
+                <Typography sx={{ 
+                  fontWeight: 800,
+                  color: '#1E377C',
+                  fontSize: '1.3rem',
+                  lineHeight: 1,
+                  letterSpacing: '-0.02em'
+                }}>
+                  BeaverNorth
+                </Typography>
+                <Typography sx={{ 
+                  color: '#6983CC',
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  letterSpacing: '0.5px',
+                  textTransform: 'uppercase'
+                }}>
+                  Advisors
+                </Typography>
+              </Box>
+            </Box>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation - Clean & Simple */}
           <Box sx={{ 
             display: { xs: 'none', lg: 'flex' },
             alignItems: 'center',
@@ -90,22 +100,20 @@ export default function Nav() {
                 to={item.path}
                 style={({ isActive }) => ({
                   textDecoration: 'none',
-                  padding: '12px 20px',
-                  borderRadius: 12,
+                  padding: '10px 20px',
+                  borderRadius: 8,
                   fontSize: '15px',
                   fontWeight: 600,
                   color: isActive ? '#6983CC' : '#417F73',
-                  transition: 'all 0.3s ease',
-                  position: 'relative'
+                  transition: 'all 0.2s ease',
+                  backgroundColor: isActive ? 'rgba(105,131,204,0.08)' : 'transparent'
                 })}
                 onMouseEnter={(e) => {
-                  if (location.pathname !== '/') {
-                    e.currentTarget.style.color = '#6983CC'
-                    e.currentTarget.style.backgroundColor = 'rgba(105,131,204,0.08)'
-                  }
+                  e.currentTarget.style.color = '#6983CC'
+                  e.currentTarget.style.backgroundColor = 'rgba(105,131,204,0.08)'
                 }}
                 onMouseLeave={(e) => {
-                  if (location.pathname !== '/') {
+                  if (location.pathname !== e.currentTarget.getAttribute('href')) {
                     e.currentTarget.style.color = '#417F73'
                     e.currentTarget.style.backgroundColor = 'transparent'
                   }
@@ -115,16 +123,16 @@ export default function Nav() {
               </NavLink>
             ))}
             
-            {/* Language Switcher */}
+            {/* Language Switcher - Minimal */}
             <Box sx={{
-              ml: 3,
-              pl: 3,
-              borderLeft: '2px solid #8CB8ED',
+              ml: 2,
+              pl: 2,
+              borderLeft: '1px solid rgba(105,131,204,0.2)',
               display: 'flex',
               alignItems: 'center',
               gap: 1
             }}>
-              <Language sx={{ fontSize: 20, color: '#417F73' }} />
+              <Language sx={{ fontSize: 18, color: '#6983CC' }} />
               <select
                 value={locale}
                 onChange={(e) => setLocale(e.target.value as 'en' | 'fr')}
@@ -138,18 +146,39 @@ export default function Nav() {
                   outline: 'none'
                 }}
               >
-                <option value="en">🇺🇸 EN</option>
-                <option value="fr">🇫🇷 FR</option>
+                <option value="en">EN</option>
+                <option value="fr">FR</option>
               </select>
             </Box>
           </Box>
 
           {/* Mobile Menu Button */}
-          <Box sx={{ display: { xs: 'flex', lg: 'none' } }}>
+          <Box sx={{ display: { xs: 'flex', lg: 'none' }, alignItems: 'center', gap: 2 }}>
+            {/* Mobile Language Switcher */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <Language sx={{ fontSize: 16, color: '#6983CC' }} />
+              <select
+                value={locale}
+                onChange={(e) => setLocale(e.target.value as 'en' | 'fr')}
+                style={{
+                  border: 'none',
+                  background: 'transparent',
+                  fontSize: '13px',
+                  fontWeight: 600,
+                  color: '#417F73',
+                  cursor: 'pointer',
+                  outline: 'none'
+                }}
+              >
+                <option value="en">EN</option>
+                <option value="fr">FR</option>
+              </select>
+            </Box>
+            
             <IconButton
               onClick={toggleMenu}
               sx={{
-                color: '#417F73',
+                color: '#6983CC',
                 '&:hover': {
                   backgroundColor: 'rgba(105,131,204,0.08)'
                 }
@@ -161,7 +190,7 @@ export default function Nav() {
         </Box>
       </Box>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer - Clean Design */}
       <Drawer
         anchor="right"
         open={isMenuOpen}
@@ -170,19 +199,24 @@ export default function Nav() {
           '& .MuiDrawer-paper': {
             width: { xs: '100vw', sm: '320px' },
             maxWidth: '320px',
-            py: 3,
-            px: 2
+            bgcolor: 'white'
           }
         }}
       >
         {/* Drawer Header */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          p: 3,
+          borderBottom: '1px solid rgba(105,131,204,0.1)'
+        }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
             <Box sx={{
-              width: 40,
-              height: 40,
+              width: 36,
+              height: 36,
               borderRadius: 2,
-              background: 'linear-gradient(135deg, #6983CC 0%, #6BA336 100%)',
+              background: '#6983CC',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
@@ -191,24 +225,27 @@ export default function Nav() {
                 src="/favicon.png" 
                 alt="BeaverNorth" 
                 style={{ 
-                  height: '22px', 
-                  width: '22px',
+                  height: '20px', 
+                  width: '20px',
                   filter: 'brightness(0) invert(1)'
                 }} 
               />
             </Box>
             <Box>
-              <Typography variant="h6" sx={{ 
+              <Typography sx={{ 
                 fontWeight: 800,
                 color: '#1E377C',
-                fontSize: '1.1rem'
+                fontSize: '1.1rem',
+                lineHeight: 1
               }}>
                 BeaverNorth
               </Typography>
-              <Typography variant="subtitle2" sx={{ 
-                color: '#EF7F18',
-                fontWeight: 700,
-                fontSize: '0.9rem'
+              <Typography sx={{ 
+                color: '#6983CC',
+                fontWeight: 600,
+                fontSize: '0.7rem',
+                letterSpacing: '0.5px',
+                textTransform: 'uppercase'
               }}>
                 Advisors
               </Typography>
@@ -217,7 +254,7 @@ export default function Nav() {
           <IconButton
             onClick={toggleMenu}
             sx={{
-              color: '#417F73',
+              color: '#6983CC',
               '&:hover': {
                 backgroundColor: 'rgba(105,131,204,0.08)'
               }
@@ -228,7 +265,7 @@ export default function Nav() {
         </Box>
 
         {/* Navigation Items */}
-        <List sx={{ flexGrow: 1 }}>
+        <List sx={{ flexGrow: 1, p: 2 }}>
           {navItems.map((item) => (
             <ListItem key={item.path} disablePadding sx={{ mb: 1 }}>
               <NavLink
@@ -237,87 +274,27 @@ export default function Nav() {
                 style={({ isActive }) => ({
                   textDecoration: 'none',
                   width: '100%',
-                  padding: '16px 20px',
-                  borderRadius: 12,
+                  padding: '14px 16px',
+                  borderRadius: 8,
                   backgroundColor: isActive ? 'rgba(105,131,204,0.1)' : 'transparent',
-                  transition: 'all 0.3s ease',
+                  transition: 'all 0.2s ease',
                   color: isActive ? '#6983CC' : '#417F73',
                   fontWeight: isActive ? 700 : 600,
-                  fontSize: '16px',
-                  border: isActive ? '2px solid rgba(105,131,204,0.3)' : '2px solid transparent'
+                  fontSize: '15px',
+                  display: 'block'
                 })}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(105,131,204,0.05)'
-                  e.currentTarget.style.color = '#6983CC'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent'
-                  e.currentTarget.style.color = location.pathname === item.path ? '#6983CC' : '#417F73'
-                }}
               >
                 <ListItemText 
                   primary={item.label}
                   primaryTypographyProps={{
-                    style: { margin: 0 }
+                    style: { margin: 0, fontWeight: 'inherit' }
                   }}
                 />
               </NavLink>
             </ListItem>
           ))}
         </List>
-
-        {/* Mobile Language Switcher */}
-        <Box sx={{ mt: 'auto', pt: 3 }}>
-          <Divider sx={{ mb: 3, borderColor: '#8CB8ED' }} />
-          <Box sx={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 2,
-            p: 2,
-            borderRadius: 2,
-            bgcolor: 'rgba(139,184,237,0.05)',
-            border: '1px solid rgba(139,184,237,0.1)'
-          }}>
-            <Language sx={{ fontSize: 24, color: '#417F73' }} />
-            <Box>
-              <Typography variant="subtitle2" sx={{ 
-                color: '#417F73',
-                fontWeight: 600,
-                fontSize: '0.9rem',
-                mb: 0.5
-              }}>
-                Language
-            </Typography>
-            <select
-              value={locale}
-              onChange={(e) => setLocale(e.target.value as 'en' | 'fr')}
-              style={{
-                border: 'none',
-                background: 'transparent',
-                fontSize: '16px',
-                fontWeight: 600,
-                color: '#6983CC',
-                cursor: 'pointer',
-                outline: 'none'
-              }}
-            >
-              <option value="en">🇺🇸 English</option>
-              <option value="fr">🇫🇷 Français</option>
-            </select>
-          </Box>
-        </Box>
-      </Box>
-    </Drawer>
-
-    {/* Shimmer Animation */}
-    <style>
-      {`
-        @keyframes shimmer {
-          0%, 100% { opacity: 0.7; transform: translateX(-100%); }
-          50% { opacity: 1; transform: translateX(100%); }
-        }
-      `}
-    </style>
+      </Drawer>
     </>
   )
 }
