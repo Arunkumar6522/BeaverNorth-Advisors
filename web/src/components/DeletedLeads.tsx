@@ -167,7 +167,8 @@ export default function DeletedLeads() {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
- being       }
+      hour: '2-digit',
+      minute: '2-digit'
     })
   }
 
