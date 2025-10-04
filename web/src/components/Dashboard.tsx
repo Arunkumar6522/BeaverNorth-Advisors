@@ -207,61 +207,8 @@ export default function Dashboard() {
         ))}
       </Box>
 
-      {/* Recent Activity & Charts */}
-      <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', lg: 'row' } }}>
-        <Box sx={{ flex: { xs: '1', lg: '4' } }}>
-          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
-            <CardContent>
-              <Typography variant="h6" sx={{ fontWeight: '600', mb: 3, color: '#111827' }}>
-                Recent Lead Activity
-              </Typography>
-              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Avatar sx={{ bgcolor: '#22C55E', width: 32, height: 32 }}>
-                    <People sx={{ fontSize: 20 }} />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="body1" sx={{ fontWeight: '500' }}>
-                      John Smith submitted a quote request
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                      Term Life Insurance - 2 minutes ago
-                    </Typography>
-                  </Box>
-                </Box>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Avatar sx={{ bgcolor: '#3B82F6', width: 32, height: 32 }}>
-                    <CheckCircleOutline sx={{ fontSize: 20 }} />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="body1" sx={{ fontWeight: '500' }}>
-                      Sarah Johnson converted to client
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                      Whole Life Insurance - 15 minutes ago
-                    </Typography>
-                  </Box>
-                </Box>
-                
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Avatar sx={{ bgcolor: '#F59E0B', width: 32, height: 32 }}>
-                    <Phone sx={{ fontSize: 20 }} />
-                  </Avatar>
-                  <Box>
-                    <Typography variant="body1" sx={{ fontWeight: '500' }}>
-                      Follow-up call with Michael Brown
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                      Travel Insurance - 1 hour ago
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        </Box>
-        
+      {/* Charts Section */}
+      <Box sx={{ display: 'flex', gap: 3, flexDirection: { xs: 'column', lg: 'row' }, mb: 3 }}>
         <Box sx={{ flex: { xs: '1', lg: '2' }, display: 'flex', gap: 2, flexDirection: { xs: 'column', md: 'row', lg: 'column' } }}>
           {/* Gender Distribution Chart */}
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', flex: 1 }}>
@@ -381,6 +328,60 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </Box>
+      </Box>
+
+      {/* Recent Activity Section */}
+      <Box>
+        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
+          <CardContent>
+            <Typography variant="h6" sx={{ fontWeight: '600', mb: 3, color: '#111827' }}>
+              Recent Lead Activity
+            </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Avatar sx={{ bgcolor: '#22C55E', width: 32, height: 32 }}>
+                    <People sx={{ fontSize: 20 }} />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body1" sx={{ fontWeight: '500' }}>
+                      John Smith submitted a quote request
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                      Term Life Insurance - 2 minutes ago
+                    </Typography>
+                  </Box>
+                </Box>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Avatar sx={{ bgcolor: '#3B82F6', width: 32, height: 32 }}>
+                    <CheckCircleOutline sx={{ fontSize: 20 }} />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body1" sx={{ fontWeight: '500' }}>
+                      Sarah Johnson converted to client
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                      Whole Life Insurance - 15 minutes ago
+                    </Typography>
+                  </Box>
+                </Box>
+                
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Avatar sx={{ bgcolor: '#F59E0B', width: 32, height: 32 }}>
+                    <Phone sx={{ fontSize: 20 }} />
+                  </Avatar>
+                  <Box>
+                    <Typography variant="body1" sx={{ fontWeight: '500' }}>
+                      Follow-up call with Michael Brown
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                      Travel Insurance - 1 hour ago
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
       </Box>
     </Box>
   )
