@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { sendOTP, verifyOTP, formatPhoneNumber, isValidPhoneNumber } from '../services/twilioService'
 import CountryCodeSelector from './CountryCodeSelector'
 
 interface ContactModalProps {
@@ -25,7 +24,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   })
 
   const [loading, setLoading] = useState(false)
-  const [otpSent, setOtpSent] = useState(false)
   const [submitted, setSubmitted] = useState(false)
 
   const nextStep = () => {
@@ -40,74 +38,29 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     }
   }
 
-  const sendOTPCode = async () => {
-    if (!formData.phone) {
-      alert('Please enter your phone number')
-      return
-    }
-
-    if (!isValidPhoneNumber(formData.phone)) {
-      alert('Please enter a valid phone number')
-      return
-    }
-
-    setLoading(true)
-    try {
-      const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
-      const result = await sendOTP(phoneNumber)
-      
-      if (result.success) {
-        setOtpSent(true)
-        // Show friendly success message instead of alert
-        console.log(`✅ OTP sent to ${formatPhoneNumber(phoneNumber)}`)
-      } else {
-        alert(result.message)
-      }
-    } catch (error) {
-      alert('Failed to send OTP. Please try again.')
-      console.error('OTP sending error:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!formData.otp) {
-      alert('Please enter the verification code')
-      return
-    }
-
     setLoading(true)
     
     try {
-      const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
-      const verificationResult = await verifyOTP(phoneNumber, formData.otp)
+      // Save lead to Supabase directly without OTP verification
+      await saveLeadToSupabase()
       
-      if (verificationResult.success) {
-        // Save lead to Supabase
-        await saveLeadToSupabase()
-        
-        // Show success alert
-        alert('✅ Quote Request Submitted Successfully!\n\nThank you for your interest. Our team will review your information and contact you shortly.')
-        
-        setLoading(false)
-        setSubmitted(true)
-        setTimeout(() => {
-          onClose()
-          setSubmitted(false)
-          setCurrentStep(1)
-          setOtpSent(false)
-          setFormData({ name: '', gender: '' as 'male' | 'female' | 'others' | 'prefer-not-to-say', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '', referralCode: '' })
-        }, 1000)
-      } else {
-        alert(verificationResult.message)
-      }
+      // Show success alert
+      alert('✅ Quote Request Submitted Successfully!\n\nThank you for your interest. Our team will review your information and contact you shortly.')
+      
+      setLoading(false)
+      setSubmitted(true)
+      setTimeout(() => {
+        onClose()
+        setSubmitted(false)
+        setCurrentStep(1)
+        setFormData({ name: '', gender: '' as 'male' | 'female' | 'others' | 'prefer-not-to-say', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '', referralCode: '' })
+      }, 1000)
     } catch (error) {
-      alert('Verification failed. Please try again.')
-      console.error('OTP verification error:', error)
-    } finally {
+      alert('Submission failed. Please try again.')
+      console.error('Submission error:', error)
       setLoading(false)
     }
   }
@@ -661,7 +614,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               </motion.div>
             )}
 
-            {/* Step 3: Contact Verification */}
+            {/* Step 3: Contact Information */}
             {currentStep === 3 && (
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
@@ -707,14 +660,14 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     color: 'var(--text-primary)',
                     marginBottom: '8px'
                   }}>
-                    Phone Number * (for verification)
+                    Phone Number *
                   </label>
                   <p style={{ 
                     fontSize: '12px',
                     color: 'var(--text-secondary)',
                     marginBottom: '12px'
                   }}>
-                    📱 We'll send a 6-digit code to verify your number
+                    📱 We'll contact you at this number
                   </p>
                   <div style={{ display: 'flex', gap: '0' }}>
                     <CountryCodeSelector
@@ -746,147 +699,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       }}
                     />
                   </div>
-                  
-                  <div style={{ marginTop: '12px', display: 'flex', gap: '12px' }}>
-                    {!otpSent ? (
-                      <button
-                        type="button"
-                        onClick={sendOTPCode}
-                        disabled={loading || !formData.phone}
-                        style={{
-                          flex: 1,
-                          padding: '14px 16px',
-                          background: loading || !formData.phone ? 'var(--line)' : 'var(--brand-green)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '12px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          cursor: loading || !formData.phone ? 'not-allowed' : 'pointer'
-                        }}
-                      >
-                        {loading ? 'Sending...' : 'Send OTP'}
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        disabled
-                        style={{
-                          flex: 1,
-                          padding: '14px 16px',
-                          background: 'var(--brand-green)',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '12px',
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          opacity: 0.8
-                        }}
-                      >
-                        ✓ SMS Sent
-                      </button>
-                    )}
-                    
-                    {otpSent && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setOtpSent(false)
-                          setFormData(prev => ({ ...prev, otp: '' }))
-                        }}
-                        style={{
-                          padding: '14px 16px',
-                          background: 'transparent',
-                          color: 'var(--text-secondary)',
-                          border: '1px solid var(--line)',
-                          borderRadius: '12px',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        Resend
-                      </button>
-                    )}
-                  </div>
-                  
-                  {otpSent && (
-                    <div style={{
-                      marginTop: '12px',
-                      padding: '12px 16px',
-                      background: 'var(--surface-2)',
-                      borderRadius: '8px',
-                      border: '1px solid var(--brand-green)',
-                      textAlign: 'center'
-                    }}>
-                      <p style={{ 
-                        margin: 0, 
-                        color: 'var(--brand-green)', 
-                        fontSize: '14px', 
-                        fontWeight: 500 
-                      }}>
-                        📱 SMS sent to {formData.countryCode} {formData.phone}
-                      </p>
-                      <p style={{ 
-                        margin: '4px 0 0 0', 
-                        color: 'var(--text-secondary)', 
-                        fontSize: '12px' 
-                      }}>
-                        Check your phone for the 6-digit code
-                      </p>
-                    </div>
-                  )}
                 </div>
-
-                {otpSent && (
-                  <div>
-                    <label style={{ 
-                      display: 'block', 
-                      fontSize: '14px', 
-                      fontWeight: 600, 
-                      color: 'var(--text-primary)',
-                      marginBottom: '8px'
-                    }}>
-                      Enter verification code
-                    </label>
-                    <p style={{ 
-                      fontSize: '12px',
-                      color: 'var(--text-secondary)',
-                      marginBottom: '12px'
-                    }}>
-                      🔐 Enter the 4-digit code from your SMS
-                    </p>
-                    <input
-                      type="text"
-                      name="otp"
-                      placeholder="1234"
-                      value={formData.otp}
-                      onChange={handleChange}
-                      maxLength={4}
-                      style={{
-                        width: '100%',
-                        padding: '14px 16px',
-                        border: '2px solid var(--line)',
-                        borderRadius: '12px',
-                        fontSize: '16px',
-                        background: 'var(--surface-1)',
-                        color: 'var(--text-primary)',
-                        outline: 'none',
-                        textAlign: 'center',
-                        letterSpacing: '8px',
-                        fontFamily: 'monospace'
-                      }}
-                    />
-                    <p style={{ 
-                      fontSize: '11px',
-                      color: 'var(--text-secondary)',
-                      margin: '8px 0 0 0',
-                      textAlign: 'center'
-                    }}>
-                      Didn't receive it? Check your SMS inbox
-                    </p>
-                  </div>
-                )}
 
                 <form onSubmit={handleSubmit} style={{ marginTop: '24px' }}>
                   <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
@@ -909,20 +722,20 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     </button>
                     <button
                       type="submit"
-                      disabled={loading || !formData.email || !formData.otp}
+                      disabled={loading || !formData.email || !formData.phone}
                       style={{
                         flex: 2,
-                        background: loading || !formData.email || !formData.otp ? 'var(--line)' : 'var(--brand-green)',
+                        background: loading || !formData.email || !formData.phone ? 'var(--line)' : 'var(--brand-green)',
                         color: 'white',
                         padding: '16px',
                         borderRadius: '12px',
                         border: 'none',
                         fontSize: '16px',
                         fontWeight: '600',
-                        cursor: loading || !formData.email || !formData.otp ? 'not-allowed' : 'pointer'
+                        cursor: loading || !formData.email || !formData.phone ? 'not-allowed' : 'pointer'
                       }}
                     >
-                        {loading ? 'Verifying...' : 'Complete Quote Request'}
+                        {loading ? 'Submitting...' : 'Submit Quote Request'}
                     </button>
                   </div>
                 </form>
