@@ -1,7 +1,7 @@
 import './App.css'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import { useI18n } from './i18n'
 import Nav from './components/Nav'
 import TopBar from './components/TopBar'

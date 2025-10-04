@@ -43,7 +43,7 @@ export function parsePhoneNumber(phoneInput: string): PhoneNumber {
 
 // Real Twilio OTP sending via backend API
 export async function sendOTP(phoneNumber: string): Promise<{ success: boolean; message: string; sessionId?: string }> {
-  const { countryCode, number, fullNumber } = parsePhoneNumber(phoneNumber)
+  const { fullNumber } = parsePhoneNumber(phoneNumber)
   
   console.log('📱 Sending OTP to:', fullNumber)
   

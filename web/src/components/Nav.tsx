@@ -46,7 +46,7 @@ export default function Nav() {
 
         {/* Desktop Navigation */}
         <nav style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <div style={{ display: 'none', gap: 8, '@media (min-width: 768px)': { display: 'flex' } }}>
+          <div style={{ display: 'none', gap: 8 }} className="desktop-nav">
             <NavLink to="/" style={() => ({ ...linkStyle, ...(location.pathname === '/' ? activeStyle : {}), fontSize: '14px' })}>{t('nav_home')}</NavLink>
             <NavLink to="/about" style={() => ({ ...linkStyle, ...(location.pathname.startsWith('/about') ? activeStyle : {}), fontSize: '14px' })}>{t('nav_about')}</NavLink>
             <NavLink to="/services" style={() => ({ ...linkStyle, ...(location.pathname.startsWith('/services') ? activeStyle : {}), fontSize: '14px' })}>{t('nav_services')}</NavLink>
@@ -106,7 +106,7 @@ export default function Nav() {
                 background: 'transparent', 
                 border: 'none', 
                 cursor: 'pointer',
-                '@media (min-width: 768px)': { display: 'none' }
+                display: 'flex'
               }}
             >
               <span style={{ 

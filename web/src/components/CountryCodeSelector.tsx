@@ -95,7 +95,6 @@ export default function CountryCodeSelector({ value, onChange, onCountryChange }
           border: '2px solid var(--line)',
           borderRadius: '12px',
           boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
-          overflow: 'hidden',
           zIndex: 1000,
           maxHeight: '300px',
           overflow: 'auto'
