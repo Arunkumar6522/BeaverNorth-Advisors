@@ -81,28 +81,28 @@ export default function Dashboard() {
       title: 'Total Leads',
       value: currentStats.total,
       icon: <People />,
-      color: '#22C55E',
+      color: '#1976D2',
       change: timePeriod === 'today' ? '+8%' : timePeriod === 'week' ? '+12%' : '+24%'
     },
     {
       title: 'New Leads',
       value: currentStats.new,
       icon: <TrendingUp />,
-      color: '#3B82F6',
+      color: '#1976D2',
       change: timePeriod === 'today' ? '+2%' : timePeriod === 'week' ? '+5%' : '+18%'
     },
     {
       title: 'Contacted',
       value: currentStats.contacted,
       icon: <Phone />,
-      color: '#F59E0B',
+      color: '#1976D2',
       change: '+5%'
     },
     {
       title: 'Converted',
       value: currentStats.converted,
       icon: <CheckCircleOutline />,
-      color: '#10B981',
+      color: '#1976D2',
       change: timePeriod === 'today' ? '+1%' : timePeriod === 'week' ? '+1.5%' : '+2%'
     }
   ]
@@ -130,13 +130,13 @@ export default function Dashboard() {
               borderRadius: 2,
               boxShadow: 1,
               '& .MuiOutlinedInput-notchedOutline': {
-                borderColor: '#E2E8F0'
+                borderColor: '#E0E0E0'
               },
               '&:hover .MuiOutlinedInput-notchedOutline': {
-                borderColor: '#22C55E'
+                borderColor: '#1976D2'
               },
               '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                borderColor: '#22C55E',
+                borderColor: '#1976D2',
                 borderWidth: 2
               }
             }}

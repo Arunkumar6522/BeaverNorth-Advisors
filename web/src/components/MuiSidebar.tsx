@@ -5,24 +5,21 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Toolbar,
-  Typography,
   Box,
-  IconButton,
+  Typography,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  IconButton
 } from '@mui/material'
 import {
   Dashboard as DashboardIcon,
   People as PeopleIcon,
   Analytics as AnalyticsIcon,
   ChevronLeft as ChevronLeftIcon,
-  Logout as LogoutIcon,
-  AccountCircle as AccountIcon
+  Logout as LogoutIcon
 } from '@mui/icons-material'
 
 const drawerWidth = 240
-const mobileDrawerWidth = 280
 
 interface MuiSidebarProps {
   open: boolean
@@ -32,7 +29,6 @@ interface MuiSidebarProps {
   onLogout: () => void
   user: { username?: string; full_name?: string }
 }
-
 
 export default function MuiSidebar({
   open,
@@ -52,134 +48,169 @@ export default function MuiSidebar({
   ]
 
   const drawerContent = (
-    <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
-      <Toolbar sx={{ 
-        background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
+    <Box sx={{ 
+      height: '100%', 
+      display: 'flex', 
+      flexDirection: 'column',
+      backgroundColor: '#ffffff',
+      overflow: 'hidden'
+    }}>
+      {/* Header with Logo */}
+      <Box sx={{ 
+        p: 3,
+        background: 'linear-gradient(135deg, #1976D2 0%, #1565C0 100%)',
         color: 'white',
         display: 'flex',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        px: 2
+        justifyContent: 'space-between',
+        minHeight: 80
       }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <AccountIcon sx={{ fontSize: 32 }} />
-          <Box>
-            <Typography variant="h6" sx={{ fontWeight: 'bold', fontSize: 16 }}>
-              BeaverNorth
-            </Typography>
-            <Typography variant="caption" sx={{ fontSize: 12, opacity: 0.9 }}>
-              Insurance Advisors
+        {open ? (
+          <>
+            <Box>
+              <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 0.5 }}>
+                BeaverNorth
+              </Typography>
+              <Typography variant="caption" sx={{ opacity: 0.9 }}>
+                Insurance Advisors
+              </Typography>
+            </Box>
+            <IconButton 
+              onClick={onToggle}
+              size="small"
+              sx={{ 
+                color: 'inherit',
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' }
+              }}
+            >
+              <ChevronLeftIcon />
+            </IconButton>
+          </>
+        ) : (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }} onClick={onToggle}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              BN
             </Typography>
           </Box>
-        </Box>
-        
-        {open && (
-          <IconButton 
-            onClick={onToggle}
-            sx={{ 
-              color: 'inherit',
-              backgroundColor: 'rgba(255,255,255,0.1)',
-              '&:hover': { backgroundColor: 'rgba(255,255,255,0.2)' }
-            }}
-          >
-            <ChevronLeftIcon />
-          </IconButton>
         )}
-      </Toolbar>
-
-      {/* User Info */}
-      <Box sx={{ 
-        p: 2, 
-        backgroundColor: '#F8FAFC',
-        borderBottom: '1px solid #E2E8F0'
-      }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-          <Avatar sx={{ 
-            backgroundColor: '#22C55E', 
-            width: 40, 
-            height: 40,
-            fontSize: 16,
-            fontWeight: 'bold'
-          }}>
-            {(user.full_name || user.username || 'A').charAt(0).toUpperCase()}
-          </Avatar>
-          <Box>
-            <Typography variant="body2" sx={{ fontWeight: '600', color: '#1E293B' }}>
-              {user.full_name || user.username || 'Admin'}
-            </Typography>
-            <Typography variant="caption" sx={{ color: '#64748B' }}>
-              Insurance Advisor
-            </Typography>
-          </Box>
-        </Box>
-        
-        {/* Quick Logout Button */}
-        <IconButton 
-          onClick={onLogout}
-          sx={{ 
-            position: 'absolute',
-            top: 8,
-            right: 8,
-            backgroundColor: '#EF4444',
-            color: 'white',
-            width: 32,
-            height: 32,
-            '&:hover': { backgroundColor: '#DC2626' }
-          }}
-        >
-          <LogoutIcon sx={{ fontSize: 18 }} />
-        </IconButton>
       </Box>
 
       {/* Navigation */}
-      <List sx={{ flexGrow: 1, py: 1 }}>
-        {modules.map((module) => {
-          const Icon = module.icon
-          const isSelected = selectedModule === module.id
-          
-          return (
-            <ListItem key={module.id} disablePadding sx={{ px: 1, mb: 0.5 }}>
-              <ListItemButton
-                selected={isSelected}
-                onClick={() => onModuleSelect(module.id)}
-                sx={{
-                  borderRadius: 2,
-                  backgroundColor: isSelected ? '#22C55E' : 'transparent',
-                  color: isSelected ? 'white' : '#374151',
-                  '&:hover': {
-                    backgroundColor: isSelected ? '#16A34A' : '#F3F4F6'
-                  },
-                  '&.Mui-selected': {
-                    backgroundColor: '#22C55E',
-                    '&:hover': { backgroundColor: '#16A34A' }
-                  }
-                }}
-              >
-                <ListItemIcon sx={{ 
-                  color: 'inherit',
-                  minWidth: 40
-                }}>
-                  <Icon />
-                </ListItemIcon>
-                <ListItemText 
-                  primary={module.name}
-                  primaryTypographyProps={{
-                    fontWeight: isSelected ? 600 : 500,
-                    fontSize: 14
+      <Box sx={{ flexGrow: 1, overflowY: 'auto', py: 2 }}>
+        <List sx={{ px: 1 }}>
+          {modules.map((module) => {
+            const Icon = module.icon
+            const isSelected = selectedModule === module.id
+            
+            return (
+              <ListItem key={module.id} disablePadding sx={{ mb: 0.5 }}>
+                <ListItemButton
+                  selected={isSelected}
+                  onClick={() => onModuleSelect(module.id)}
+                  sx={{
+                    borderRadius: 2,
+                    mx: 1,
+                    backgroundColor: isSelected ? '#E3F2FD' : 'transparent',
+                    color: isSelected ? '#1976D2' : '#666666',
+                    border: isSelected ? '1px solid #1976D2' : '1px solid transparent',
+                    '&:hover': {
+                      backgroundColor: isSelected ? '#E3F2FD' : '#F5F5F5'
+                    },
+                    '&.Mui-selected': {
+                      backgroundColor: '#E3F2FD',
+                      color: '#1976D2',
+                      '&:hover': { backgroundColor: '#E3F2FD' }
+                    }
                   }}
-                />
-              </ListItemButton>
-            </ListItem>
-          )
-        })}
-      </List>
+                >
+                  <ListItemIcon sx={{ 
+                    color: isSelected ? '#1976D2' : '#666666',
+                    minWidth: 44
+                  }}>
+                    <Icon />
+                  </ListItemIcon>
+                  {open && (
+                    <ListItemText 
+                      primary={module.name}
+                      primaryTypographyProps={{
+                        fontWeight: isSelected ? 600 : 500,
+                        fontSize: 14,
+                        color: isSelected ? '#1976D2' : '#666666'
+                      }}
+                    />
+                  )}
+                </ListItemButton>
+              </ListItem>
+            )
+          })}
+        </List>
+      </Box>
 
-      {/* Footer */}
-      <Box sx={{ p: 2, backgroundColor: '#F8FAFC', borderTop: '1px solid #E2E8F0' }}>
-        <Typography variant="caption" sx={{ color: '#64748B', fontSize: 11 }}>
-          © 2025 BeaverNorth Advisors
-        </Typography>
+      {/* Logout Section at Bottom */}
+      <Box sx={{ 
+        p: 2, 
+        backgroundColor: '#FAFAFA',
+        borderTop: '1px solid #E0E0E0'
+      }}>
+        {open ? (
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Box sx={{ 
+                width: 40, 
+                height: 40, 
+                borderRadius: '50%',
+                backgroundColor: '#1976D2',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'white',
+                fontSize: 16,
+                fontWeight: 'bold'
+              }}>
+                {(user.full_name || user.username || 'A').charAt(0).toUpperCase()}
+              </Box>
+              <Box>
+                <Typography variant="body2" sx={{ fontWeight: '600', color: '#333333' }}>
+                  {user.full_name || user.username || 'Admin'}
+                </Typography>
+                <Typography variant="caption" sx={{ color: '#666666' }}>
+                  Insurance Advisor
+                </Typography>
+              </Box>
+            </Box>
+            
+            <IconButton 
+              onClick={onLogout}
+              size="small"
+              sx={{ 
+                backgroundColor: '#F44336',
+                color: 'white',
+                width: 32,
+                height: 32,
+                '&:hover': { backgroundColor: '#D32F2F' }
+              }}
+            >
+              <LogoutIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Box>
+        ) : (
+          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <IconButton 
+              onClick={onLogout}
+              size="small"
+              sx={{ 
+                backgroundColor: '#F44336',
+                color: 'white',
+                width: 32,
+                height: 32,
+                '&:hover': { backgroundColor: '#D32F2F' }
+              }}
+            >
+              <LogoutIcon sx={{ fontSize: 18 }} />
+            </IconButton>
+          </Box>
+        )}
       </Box>
     </Box>
   )
@@ -190,18 +221,18 @@ export default function MuiSidebar({
       open={open}
       onClose={onToggle}
       sx={{
-        width: open ? (isMobile ? mobileDrawerWidth : drawerWidth) : (isMobile ? 0 : 64),
+        width: open ? drawerWidth : (isMobile ? 0 : 64),
         flexShrink: 0,
         '& .MuiDrawer-paper': {
-          width: open ? (isMobile ? mobileDrawerWidth : drawerWidth) : (isMobile ? 0 : 64),
+          width: open ? drawerWidth : (isMobile ? 57 : 64),
           boxSizing: 'border-box',
-          backgroundColor: '#FFFFFF',
-          borderRight: '1px solid #E2E8F0',
+          borderRight: '1px solid #E0E0E0',
           transition: theme.transitions.create('width', {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
           }),
-          overflowX: 'hidden'
+          overflowX: 'hidden',
+          position: 'relative'
         },
       }}
     >
@@ -209,25 +240,3 @@ export default function MuiSidebar({
     </Drawer>
   )
 }
-
-// Avatar component for consistent styling
-const Avatar = ({ children, sx, ...props }: any) => (
-  <Box 
-    sx={{ 
-      display: 'flex', 
-      alignItems: 'center', 
-      justifyContent: 'center',
-      borderRadius: '50%',
-      width: 40,
-      height: 40,
-      backgroundColor: '#22C55E',
-      color: 'white',
-      fontSize: 16,
-      fontWeight: 'bold',
-      ...sx
-    }} 
-    {...props}
-  >
-    {children}
-  </Box>
-)
