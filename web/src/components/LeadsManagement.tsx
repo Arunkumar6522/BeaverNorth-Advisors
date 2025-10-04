@@ -393,6 +393,8 @@ export default function LeadsManagement() {
       const { supabase } = await import('../lib/supabase')
       const username = localStorage.getItem('username') || 'Admin'
       
+      console.log('📝 Attempting to log activity:', { leadId, activityType, description })
+      
       const { error } = await supabase
         .from('activity_log')
         .insert({
@@ -406,8 +408,16 @@ export default function LeadsManagement() {
 
       if (error) {
         console.error('❌ Error logging activity:', error)
+        console.error('❌ Error details:', error.message, error.details, error.hint)
+        
+        // Show user-friendly error
+        if (error.message.includes('relation "activity_log" does not exist')) {
+          console.error('🚨 ACTIVITY_LOG TABLE DOES NOT EXIST!')
+          console.error('📋 Please run the SQL script in Supabase SQL Editor first!')
+          alert('⚠️ Activity logging not set up yet. Please run the SQL script in Supabase first.')
+        }
       } else {
-        console.log('✅ Activity logged:', activityType)
+        console.log('✅ Activity logged successfully:', activityType)
       }
     } catch (error) {
       console.error('❌ Error logging activity:', error)

@@ -123,6 +123,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       
       // Log the lead creation activity
       try {
+        console.log('📝 Attempting to log lead creation activity...')
+        
         const { error: logError } = await supabase
           .from('activity_log')
           .insert({
@@ -135,6 +137,12 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
         if (logError) {
           console.error('❌ Error logging activity:', logError)
+          console.error('❌ Error details:', logError.message, logError.details, logError.hint)
+          
+          if (logError.message.includes('relation "activity_log" does not exist')) {
+            console.error('🚨 ACTIVITY_LOG TABLE DOES NOT EXIST!')
+            console.error('📋 Please run the SQL script in Supabase SQL Editor first!')
+          }
         } else {
           console.log('✅ Activity logged: lead_created')
         }
