@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Box, Card, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Avatar } from '@mui/material'
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Info as InfoIcon } from '@mui/icons-material'
+import { Box, Card, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Avatar, CircularProgress } from '@mui/material'
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Info as InfoIcon, Person as PersonIcon } from '@mui/icons-material'
 
 interface ActivityLog {
   id: string
@@ -28,7 +28,6 @@ export default function Logs() {
         .from('activity_log')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(100)
 
       if (error) {
         console.error('❌ Error fetching logs:', error)
@@ -39,6 +38,7 @@ export default function Logs() {
           setLogs(tempActivities)
         }
       } else if (data) {
+        console.log('✅ Logs fetched:', data.length, 'activities')
         setLogs(data)
       }
     } catch (error) {
@@ -80,6 +80,18 @@ export default function Logs() {
     return `${Math.floor(diffInSeconds / 86400)}d ago`
   }
 
+  const formatDateTime = (isoDate: string) => {
+    const date = new Date(isoDate)
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })
+  }
+
   const getActivityTypeLabel = (type: ActivityLog['activity_type']) => {
     switch (type) {
       case 'lead_created': return 'Lead Created'
@@ -92,7 +104,12 @@ export default function Logs() {
   if (loading) {
     return (
       <Box sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Typography>Loading logs...</Typography>
+        <Box sx={{ textAlign: 'center' }}>
+          <CircularProgress sx={{ mb: 2 }} />
+          <Typography variant="h6" sx={{ color: '#6B7280' }}>
+            Loading activity logs...
+          </Typography>
+        </Box>
       </Box>
     )
   }
@@ -105,7 +122,7 @@ export default function Logs() {
           Activity Logs
         </Typography>
         <Typography variant="body1" sx={{ color: '#6B7280' }}>
-          Complete audit trail of all system activities
+          Complete audit trail of all system activities ({logs.length} total activities)
         </Typography>
       </Box>
 
@@ -123,14 +140,15 @@ export default function Logs() {
         ) : (
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%' }}>
             <TableContainer sx={{ height: '100%', overflow: 'auto', overflowX: 'auto', '&::-webkit-scrollbar': { height: '6px' } }}>
-              <Table stickyHeader sx={{ minWidth: 800, width: '100%' }}>
+              <Table stickyHeader sx={{ minWidth: 1000, width: '100%' }}>
                 <TableHead>
                   <TableRow sx={{ backgroundColor: '#F9FAFB' }}>
-                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 120, sm: 150 } }}>Activity</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 200, sm: 300 } }}>Description</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 100, sm: 120 } }}>Performed By</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: { xs: 100, sm: 120 } }}>Time</TableCell>
-                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 150 }}>Details</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: 120 }}>Activity Type</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: 300 }}>Description</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: 120 }}>Performed By</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: 100 }}>Time Ago</TableCell>
+                    <TableCell sx={{ fontWeight: '600', minWidth: 180 }}>Date & Time</TableCell>
+                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 200 }}>Changes</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -138,7 +156,7 @@ export default function Logs() {
                     <TableRow key={log.id} hover>
                       <TableCell>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Avatar sx={{ bgcolor: getActivityColor(log.activity_type), width: 24, height: 24 }}>
+                          <Avatar sx={{ bgcolor: getActivityColor(log.activity_type), width: 28, height: 28 }}>
                             {getActivityIcon(log.activity_type)}
                           </Avatar>
                           <Chip
@@ -148,30 +166,61 @@ export default function Logs() {
                               bgcolor: getActivityColor(log.activity_type),
                               color: 'white',
                               fontSize: '11px',
-                              height: '20px'
+                              height: '22px',
+                              fontWeight: '500'
                             }}
                           />
                         </Box>
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2" sx={{ fontWeight: '500' }}>
+                        <Typography variant="body2" sx={{ fontWeight: '500', lineHeight: 1.4 }}>
                           {log.description}
                         </Typography>
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                          {log.performed_by}
-                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <PersonIcon sx={{ fontSize: 16, color: '#6B7280' }} />
+                          <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: '500' }}>
+                            {log.performed_by}
+                          </Typography>
+                        </Box>
                       </TableCell>
                       <TableCell>
-                        <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                        <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: '500' }}>
                           {formatTimeAgo(log.created_at)}
                         </Typography>
                       </TableCell>
-                      <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
-                        {log.old_value && log.new_value && (
+                      <TableCell>
+                        <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.8rem' }}>
+                          {formatDateTime(log.created_at)}
+                        </Typography>
+                      </TableCell>
+                      <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                        {log.old_value && log.new_value ? (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Chip
+                              label={log.old_value}
+                              size="small"
+                              variant="outlined"
+                              sx={{ fontSize: '10px', height: '20px' }}
+                            />
+                            <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                              →
+                            </Typography>
+                            <Chip
+                              label={log.new_value}
+                              size="small"
+                              sx={{ 
+                                fontSize: '10px', 
+                                height: '20px',
+                                bgcolor: '#E3F2FD',
+                                color: '#1976D2'
+                              }}
+                            />
+                          </Box>
+                        ) : (
                           <Typography variant="caption" sx={{ color: '#9CA3AF' }}>
-                            {log.old_value} → {log.new_value}
+                            No changes
                           </Typography>
                         )}
                       </TableCell>
