@@ -3,6 +3,8 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
 import { Box, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material'
 import { Menu as MenuIcon, Close as CloseIcon, Language } from '@mui/icons-material'
+import NotificationDropdown from './NotificationDropdown'
+import { customAuth } from '../lib/custom-auth'
 
 export default function Nav() {
   const location = useLocation()
@@ -110,6 +112,9 @@ export default function Nav() {
               </NavLink>
             ))}
             
+            {/* Notification Dropdown */}
+            <NotificationDropdown isAuthenticated={customAuth.isAuthenticated()} />
+            
             {/* Language Switcher - Minimal */}
             <Box sx={{
               ml: 2,
@@ -122,7 +127,10 @@ export default function Nav() {
               <Language sx={{ fontSize: 18, color: '#6983CC' }} />
               <select
                 value={locale}
-                onChange={(e) => setLocale(e.target.value as 'en' | 'fr')}
+                onChange={(e) => {
+                  console.log('Language changed to:', e.target.value)
+                  setLocale(e.target.value as 'en' | 'fr')
+                }}
                 style={{
                   border: 'none',
                   background: 'transparent',
@@ -141,12 +149,18 @@ export default function Nav() {
 
           {/* Mobile Menu Button */}
           <Box sx={{ display: { xs: 'flex', lg: 'none' }, alignItems: 'center', gap: 2 }}>
+            {/* Mobile Notification Dropdown */}
+            <NotificationDropdown isAuthenticated={customAuth.isAuthenticated()} />
+            
             {/* Mobile Language Switcher */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
               <Language sx={{ fontSize: 16, color: '#6983CC' }} />
               <select
                 value={locale}
-                onChange={(e) => setLocale(e.target.value as 'en' | 'fr')}
+                onChange={(e) => {
+                  console.log('Mobile language changed to:', e.target.value)
+                  setLocale(e.target.value as 'en' | 'fr')
+                }}
                 style={{
                   border: 'none',
                   background: 'transparent',

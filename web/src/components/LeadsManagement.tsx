@@ -40,6 +40,7 @@ import {
   Email as EmailIcon,
   Close as CloseIcon
 } from '@mui/icons-material'
+import { customAuth } from '../lib/custom-auth'
 
 interface Lead {
   id: string
@@ -391,7 +392,7 @@ export default function LeadsManagement() {
   const logActivity = async (leadId: string, activityType: string, description: string, oldValue?: string, newValue?: string) => {
     try {
       const { supabase } = await import('../lib/supabase')
-      const username = localStorage.getItem('username') || 'Admin'
+      const username = customAuth.getCurrentUser()?.username || 'Admin'
       
       console.log('📝 Attempting to log activity:', { leadId, activityType, description })
       
@@ -452,7 +453,7 @@ export default function LeadsManagement() {
       console.log('🗑️ Deleting lead:', deleteLeadId)
       
       // Get current user
-      const username = localStorage.getItem('username') || 'Admin'
+      const username = customAuth.getCurrentUser()?.username || 'Admin'
       
       // Get lead name for logging
       const leadToDelete = leads.find(lead => lead.id === deleteLeadId)
