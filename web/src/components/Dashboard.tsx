@@ -196,18 +196,11 @@ export default function Dashboard() {
 
   return (
     <Box sx={{ height: '100%', overflow: 'auto', px: 1 }}>
-      {/* Header */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1 }}>
-          Welcome back, {customAuth.getCurrentUser()?.username || 'Admin'}! 👋
+      {/* Header row: Welcome on left, period dropdown on right */}
+      <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827' }}>
+          Welcome, {customAuth.getCurrentUser()?.username || 'Admin'}
         </Typography>
-        <Typography variant="body1" sx={{ color: '#6B7280' }}>
-          Here's what's happening with your leads today
-        </Typography>
-      </Box>
-
-      {/* Time Period Selector */}
-      <Box sx={{ mb: 4 }}>
         <FormControl size="small" sx={{ minWidth: 200 }}>
           <Select
             value={timePeriod}

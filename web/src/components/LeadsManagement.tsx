@@ -590,12 +590,7 @@ export default function LeadsManagement() {
 
   return (
     <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column', width: '100%' }}>
-      {/* Header */}
-      <Box sx={{ px: 1, py: 2, flexShrink: 0 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
-          👥 Leads Management
-        </Typography>
-      </Box>
+      {/* Header removed (Top bar already shows module name) */}
 
       {/* Tabs and Search Bar */}
       <Box sx={{ px: 1, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
