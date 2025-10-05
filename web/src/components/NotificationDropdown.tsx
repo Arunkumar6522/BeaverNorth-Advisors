@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { 
   Box, 
   IconButton, 
@@ -10,14 +11,16 @@ import {
   ListItemIcon,
   Avatar,
   Divider,
-  Chip
+  Chip,
+  Button
 } from '@mui/material'
 import { 
   Notifications as NotificationsIcon,
   PersonAdd as PersonAddIcon,
   Update as UpdateIcon,
   Delete as DeleteIcon,
-  CheckCircle as CheckCircleIcon
+  CheckCircle as CheckCircleIcon,
+  OpenInNew as MaximizeIcon
 } from '@mui/icons-material'
 
 interface ActivityLog {
@@ -36,6 +39,7 @@ interface NotificationDropdownProps {
 }
 
 export default function NotificationDropdown({ isAuthenticated = false, color = '#6983CC' }: NotificationDropdownProps) {
+  const navigate = useNavigate()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [recentActivity, setRecentActivity] = useState<ActivityLog[]>([])
   const [loading, setLoading] = useState(false)
@@ -230,6 +234,34 @@ export default function NotificationDropdown({ isAuthenticated = false, color = 
                 </Box>
               ))}
             </List>
+          )}
+          
+          {/* Maximize Button */}
+          {isAuthenticated && recentActivity.length > 0 && (
+            <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #E5E7EB' }}>
+              <Button
+                fullWidth
+                variant="outlined"
+                startIcon={<MaximizeIcon />}
+                onClick={() => {
+                  handleClose()
+                  navigate('/logs')
+                }}
+                sx={{
+                  textTransform: 'none',
+                  fontSize: '0.85rem',
+                  fontWeight: 500,
+                  borderColor: '#D1D5DB',
+                  color: '#374151',
+                  '&:hover': {
+                    borderColor: '#9CA3AF',
+                    backgroundColor: '#F9FAFB'
+                  }
+                }}
+              >
+                View All Logs
+              </Button>
+            </Box>
           )}
         </Box>
       </Popover>
