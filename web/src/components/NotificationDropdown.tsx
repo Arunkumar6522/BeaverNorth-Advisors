@@ -184,10 +184,40 @@ export default function NotificationDropdown({ isAuthenticated = false, color = 
         }}
       >
         <Box sx={{ p: 2 }}>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
-            Recent Activity
-          </Typography>
+          {/* Header with View All Logs Button */}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              Recent Activity
+            </Typography>
+            {isAuthenticated && (
+              <Button
+                variant="outlined"
+                size="small"
+                startIcon={<MaximizeIcon />}
+                onClick={() => {
+                  handleClose()
+                  navigate('/logs')
+                }}
+                sx={{
+                  textTransform: 'none',
+                  fontSize: '0.75rem',
+                  fontWeight: 500,
+                  borderColor: '#D1D5DB',
+                  color: '#374151',
+                  py: 0.5,
+                  px: 1,
+                  '&:hover': {
+                    borderColor: '#9CA3AF',
+                    backgroundColor: '#F9FAFB'
+                  }
+                }}
+              >
+                View All
+              </Button>
+            )}
+          </Box>
           
+          {/* Activity List */}
           {!isAuthenticated ? (
             <Typography variant="body2" sx={{ color: '#6B7280', textAlign: 'center', py: 2 }}>
               Please log in to view notifications
@@ -236,33 +266,6 @@ export default function NotificationDropdown({ isAuthenticated = false, color = 
             </List>
           )}
           
-          {/* Maximize Button */}
-          {isAuthenticated && recentActivity.length > 0 && (
-            <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid #E5E7EB' }}>
-              <Button
-                fullWidth
-                variant="outlined"
-                startIcon={<MaximizeIcon />}
-                onClick={() => {
-                  handleClose()
-                  navigate('/logs')
-                }}
-                sx={{
-                  textTransform: 'none',
-                  fontSize: '0.85rem',
-                  fontWeight: 500,
-                  borderColor: '#D1D5DB',
-                  color: '#374151',
-                  '&:hover': {
-                    borderColor: '#9CA3AF',
-                    backgroundColor: '#F9FAFB'
-                  }
-                }}
-              >
-                View All Logs
-              </Button>
-            </Box>
-          )}
         </Box>
       </Popover>
     </>
