@@ -318,6 +318,36 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           ×
         </button>
 
+        {/* Logo */}
+        <div style={{
+          position: 'absolute',
+          top: '20px',
+          left: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px'
+        }}>
+          <img 
+            src="/src/assets/bna logo.png" 
+            alt="BeaverNorth Advisors" 
+            style={{ 
+              height: '32px',
+              width: 'auto'
+            }} 
+            onError={(e) => {
+              console.error('Modal logo failed to load:', e.currentTarget.src)
+              e.currentTarget.style.display = 'none'
+            }}
+          />
+          <span style={{
+            fontSize: '14px',
+            fontWeight: 600,
+            color: '#1E377C'
+          }}>
+            BNA
+          </span>
+        </div>
+
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <h2 style={{ 
             margin: '0 0 8px 0', 

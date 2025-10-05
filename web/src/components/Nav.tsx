@@ -8,14 +8,14 @@ import { customAuth } from '../lib/custom-auth'
 
 export default function Nav() {
   const location = useLocation()
-  const { locale, setLocale } = useI18n()
+  const { locale, setLocale, t } = useI18n()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const navItems = [
-    { label: 'Home', path: '/' },
-    { label: 'About', path: '/about' },
-    { label: 'Services', path: '/services' },
-    { label: 'Contact', path: '/contact' }
+    { label: t('nav_home'), path: '/' },
+    { label: t('nav_about'), path: '/about' },
+    { label: t('nav_services'), path: '/services' },
+    { label: t('nav_contact'), path: '/contact' }
   ]
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)

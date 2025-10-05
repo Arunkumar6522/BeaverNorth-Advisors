@@ -2,6 +2,16 @@ import { useState, useEffect } from 'react'
 import { Box, Typography } from '@mui/material'
 import { useI18n } from '../i18n'
 
+// Import logos
+import manulifeLogo from '../assets/insurance companies/manulife-logo-preview.png'
+import benevaLogo from '../assets/insurance companies/beneva-ssq-lacapitale-brand-1536x672.jpg'
+import allianzLogo from '../assets/insurance companies/Allianz.svg.png'
+import iaLogo from '../assets/insurance companies/IA_Financial_Group-Logo.wine.png'
+import travelanceLogo from '../assets/insurance companies/travelance-logo.png'
+import visitCanadaLogo from '../assets/insurance companies/2-visit-canada_logo.svg'
+import empireLifeLogo from '../assets/insurance companies/logo-en.png'
+import forestersLogo from '../assets/insurance companies/PngItem_4618681.png'
+
 interface InsuranceLogo {
   name: string
   src: string
@@ -11,42 +21,42 @@ interface InsuranceLogo {
 const insuranceLogos: InsuranceLogo[] = [
   {
     name: 'Manulife',
-    src: '/src/assets/insurance companies/manulife-logo-preview.png',
+    src: manulifeLogo,
     alt: 'Manulife Insurance'
   },
   {
     name: 'Beneva',
-    src: '/src/assets/insurance companies/beneva-ssq-lacapitale-brand-1536x672.jpg',
+    src: benevaLogo,
     alt: 'Beneva Insurance'
   },
   {
     name: 'Allianz',
-    src: '/src/assets/insurance companies/Allianz.svg.png',
+    src: allianzLogo,
     alt: 'Allianz Insurance'
   },
   {
     name: 'Industrial Alliance',
-    src: '/src/assets/insurance companies/IA_Financial_Group-Logo.wine.png',
+    src: iaLogo,
     alt: 'Industrial Alliance Insurance'
   },
   {
     name: 'Travelance',
-    src: '/src/assets/insurance companies/travelance-logo.png',
+    src: travelanceLogo,
     alt: 'Travelance Insurance'
   },
   {
     name: '2VisitCanada',
-    src: '/src/assets/insurance companies/2-visit-canada_logo.svg',
+    src: visitCanadaLogo,
     alt: '2VisitCanada Insurance'
   },
   {
     name: 'Empire Life',
-    src: '/src/assets/insurance companies/logo-en.png',
+    src: empireLifeLogo,
     alt: 'Empire Life Insurance'
   },
   {
     name: 'Foresters Financial',
-    src: '/src/assets/insurance companies/PngItem_4618681.png',
+    src: forestersLogo,
     alt: 'Foresters Financial'
   }
 ]
