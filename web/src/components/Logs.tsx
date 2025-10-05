@@ -51,7 +51,7 @@ export default function Logs() {
       if (error) {
         console.error('❌ Error fetching activity logs:', error)
         // Fallback to localStorage
-        const localLogs = JSON.parse(localStorage.getItem('activity_logs') || '[]')
+        const localLogs = JSON.parse(localStorage.getItem('temp_activities') || '[]')
         setLogs(localLogs)
         setDataSource('localStorage')
       } else {
@@ -62,7 +62,7 @@ export default function Logs() {
     } catch (error) {
       console.error('❌ Error fetching activity logs:', error)
       // Fallback to localStorage
-      const localLogs = JSON.parse(localStorage.getItem('activity_logs') || '[]')
+      const localLogs = JSON.parse(localStorage.getItem('temp_activities') || '[]')
       setLogs(localLogs)
       setDataSource('localStorage')
     } finally {

@@ -42,6 +42,8 @@ export default function DashboardLayout() {
       setSelectedModule('leads')
     } else if (path === '/deleted') {
       setSelectedModule('deleted')
+    } else if (path === '/logs') {
+      setSelectedModule('logs')
     } else {
       setSelectedModule('dashboard')
     }
@@ -55,6 +57,8 @@ export default function DashboardLayout() {
       navigate('/leads')
     } else if (moduleId === 'deleted') {
       navigate('/deleted')
+    } else if (moduleId === 'logs') {
+      navigate('/logs')
     } else {
       navigate('/dashboard')
     }
