@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import CountryCodeSelector from './CountryCodeSelector'
 import { supabase } from '../lib/supabase'
+import { useI18n } from '../i18n'
 import bnaLogo from '../assets/bna logo.png'
 
 interface ContactModalProps {
@@ -10,6 +11,8 @@ interface ContactModalProps {
 }
 
 export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
+  const { locale } = useI18n()
+  const isFr = locale === 'fr'
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
     name: '',
@@ -260,11 +263,13 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     
     // Special validation for dob field
     if (name === 'dob') {
-      setFormData({
-        ...formData,
-        [name]: value
-      })
-      if (!validateDob(value)) {
+      // Only accept values within bounds; otherwise show error and ignore change
+      if (validateDob(value)) {
+        setFormData({
+          ...formData,
+          [name]: value
+        })
+      } else {
         setValidationErrors(prev => ({
           ...prev,
           [name]: 'Please enter a valid date of birth (1920-2020), age 18-105'
@@ -380,16 +385,16 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         </div>
 
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h2 style={{ 
+                  <h2 style={{ 
             margin: '0 0 8px 0', 
             color: '#111827', 
             fontSize: '24px',
             fontWeight: '600',
             letterSpacing: '-0.02em'
           }}>
-            {currentStep === 1 ? 'Get Started' : 
-             currentStep === 2 ? `Hi ${formData.name} 👋` :
-             'Almost Done'}
+                    {currentStep === 1 ? (locale === 'fr' ? 'Commencer' : 'Get Started') : 
+                     currentStep === 2 ? (locale === 'fr' ? `Salut ${formData.name} 👋` : `Hi ${formData.name} 👋`) :
+                     (locale === 'fr' ? 'Presque terminé' : 'Almost Done')}
           </h2>
           <p style={{ 
             margin: '0 0 24px 0', 
@@ -397,9 +402,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             fontSize: '15px',
             fontWeight: '400'
           }}>
-            {currentStep === 1 ? 'Tell us about yourself' : 
-             currentStep === 2 ? 'Help us personalize your quote' :
-             'Verify your contact information'}
+                    {currentStep === 1 ? (locale === 'fr' ? 'Parlez-nous de vous' : 'Tell us about yourself') : 
+                     currentStep === 2 ? (locale === 'fr' ? 'Aidez-nous à personnaliser votre devis' : 'Help us personalize your quote') :
+                     (locale === 'fr' ? 'Vérifiez vos coordonnées' : 'Verify your contact information')}
           </p>
           
           {/* Progress Bar */}
@@ -477,14 +482,14 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 style={{ display: 'grid', gap: '20px' }}
               >
                 <div>
-                          <label style={{ 
+                  <label style={{ 
                             display: 'block', 
                             fontSize: '14px', 
                             fontWeight: '500', 
                             color: '#374151',
                             marginBottom: '8px'
                           }}>
-                            Full name <span style={{ color: '#EF4444' }}>*</span>
+                    Full name <span style={{ color: '#EF4444' }}>*</span>
                           </label>
                           <input
                             type="text"
@@ -506,6 +511,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                             }}
                             onFocus={(e) => e.target.style.borderColor = validationErrors.name ? '#EF4444' : '#22C55E'}
                             onBlur={(e) => e.target.style.borderColor = validationErrors.name ? '#EF4444' : '#D1D5DB'}
+                            maxLength={25}
                           />
                           {validationErrors.name && (
                             <p style={{
@@ -527,7 +533,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     color: '#374151',
                     marginBottom: '8px'
                   }}>
-                    Gender *
+                    Gender <span style={{ color: '#EF4444' }}>*</span>
                   </label>
                   <select
                     name="gender"
@@ -562,7 +568,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     color: 'var(--text-primary)',
                     marginBottom: '8px'
                   }}>
-                    When were you born? *
+                    When were you born? <span style={{ color: '#EF4444' }}>*</span>
                   </label>
                   <input
                     type="date"
@@ -581,6 +587,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       color: 'var(--text-primary)',
                       outline: 'none'
                     }}
+                    onKeyDown={(e) => e.preventDefault()}
                   />
                 </div>
 
@@ -666,8 +673,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       background: formData.smokingStatus === 'non-smoker' ? 'var(--brand-green)' : 'var(--surface-1)',
                       color: formData.smokingStatus === 'non-smoker' ? 'white' : 'var(--text-primary)',
                       transition: 'all 0.2s',
-                      opacity: formData.smokingStatus === 'smoker' ? 0.5 : 1,
-                      pointerEvents: formData.smokingStatus === 'smoker' ? 'none' : 'auto'
+                      opacity: formData.smokingStatus !== '' && formData.smokingStatus !== 'non-smoker' ? 0.5 : 1,
+                      pointerEvents: formData.smokingStatus !== '' && formData.smokingStatus !== 'non-smoker' ? 'none' : 'auto'
                     }}>
                       <input
                         type="radio"
@@ -691,8 +698,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       background: formData.smokingStatus === 'smoker' ? 'var(--brand-yellow)' : 'var(--surface-1)',
                       color: formData.smokingStatus === 'smoker' ? 'white' : 'var(--text-primary)',
                       transition: 'all 0.2s',
-                      opacity: formData.smokingStatus === 'non-smoker' ? 0.5 : 1,
-                      pointerEvents: formData.smokingStatus === 'non-smoker' ? 'none' : 'auto'
+                      opacity: formData.smokingStatus !== '' && formData.smokingStatus !== 'smoker' ? 0.5 : 1,
+                      pointerEvents: formData.smokingStatus !== '' && formData.smokingStatus !== 'smoker' ? 'none' : 'auto'
                     }}>
                       <input
                         type="radio"

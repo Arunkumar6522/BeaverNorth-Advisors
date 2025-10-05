@@ -11,7 +11,8 @@ import {
   TableRow,
   Chip,
   Avatar,
-  Button
+  Button,
+  Pagination
 } from '@mui/material'
 import {
   Refresh as RefreshIcon,
@@ -21,6 +22,7 @@ import {
   Delete as DeleteIcon,
   Visibility as ViewIcon
 } from '@mui/icons-material'
+import { supabase } from '../lib/supabase'
 
 interface ActivityLog {
   id: string
@@ -35,13 +37,14 @@ interface ActivityLog {
 export default function Logs() {
   const [logs, setLogs] = useState<ActivityLog[]>([])
   const [loading, setLoading] = useState(true)
-  const [dataSource, setDataSource] = useState<'database' | 'localStorage' | 'none'>('none')
+  const [page, setPage] = useState(1) // 1-based for MUI Pagination
+  const [rowsPerPage] = useState(10)
+  // data source indicator removed from UI; no state needed
 
   const fetchLogs = async () => {
     setLoading(true)
     try {
       console.log('🔄 Fetching activity logs from Supabase...')
-      const { supabase } = await import('../lib/supabase')
       const { data, error } = await supabase
         .from('activity_log')
         .select('*')
@@ -52,18 +55,17 @@ export default function Logs() {
         // Fallback to localStorage
         const localLogs = JSON.parse(localStorage.getItem('temp_activities') || '[]')
         setLogs(localLogs)
-        setDataSource('localStorage')
+        // no UI indicator
       } else {
         console.log('📊 Activity logs data:', data)
         setLogs(data || [])
-        setDataSource('database')
       }
     } catch (error) {
       console.error('❌ Error fetching activity logs:', error)
       // Fallback to localStorage
       const localLogs = JSON.parse(localStorage.getItem('temp_activities') || '[]')
       setLogs(localLogs)
-      setDataSource('localStorage')
+      // no UI indicator
     } finally {
       setLoading(false)
     }
@@ -130,13 +132,6 @@ export default function Logs() {
 
   return (
     <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
-      <Box sx={{ px: 1, py: 2, flexShrink: 0 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
-          📋 Activity Logs
-        </Typography>
-      </Box>
-
       {/* Actions */}
       <Box sx={{ px: 1, py: 1, flexShrink: 0 }}>
         <Button
@@ -159,12 +154,7 @@ export default function Logs() {
         >
           Refresh
         </Button>
-        {dataSource === 'database' && (
-          <Chip label="Database" size="small" color="success" sx={{ ml: 2, fontSize: '0.8rem' }} />
-        )}
-        {dataSource === 'localStorage' && (
-          <Chip label="Local Storage" size="small" color="warning" sx={{ ml: 2, fontSize: '0.8rem' }} />
-        )}
+        {/* Data source chips removed as requested */}
       </Box>
 
       {/* Logs Table */}
@@ -193,7 +183,9 @@ export default function Logs() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {logs.map((log) => (
+                  {logs
+                    .slice((page - 1) * rowsPerPage, (page - 1) * rowsPerPage + rowsPerPage)
+                    .map((log) => (
                     <TableRow key={log.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                       <TableCell>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -271,6 +263,17 @@ export default function Logs() {
                 </TableBody>
               </Table>
             </TableContainer>
+            {/* Pagination Controls */}
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+              <Pagination
+                count={Math.max(1, Math.ceil(logs.length / rowsPerPage))}
+                page={page}
+                onChange={(_e, value) => setPage(value)}
+                showFirstButton
+                showLastButton
+                color="primary"
+              />
+            </Box>
           </Card>
         )}
       </Box>

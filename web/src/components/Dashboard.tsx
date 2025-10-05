@@ -7,7 +7,9 @@ import {
   Avatar,
   FormControl,
   Select,
-  MenuItem
+  MenuItem,
+  IconButton,
+  Tooltip as MuiTooltip
 } from '@mui/material'
 import { 
   TrendingUp, 
@@ -16,6 +18,7 @@ import {
   CheckCircleOutline,
   CalendarToday
 } from '@mui/icons-material'
+import { Handshake } from '@mui/icons-material'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
@@ -76,7 +79,8 @@ export default function Dashboard() {
   const [leadsData, setLeadsData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [inactiveGender, setInactiveGender] = useState<Set<string>>(new Set())
-  const [inactiveSmoking, setInactiveSmoking] = useState<Set<string>>(new Set())
+  // For smoking chart: keep a single active category; others are dimmed
+  const [activeSmoking, setActiveSmoking] = useState<string | null>(null)
 
   const timePeriods = [
     { value: 'today', label: 'Today', icon: CalendarToday },
@@ -200,9 +204,16 @@ export default function Dashboard() {
     <Box sx={{ height: '100%', overflow: 'auto', px: 1 }}>
       {/* Header row: Welcome on left, period dropdown on right */}
       <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827' }}>
-          Welcome, {customAuth.getCurrentUser()?.username || 'Admin'}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827' }}>
+            Welcome, {customAuth.getCurrentUser()?.username || 'Admin'}
+          </Typography>
+          <MuiTooltip title="Welcome">
+            <IconButton size="large" sx={{ color: '#1E377C' }}>
+              <Handshake />
+            </IconButton>
+          </MuiTooltip>
+        </Box>
         <FormControl size="small" sx={{ minWidth: 200 }}>
           <Select
             value={timePeriod}
@@ -283,18 +294,9 @@ export default function Dashboard() {
                       <Cell
                         key={`cell-${index}`}
                         fill={entry.color}
-                        fillOpacity={inactiveSmoking.has(entry.name) ? 0.25 : 1}
+                        fillOpacity={activeSmoking === null || activeSmoking === entry.name ? 1 : 0.25}
                         onClick={() => {
-                          setInactiveSmoking(prev => {
-                            const next = new Set(Array.from(prev))
-                            if (next.has(entry.name)) {
-                              next.delete(entry.name)
-                            } else {
-                              next.clear()
-                              next.add(entry.name)
-                            }
-                            return next
-                          })
+                          setActiveSmoking(curr => (curr === entry.name ? null : entry.name))
                         }}
                         style={{ cursor: 'pointer' }}
                       />
@@ -302,9 +304,9 @@ export default function Dashboard() {
                   </Pie>
                   <Tooltip
                     content={({ active, payload }) => {
-                      if (!active || !payload || payload.length === 0) return null
-                      const name = payload[0]?.name as string
-                      if (inactiveSmoking.has(name)) return null
+                      if (!active || !payload || (payload as any[]).length === 0) return null
+                      const name = (payload as any[])[0]?.name as string
+                      if (activeSmoking !== null && name !== activeSmoking) return null
                       return <CustomTooltip />
                     }}
                   />
@@ -368,8 +370,8 @@ export default function Dashboard() {
                   </Pie>
                   <Tooltip
                     content={({ active, payload }) => {
-                      if (!active || !payload || payload.length === 0) return null
-                      const name = payload[0]?.name as string
+                      if (!active || !payload || (payload as any[]).length === 0) return null
+                      const name = (payload as any[])[0]?.name as string
                       if (inactiveGender.has(name)) return null
                       return <CustomTooltip />
                     }}
