@@ -40,6 +40,7 @@ import {
   Close as CloseIcon
 } from '@mui/icons-material'
 import { useLocation } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 import { customAuth } from '../lib/custom-auth'
 
 interface Lead {
@@ -191,7 +192,6 @@ export default function LeadsManagement() {
     const fetchLeads = async () => {
       try {
         console.log('🔄 Fetching leads from Supabase...')
-        const { supabase } = await import('../lib/supabase')
         
         // First, let's get ALL leads to see what's in the database
         const { data, error } = await supabase

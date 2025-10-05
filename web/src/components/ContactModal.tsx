@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import CountryCodeSelector from './CountryCodeSelector'
+import { supabase } from '../lib/supabase'
+import bnaLogo from '../assets/bna logo.png'
 
 interface ContactModalProps {
   isOpen: boolean
@@ -110,8 +112,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       console.log('📋 Lead data:', leadData)
       
       // Real Supabase integration
-      const { supabase } = await import('../lib/supabase')
-      
       console.log('🔗 Supabase client loaded, inserting data...')
       
       const { data, error } = await supabase
@@ -359,7 +359,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           gap: '8px'
         }}>
           <img 
-            src="/src/assets/bna logo.png" 
+            src={bnaLogo} 
             alt="BeaverNorth Advisors" 
             style={{ 
               height: '32px',
@@ -484,7 +484,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                             color: '#374151',
                             marginBottom: '8px'
                           }}>
-                            Full name
+                            Full name <span style={{ color: '#EF4444' }}>*</span>
                           </label>
                           <input
                             type="text"

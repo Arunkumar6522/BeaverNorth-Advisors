@@ -106,8 +106,8 @@ export default function DashboardLayout() {
 
   const drawer = (open: boolean) => (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-      {/* Logo Section */}
-      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: open ? 'flex-start' : 'center', minHeight: 64 }}>
+      {/* Logo + Collapse Toggle Section */}
+      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: open ? 'space-between' : 'center', minHeight: 64 }}>
         {open ? (
           <>
             <Avatar 
@@ -118,13 +118,21 @@ export default function DashboardLayout() {
             <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1976d2' }}>
               BNA
             </Typography>
+            <IconButton onClick={handleDrawerToggle} sx={{ ml: 'auto' }} aria-label="Collapse sidebar">
+              <ChevronLeftIcon />
+            </IconButton>
           </>
         ) : (
-          <Avatar 
-            src="/src/assets/bna logo.png" 
-            alt="BNA" 
-            sx={{ width: 40, height: 40 }}
-          />
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+            <Avatar 
+              src="/src/assets/bna logo.png" 
+              alt="BNA" 
+              sx={{ width: 40, height: 40 }}
+            />
+            <IconButton onClick={handleDrawerToggle} aria-label="Expand sidebar">
+              <ChevronRightIcon />
+            </IconButton>
+          </Box>
         )}
       </Box>
       

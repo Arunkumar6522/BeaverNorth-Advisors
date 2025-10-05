@@ -18,6 +18,7 @@ import {
 } from '@mui/icons-material'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 import { customAuth } from '../lib/custom-auth'
 
 interface StatCardProps {
@@ -85,7 +86,6 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchLeadsData = async () => {
       try {
-        const { supabase } = await import('../lib/supabase')
         const { data, error } = await supabase
           .from('leads')
           .select('*')

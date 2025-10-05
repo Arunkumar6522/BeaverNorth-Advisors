@@ -1,6 +1,7 @@
 import { useI18n } from '../i18n'
 import { Box, Typography, Container } from '@mui/material'
 import { Phone, Email, LocationOn } from '@mui/icons-material'
+import bnaLogo from '../assets/bna logo.png'
 
 export default function Footer() {
   const { t } = useI18n()
@@ -22,7 +23,7 @@ export default function Footer() {
           <Box>
             <Box sx={{ mb: 2 }}>
               <img 
-                src="/src/assets/bna logo.png" 
+                src={bnaLogo} 
                 alt="BeaverNorth Advisors" 
                 style={{ 
                   height: '45px',

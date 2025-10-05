@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
 import { Box, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material'
 import { Menu as MenuIcon, Close as CloseIcon, Language } from '@mui/icons-material'
+import bnaLogo from '../assets/bna logo.png'
 
 export default function Nav() {
   const location = useLocation()
@@ -45,7 +46,7 @@ export default function Nav() {
           {/* Logo - Bigger with Company Name */}
           <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '16px' }}>
             <img 
-              src="/src/assets/bna logo.png" 
+              src={bnaLogo} 
               alt="BeaverNorth Advisors" 
               style={{ 
                 height: '70px',
@@ -205,7 +206,7 @@ export default function Nav() {
           borderBottom: '1px solid rgba(105,131,204,0.1)'
         }}>
           <img 
-            src="/src/assets/bna logo.png" 
+            src={bnaLogo} 
             alt="BeaverNorth Advisors" 
             style={{ 
               height: '40px',

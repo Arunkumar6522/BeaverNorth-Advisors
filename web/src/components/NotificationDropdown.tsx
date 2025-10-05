@@ -22,6 +22,7 @@ import {
   CheckCircle as CheckCircleIcon,
   OpenInNew as MaximizeIcon
 } from '@mui/icons-material'
+import { supabase } from '../lib/supabase'
 
 interface ActivityLog {
   id: string
@@ -63,7 +64,6 @@ export default function NotificationDropdown({ isAuthenticated = false, color = 
     
     try {
       // Try to fetch from Supabase first
-      const { supabase } = await import('../lib/supabase')
       const { data, error } = await supabase
         .from('activity_log')
         .select('*')
