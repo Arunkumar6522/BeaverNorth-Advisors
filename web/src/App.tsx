@@ -7,6 +7,7 @@ import Nav from './components/Nav'
 import TopBar from './components/TopBar'
 import Footer from './components/Footer'
 import ContactModal from './components/ContactModal'
+import InsuranceCarousel from './components/InsuranceCarousel'
 import AsuransiSVG from './assets/Asuransi keluarga 1.svg'
 
 export default function App() {
@@ -136,79 +137,7 @@ export default function App() {
       </Box>
 
       {/* Insurance Companies Carousel */}
-      <Box sx={{ 
-        bgcolor: 'white', 
-        py: 6,
-        borderTop: '1px solid rgba(105,131,204,0.1)',
-        borderBottom: '1px solid rgba(105,131,204,0.1)'
-      }}>
-        <Box sx={{ maxWidth: '1400px', mx: 'auto', px: { xs: 3, md: 6 } }}>
-          <Typography 
-            variant="h6" 
-            sx={{ 
-              textAlign: 'center', 
-              color: '#417F73', 
-              mb: 4,
-              fontWeight: 600,
-              fontSize: '1rem'
-            }}
-          >
-            Trusted Partners - Canadian Insurance Providers
-          </Typography>
-          
-          <Box sx={{ 
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: { xs: 3, md: 5 },
-            '& > *': {
-              opacity: 0.7,
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                opacity: 1,
-                transform: 'scale(1.1)'
-              }
-            }
-          }}>
-            {[
-              'Manulife',
-              'Beneva',
-              'Foresters Financial',
-              'Assumption Life',
-              'Industrial Alliance',
-              'RBC',
-              'Allianz',
-              'Empire Life',
-              'Travelance',
-              '2VisitCanada'
-            ].map((company, index) => (
-              <Box
-                key={index}
-                sx={{
-                  px: 3,
-                  py: 2,
-                  bgcolor: '#F3F8FF',
-                  borderRadius: 2,
-                  border: '1px solid rgba(105,131,204,0.1)',
-                  minWidth: { xs: '140px', md: '160px' },
-                  textAlign: 'center'
-                }}
-              >
-                <Typography 
-                  sx={{ 
-                    color: '#1E377C', 
-                    fontWeight: 600,
-                    fontSize: { xs: '0.85rem', md: '0.95rem' }
-                  }}
-                >
-                  {company}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-        </Box>
-      </Box>
+      <InsuranceCarousel />
 
       <Footer />
       

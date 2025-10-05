@@ -51,6 +51,10 @@ export default function Nav() {
                 height: '70px',
                 width: 'auto'
               }} 
+              onError={(e) => {
+                console.error('Logo failed to load:', e.currentTarget.src)
+                e.currentTarget.style.display = 'none'
+              }}
             />
             <Box sx={{ display: { xs: 'none', md: 'block' } }}>
               <Box sx={{ 
@@ -201,6 +205,10 @@ export default function Nav() {
               height: '40px',
               width: 'auto'
             }} 
+            onError={(e) => {
+              console.error('Mobile logo failed to load:', e.currentTarget.src)
+              e.currentTarget.style.display = 'none'
+            }}
           />
           <IconButton
             onClick={toggleMenu}
