@@ -23,6 +23,7 @@ import {
   VisibilityOff as PreferNotToSayIcon
 } from '@mui/icons-material'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
+import { customAuth } from '../lib/custom-auth'
 
 interface StatCardProps {
   title: string
@@ -333,7 +334,7 @@ export default function Dashboard() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
           <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1 }}>
-            Welcome back! 👋
+            Welcome back, {customAuth.getCurrentUser()?.username || 'Admin'}! 👋
           </Typography>
           <Typography variant="body1" sx={{ color: '#6B7280' }}>
             Here's your insurance leads performance.

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Box, Drawer, CssBaseline, AppBar, Toolbar, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, useMediaQuery, useTheme, Avatar, Divider, Button } from '@mui/material'
 import { Dashboard as DashboardIcon, People as LeadsIcon, Delete as DeletedIcon, Menu as MenuIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Logout as LogoutIcon } from '@mui/icons-material'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { customAuth } from '../lib/custom-auth'
 import DashboardOverview from './Dashboard'
 import LeadsManagement from './LeadsManagement'
 import DeletedLeads from './DeletedLeads'
@@ -69,8 +70,15 @@ export default function DashboardLayout() {
   }
 
   const handleLogout = () => {
+    // Use the custom auth library's logout method
+    customAuth.logout()
+    
+    // Also clear any additional localStorage items
     localStorage.removeItem('isAuthenticated')
     localStorage.removeItem('username')
+    localStorage.removeItem('temp_activities') // Clear temporary activities
+    
+    // Navigate to login page
     navigate('/login')
   }
 
