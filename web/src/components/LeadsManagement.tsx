@@ -635,19 +635,21 @@ export default function LeadsManagement() {
                 sx={{ minWidth: { xs: '100%', sm: 300 }, width: { xs: '100%', sm: 'auto' } }}
               />
               
-              <FormControl size="medium" sx={{ minWidth: { xs: '100%', sm: 180 }, width: { xs: '100%', sm: 'auto' } }}>
-                <InputLabel>Status Filter</InputLabel>
-                <Select
-                  value={statusFilter}
-                  label="Status Filter"
-                  onChange={(e) => setFilter(e.target.value)}
-                >
-                  <MenuItem value="all">All Status</MenuItem>
-                  <MenuItem value="new">New</MenuItem>
-                  <MenuItem value="contacted">Contacted</MenuItem>
-                  <MenuItem value="converted">Converted</MenuItem>
-                </Select>
-              </FormControl>
+              {/* Only show status filter for Active Leads tab */}
+              {currentTab === 'active' && (
+                <FormControl size="medium" sx={{ minWidth: { xs: '100%', sm: 180 }, width: { xs: '100%', sm: 'auto' } }}>
+                  <InputLabel>Status Filter</InputLabel>
+                  <Select
+                    value={statusFilter}
+                    label="Status Filter"
+                    onChange={(e) => setFilter(e.target.value)}
+                  >
+                    <MenuItem value="all">All Status</MenuItem>
+                    <MenuItem value="new">New</MenuItem>
+                    <MenuItem value="contacted">Contacted</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
             </Box>
           </CardContent>
         </Card>
