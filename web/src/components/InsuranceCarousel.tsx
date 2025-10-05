@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Box, Typography } from '@mui/material'
+import { useI18n } from '../i18n'
 
 interface InsuranceLogo {
   name: string
@@ -52,6 +53,7 @@ const insuranceLogos: InsuranceLogo[] = [
 
 export default function InsuranceCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const { t } = useI18n()
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -80,7 +82,7 @@ export default function InsuranceCarousel() {
             fontSize: '1rem'
           }}
         >
-          Trusted Partners - Canadian Insurance Providers
+          {t('insurance_partners')}
         </Typography>
         
         {/* Carousel Container */}

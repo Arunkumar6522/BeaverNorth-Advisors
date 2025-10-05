@@ -9,9 +9,11 @@ import Footer from './components/Footer'
 import ContactModal from './components/ContactModal'
 import InsuranceCarousel from './components/InsuranceCarousel'
 import AsuransiSVG from './assets/Asuransi keluarga 1.svg'
+import { useI18n } from './i18n'
 
 export default function App() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
+  const { t } = useI18n()
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#F3F8FF' }}>
@@ -86,7 +88,7 @@ export default function App() {
                   color: '#1E377C'
                 }}
               >
-                Smart Insurance for Your Family
+                {t('hero_headline_1')} {t('hero_headline_2')}
               </Typography>
 
               {/* Subheading */}
@@ -101,8 +103,7 @@ export default function App() {
                   maxWidth: '600px'
                 }}
               >
-                Professional insurance guidance with guaranteed safety and comprehensive 
-                coverage options for Canadian families.
+                {t('hero_subtitle')}
               </Typography>
 
               {/* CTA Button */}
@@ -129,7 +130,7 @@ export default function App() {
                   transition: 'all 0.3s ease'
                 }}
               >
-                Get Your Free Quote
+                {t('cta_get_quote')}
               </Button>
             </motion.div>
           </Box>

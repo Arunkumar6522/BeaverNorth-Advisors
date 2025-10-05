@@ -17,8 +17,10 @@ const en: Dict = {
   hero_tag: '#1 Canadian insurance advisory partner',
   hero_headline_1: 'New Confidence',
   hero_headline_2: 'for your Future',
+  hero_subtitle: 'Get personalized insurance quotes from trusted Canadian providers',
   cta_get_in_touch: 'Get in touch',
   cta_our_services: 'Our services',
+  cta_get_quote: 'Get Your Quote',
   metrics_1_label: 'Annual client savings guided',
   metrics_2_label: 'Projects completed nationwide',
   metrics_3_label: 'Canadians supported to date',
@@ -29,7 +31,13 @@ const en: Dict = {
   ready_title: 'Ready to protect what matters?',
   ready_sub: 'Talk to a licensed advisor today.',
   contact_title: 'Contact Us',
-  footer_tag: 'Canada‑based insurance advisory'
+  footer_tag: 'Canada‑based insurance advisory',
+  insurance_partners: 'Trusted Partners - Canadian Insurance Providers',
+  footer_about: 'About Us',
+  footer_services: 'Services',
+  footer_contact: 'Contact',
+  footer_rights: 'All rights reserved.',
+  footer_description: 'Your trusted partner for Canadian insurance solutions.'
 }
 
 const fr: Dict = {
@@ -57,7 +65,15 @@ const fr: Dict = {
   ready_title: 'Prêt à protéger l’essentiel ?',
   ready_sub: 'Parlez à un conseiller agréé dès aujourd’hui.',
   contact_title: 'Nous contacter',
-  footer_tag: 'Cabinet-conseil en assurance basé au Canada'
+  footer_tag: 'Cabinet-conseil en assurance basé au Canada',
+  hero_subtitle: 'Obtenez des devis d\'assurance personnalisés de fournisseurs canadiens de confiance',
+  cta_get_quote: 'Obtenez votre devis',
+  insurance_partners: 'Partenaires de confiance - Fournisseurs d\'assurance canadiens',
+  footer_about: 'À propos',
+  footer_services: 'Services',
+  footer_contact: 'Contact',
+  footer_rights: 'Tous droits réservés.',
+  footer_description: 'Votre partenaire de confiance pour les solutions d\'assurance canadiennes.'
 }
 
 const dictionaries: Record<Locale, Dict> = { en, fr }

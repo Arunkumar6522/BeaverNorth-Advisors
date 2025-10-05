@@ -508,7 +508,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     name="dob"
                     value={formData.dob}
                     onChange={handleChange}
-                    max="2005-12-31"
+                    min="1920-01-01"
+                    max="2020-12-31"
                     style={{
                       width: '100%',
                       padding: '14px 16px',
