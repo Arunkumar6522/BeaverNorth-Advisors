@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import {
   Box,
   Card,
-  CardContent,
   Typography,
   Table,
   TableBody,
@@ -40,6 +39,7 @@ import {
   Email as EmailIcon,
   Close as CloseIcon
 } from '@mui/icons-material'
+import { useLocation } from 'react-router-dom'
 import { customAuth } from '../lib/custom-auth'
 
 interface Lead {
@@ -140,6 +140,7 @@ const DELETE_REASONS = [
 ]
 
 export default function LeadsManagement() {
+  const location = useLocation()
   const [leads, setLeads] = useState<Lead[]>([])  // Start with empty array, will load from Supabase
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setFilter] = useState<'all' | 'new' | 'contacted' | 'converted'>('all')
@@ -169,6 +170,21 @@ export default function LeadsManagement() {
     setCurrentTab(newValue === 0 ? 'active' : 'closed')
     setPage(0) // Reset to first page when switching tabs
   }
+
+  // Handle URL parameters
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search)
+    const filter = searchParams.get('filter')
+    const tab = searchParams.get('tab')
+    
+    if (filter && ['new', 'contacted', 'converted'].includes(filter)) {
+      setFilter(filter as 'new' | 'contacted' | 'converted')
+    }
+    
+    if (tab === 'closed') {
+      setCurrentTab('closed')
+    }
+  }, [location.search])
 
   // Fetch leads from Supabase
   useEffect(() => {
@@ -581,78 +597,67 @@ export default function LeadsManagement() {
         </Typography>
       </Box>
 
-      {/* Tabs */}
+      {/* Tabs and Search Bar */}
       <Box sx={{ px: 1, borderBottom: 1, borderColor: 'divider', flexShrink: 0 }}>
-        <Tabs value={currentTab === 'active' ? 0 : 1} onChange={handleTabChange}>
-          <Tab 
-            label={
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography sx={{ fontSize: '1rem' }}>Active Leads</Typography>
-                <Chip 
-                  label={leads.filter(l => l.status !== 'converted' && !l.deleted_at).length} 
-                  size="small" 
-                  sx={{ backgroundColor: '#1976D2', color: 'white', fontSize: '0.75rem' }} />
-              </Stack>
-            }
-          />
-          <Tab 
-            label={
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <Typography sx={{ fontSize: '1rem' }}>Closed Leads</Typography>
-                <Chip 
-                  label={leads.filter(l => l.status === 'converted' && !l.deleted_at).length} 
-                  size="small" 
-                  sx={{ backgroundColor: '#10B981', color: 'white', fontSize: '0.75rem' }} />
-              </Stack>
-            }
-          />
-        </Tabs>
-      </Box>
-
-      {/* Filters */}
-      <Box sx={{ px: 1, py: 1, flexShrink: 0 }}>
-        <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff' }}>
-          <CardContent sx={{ py: 2 }}>
-            <Box sx={{ 
-              display: 'flex', 
-              gap: { xs: 2, sm: 2 }, 
-              flexWrap: 'wrap', 
-              alignItems: 'center',
-              flexDirection: { xs: 'column', sm: 'row' }
-            }}>
-              <TextField
-                size="medium"
-                placeholder="Search leads..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ color: '#6B7280' }} />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ minWidth: { xs: '100%', sm: 300 }, width: { xs: '100%', sm: 'auto' } }}
-              />
-              
-              {/* Only show status filter for Active Leads tab */}
-              {currentTab === 'active' && (
-                <FormControl size="medium" sx={{ minWidth: { xs: '100%', sm: 180 }, width: { xs: '100%', sm: 'auto' } }}>
-                  <InputLabel>Status Filter</InputLabel>
-                  <Select
-                    value={statusFilter}
-                    label="Status Filter"
-                    onChange={(e) => setFilter(e.target.value)}
-                  >
-                    <MenuItem value="all">All Status</MenuItem>
-                    <MenuItem value="new">New</MenuItem>
-                    <MenuItem value="contacted">Contacted</MenuItem>
-                  </Select>
-                </FormControl>
-              )}
-            </Box>
-          </CardContent>
-        </Card>
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
+          <Tabs value={currentTab === 'active' ? 0 : 1} onChange={handleTabChange}>
+            <Tab 
+              label={
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Typography sx={{ fontSize: '1rem' }}>Active Leads</Typography>
+                  <Chip 
+                    label={leads.filter(l => l.status !== 'converted' && !l.deleted_at).length} 
+                    size="small" 
+                    sx={{ backgroundColor: '#1976D2', color: 'white', fontSize: '0.75rem' }} />
+                </Stack>
+              }
+            />
+            <Tab 
+              label={
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Typography sx={{ fontSize: '1rem' }}>Closed Leads</Typography>
+                  <Chip 
+                    label={leads.filter(l => l.status === 'converted' && !l.deleted_at).length} 
+                    size="small" 
+                    sx={{ backgroundColor: '#10B981', color: 'white', fontSize: '0.75rem' }} />
+                </Stack>
+              }
+            />
+          </Tabs>
+          
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <TextField
+              size="small"
+              placeholder="Search leads..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon sx={{ color: '#6B7280' }} />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ minWidth: 200, width: 200 }}
+            />
+            
+            {/* Only show status filter for Active Leads tab */}
+            {currentTab === 'active' && (
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={statusFilter}
+                  label="Status"
+                  onChange={(e) => setFilter(e.target.value)}
+                >
+                  <MenuItem value="all">All</MenuItem>
+                  <MenuItem value="new">New</MenuItem>
+                  <MenuItem value="contacted">Contacted</MenuItem>
+                </Select>
+              </FormControl>
+            )}
+          </Box>
+        </Box>
       </Box>
 
       {/* Full Screen Table */}

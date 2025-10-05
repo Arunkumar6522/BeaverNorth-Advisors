@@ -17,6 +17,7 @@ import {
   CalendarToday
 } from '@mui/icons-material'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
+import { useNavigate } from 'react-router-dom'
 import { customAuth } from '../lib/custom-auth'
 
 interface StatCardProps {
@@ -25,11 +26,25 @@ interface StatCardProps {
   icon: React.ReactNode
   color: string
   change?: string
+  onClick?: () => void
 }
 
-function StatCard({ title, value, icon, color, change }: StatCardProps) {
+function StatCard({ title, value, icon, color, change, onClick }: StatCardProps) {
   return (
-    <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', elevation: 0 }}>
+    <Card 
+      sx={{ 
+        borderRadius: 2, 
+        backgroundColor: '#ffffff', 
+        elevation: 0,
+        cursor: onClick ? 'pointer' : 'default',
+        transition: 'all 0.2s ease',
+        '&:hover': onClick ? {
+          transform: 'translateY(-2px)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+        } : {}
+      }}
+      onClick={onClick}
+    >
       <CardContent>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box>
@@ -55,6 +70,7 @@ function StatCard({ title, value, icon, color, change }: StatCardProps) {
 }
 
 export default function Dashboard() {
+  const navigate = useNavigate()
   const [timePeriod, setTimePeriod] = useState('month')
   const [leadsData, setLeadsData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -223,24 +239,28 @@ export default function Dashboard() {
           value={stats.total}
           icon={<People sx={{ fontSize: 28 }} />}
           color="#3B82F6"
+          onClick={() => navigate('/leads')}
         />
         <StatCard
           title="New Leads"
           value={stats.newLeads}
           icon={<TrendingUp sx={{ fontSize: 28 }} />}
           color="#22C55E"
+          onClick={() => navigate('/leads?filter=new')}
         />
         <StatCard
           title="Contacted"
           value={stats.contacted}
           icon={<Phone sx={{ fontSize: 28 }} />}
           color="#F59E0B"
+          onClick={() => navigate('/leads?filter=contacted')}
         />
         <StatCard
           title="Converted"
           value={stats.converted}
           icon={<CheckCircleOutline sx={{ fontSize: 28 }} />}
           color="#8B5CF6"
+          onClick={() => navigate('/leads?tab=closed')}
         />
       </Box>
 

@@ -232,9 +232,6 @@ export default function DeletedLeads() {
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
           🗑️ Deleted Leads
         </Typography>
-        <Typography variant="body1" sx={{ color: '#6B7280', fontSize: '1.1rem' }}>
-          View and manage deleted leads. You can restore them or permanently delete them.
-        </Typography>
       </Box>
 
       {/* Actions */}

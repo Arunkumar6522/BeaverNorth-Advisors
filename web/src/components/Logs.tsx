@@ -11,8 +11,7 @@ import {
   TableRow,
   Chip,
   Avatar,
-  Button,
-  Alert
+  Button
 } from '@mui/material'
 import {
   Refresh as RefreshIcon,
@@ -136,15 +135,6 @@ export default function Logs() {
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
           📋 Activity Logs
         </Typography>
-        <Typography variant="body1" sx={{ color: '#6B7280', fontSize: '1.1rem' }}>
-          Complete audit trail of all system activities ({logs.length} total activities)
-        </Typography>
-        {dataSource === 'localStorage' && (
-          <Alert severity="warning" sx={{ mt: 2, fontSize: '0.9rem' }}>
-            Activity logs are being loaded from local storage. The activity_log table may not exist in the database. 
-            Please run the SQL script in Supabase to create the activity_log table for persistent storage.
-          </Alert>
-        )}
       </Box>
 
       {/* Actions */}
