@@ -40,12 +40,31 @@ export default function Login() {
 
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0a2540' }}>
+    <div style={{ 
+      height: '100vh', 
+      width: '100vw',
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center', 
+      background: '#0a2540',
+      overflow: 'hidden',
+      position: 'fixed',
+      top: 0,
+      left: 0
+    }}>
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        style={{ background: 'white', padding: 24, borderRadius: 12, width: 360, boxShadow: '0 10px 30px rgba(0,0,0,0.15)' }}
+        style={{ 
+          background: 'white', 
+          padding: 32, 
+          borderRadius: 16, 
+          width: 400, 
+          maxWidth: '90vw',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
+          boxSizing: 'border-box'
+        }}
       >
         <h2 style={{ marginTop: 0, marginBottom: 16 }}>BeaverNorth Advisors</h2>
         <p style={{ marginTop: 0, color: '#555', marginBottom: 16 }}>Admin Login</p>
@@ -73,7 +92,16 @@ export default function Login() {
             required
             placeholder="Enter username"
             disabled={loading}
-            style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #ccc', marginBottom: 12 }}
+            style={{ 
+              width: '100%', 
+              padding: '12px 16px', 
+              borderRadius: 8, 
+              border: '1px solid #ccc', 
+              marginBottom: 16,
+              fontSize: '16px',
+              boxSizing: 'border-box',
+              outline: 'none'
+            }}
           />
           <label style={{ display: 'block', fontSize: 14, color: '#333', marginBottom: 6 }}>Password</label>
           <input
@@ -83,7 +111,16 @@ export default function Login() {
             required
             placeholder="••••••••"
             disabled={loading}
-            style={{ width: '100%', padding: '10px 12px', borderRadius: 8, border: '1px solid #ccc', marginBottom: 16 }}
+            style={{ 
+              width: '100%', 
+              padding: '12px 16px', 
+              borderRadius: 8, 
+              border: '1px solid #ccc', 
+              marginBottom: 20,
+              fontSize: '16px',
+              boxSizing: 'border-box',
+              outline: 'none'
+            }}
           />
           <button 
             type="submit" 

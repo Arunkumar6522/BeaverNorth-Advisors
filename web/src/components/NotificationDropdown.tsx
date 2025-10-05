@@ -32,9 +32,10 @@ interface ActivityLog {
 
 interface NotificationDropdownProps {
   isAuthenticated?: boolean
+  color?: string
 }
 
-export default function NotificationDropdown({ isAuthenticated = false }: NotificationDropdownProps) {
+export default function NotificationDropdown({ isAuthenticated = false, color = '#6983CC' }: NotificationDropdownProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const [recentActivity, setRecentActivity] = useState<ActivityLog[]>([])
   const [loading, setLoading] = useState(false)
@@ -132,9 +133,9 @@ export default function NotificationDropdown({ isAuthenticated = false }: Notifi
       <IconButton
         onClick={handleClick}
         sx={{
-          color: '#6983CC',
+          color: color,
           '&:hover': {
-            backgroundColor: 'rgba(105,131,204,0.1)'
+            backgroundColor: 'rgba(0,0,0,0.1)'
           }
         }}
       >

@@ -6,6 +6,7 @@ import { customAuth } from '../lib/custom-auth'
 import DashboardOverview from './Dashboard'
 import LeadsManagement from './LeadsManagement'
 import DeletedLeads from './DeletedLeads'
+import NotificationDropdown from './NotificationDropdown'
 
 const drawerWidth = 240
 const miniDrawerWidth = 73
@@ -231,6 +232,9 @@ export default function DashboardLayout() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: '600' }}>
             {modules.find(m => m.id === selectedModule)?.name || 'Dashboard'}
           </Typography>
+          
+          {/* Notification Icon */}
+          <NotificationDropdown isAuthenticated={customAuth.isAuthenticated()} color="#000000" />
         </Toolbar>
       </AppBar>
 
