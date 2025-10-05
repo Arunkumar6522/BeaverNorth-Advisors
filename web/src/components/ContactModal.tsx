@@ -25,6 +25,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
   const [loading, setLoading] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({})
 
   const nextStep = () => {
     if (currentStep < 3) {
@@ -75,6 +76,20 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
       if (!formData.dob || !formData.smokingStatus || !formData.province || !formData.insuranceProduct) {
         throw new Error('Missing required fields: dob, smoking status, province, or insurance product')
+      }
+      
+      // Check for validation errors
+      if (validationErrors.name || validationErrors.email) {
+        throw new Error('Please fix validation errors before submitting')
+      }
+      
+      // Additional validation checks
+      if (!validateName(formData.name)) {
+        throw new Error('Name contains invalid characters')
+      }
+      
+      if (!validateEmail(formData.email)) {
+        throw new Error('Please enter a valid email address')
       }
 
       const leadData = {
@@ -173,10 +188,64 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     }
   }
 
+  // Validation functions
+  const validateName = (name: string) => {
+    // Allow only letters, spaces, hyphens, and apostrophes
+    const nameRegex = /^[a-zA-Z\s\-']+$/
+    return nameRegex.test(name)
+  }
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target
+    
+    // Clear validation errors when user starts typing
+    if (validationErrors[name]) {
+      setValidationErrors(prev => ({ ...prev, [name]: '' }))
+    }
+    
+    // Special validation for name field
+    if (name === 'name') {
+      if (value === '' || validateName(value)) {
+        setFormData({
+          ...formData,
+          [name]: value
+        })
+      } else {
+        // Show validation error for invalid characters
+        setValidationErrors(prev => ({ 
+          ...prev, 
+          [name]: 'Name can only contain letters, spaces, hyphens, and apostrophes' 
+        }))
+      }
+      return
+    }
+    
+    // Special validation for email field
+    if (name === 'email') {
+      setFormData({
+        ...formData,
+        [name]: value
+      })
+      
+      // Validate email format
+      if (value && !validateEmail(value)) {
+        setValidationErrors(prev => ({ 
+          ...prev, 
+          [name]: 'Please enter a valid email address' 
+        }))
+      }
+      return
+    }
+    
+    // For all other fields
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     })
   }
 
@@ -366,7 +435,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                             style={{
                               width: '100%',
                               padding: '16px',
-                              border: '1px solid #D1D5DB',
+                              border: `1px solid ${validationErrors.name ? '#EF4444' : '#D1D5DB'}`,
                               borderRadius: '8px',
                               fontSize: '16px',
                               background: '#ffffff',
@@ -374,9 +443,19 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                               outline: 'none',
                               transition: 'border-color 0.2s'
                             }}
-                            onFocus={(e) => e.target.style.borderColor = '#22C55E'}
-                            onBlur={(e) => e.target.style.borderColor = '#D1D5DB'}
+                            onFocus={(e) => e.target.style.borderColor = validationErrors.name ? '#EF4444' : '#22C55E'}
+                            onBlur={(e) => e.target.style.borderColor = validationErrors.name ? '#EF4444' : '#D1D5DB'}
                           />
+                          {validationErrors.name && (
+                            <p style={{
+                              color: '#EF4444',
+                              fontSize: '12px',
+                              margin: '4px 0 0 0',
+                              fontWeight: '500'
+                            }}>
+                              {validationErrors.name}
+                            </p>
+                          )}
                 </div>
 
                 <div>
@@ -476,17 +555,17 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <button
                   type="button"
                   onClick={nextStep}
-                  disabled={!formData.name || !formData.gender || !formData.dob}
+                  disabled={!formData.name || !formData.gender || !formData.dob || !!validationErrors.name}
                   style={{
                     width: '100%',
-                    background: !formData.name || !formData.gender || !formData.dob ? 'var(--line)' : 'var(--brand-green)',
+                    background: (!formData.name || !formData.gender || !formData.dob || validationErrors.name) ? 'var(--line)' : 'var(--brand-green)',
                     color: 'white',
                     padding: '16px',
                     borderRadius: '12px',
                     border: 'none',
                     fontSize: '16px',
                     fontWeight: '600',
-                    cursor: !formData.name || !formData.dob ? 'not-allowed' : 'pointer',
+                    cursor: (!formData.name || !formData.gender || !formData.dob || validationErrors.name) ? 'not-allowed' : 'pointer',
                     marginTop: '12px'
                   }}
                 >
@@ -712,14 +791,27 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     style={{
                       width: '100%',
                       padding: '14px 16px',
-                      border: '2px solid var(--line)',
+                      border: `2px solid ${validationErrors.email ? '#EF4444' : 'var(--line)'}`,
                       borderRadius: '12px',
                       fontSize: '16px',
                       background: 'var(--surface-1)',
                       color: 'var(--text-primary)',
-                      outline: 'none'
+                      outline: 'none',
+                      transition: 'border-color 0.2s'
                     }}
+                    onFocus={(e) => e.target.style.borderColor = validationErrors.email ? '#EF4444' : '#22C55E'}
+                    onBlur={(e) => e.target.style.borderColor = validationErrors.email ? '#EF4444' : 'var(--line)'}
                   />
+                  {validationErrors.email && (
+                    <p style={{
+                      color: '#EF4444',
+                      fontSize: '12px',
+                      margin: '4px 0 0 0',
+                      fontWeight: '500'
+                    }}>
+                      {validationErrors.email}
+                    </p>
+                  )}
                 </div>
 
                 <div>
@@ -792,17 +884,17 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     </button>
                     <button
                       type="submit"
-                      disabled={loading || !formData.email || !formData.phone}
+                      disabled={loading || !formData.email || !formData.phone || !!validationErrors.email}
                       style={{
                         flex: 2,
-                        background: loading || !formData.email || !formData.phone ? 'var(--line)' : 'var(--brand-green)',
+                        background: (loading || !formData.email || !formData.phone || validationErrors.email) ? 'var(--line)' : 'var(--brand-green)',
                         color: 'white',
                         padding: '16px',
                         borderRadius: '12px',
                         border: 'none',
                         fontSize: '16px',
                         fontWeight: '600',
-                        cursor: loading || !formData.email || !formData.phone ? 'not-allowed' : 'pointer'
+                        cursor: (loading || !formData.email || !formData.phone || validationErrors.email) ? 'not-allowed' : 'pointer'
                       }}
                     >
                         {loading ? 'Submitting...' : 'Submit Quote Request'}
