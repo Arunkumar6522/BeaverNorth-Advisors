@@ -200,6 +200,22 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     return emailRegex.test(email)
   }
 
+  const validateDob = (dobString: string) => {
+    if (!dobString) return false
+    const dob = new Date(dobString)
+    if (Number.isNaN(dob.getTime())) return false
+    const year = dob.getFullYear()
+    // Hard bounds to prevent random years
+    if (year < 1920 || year > 2020) return false
+    // Age bounds (approx): 18 to 105
+    const today = new Date()
+    let age = today.getFullYear() - year
+    const m = today.getMonth() - dob.getMonth()
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--
+    if (age < 18 || age > 105) return false
+    return true
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     
@@ -242,6 +258,21 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       return
     }
     
+    // Special validation for dob field
+    if (name === 'dob') {
+      setFormData({
+        ...formData,
+        [name]: value
+      })
+      if (!validateDob(value)) {
+        setValidationErrors(prev => ({
+          ...prev,
+          [name]: 'Please enter a valid date of birth (1920-2020), age 18-105'
+        }))
+      }
+      return
+    }
+
     // For all other fields
     setFormData({
       ...formData,
