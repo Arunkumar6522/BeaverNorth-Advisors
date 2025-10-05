@@ -76,6 +76,7 @@ export default function Dashboard() {
   const [leadsData, setLeadsData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [inactiveGender, setInactiveGender] = useState<Set<string>>(new Set())
+  const [inactiveSmoking, setInactiveSmoking] = useState<Set<string>>(new Set())
 
   const timePeriods = [
     { value: 'today', label: 'Today', icon: CalendarToday },
@@ -279,10 +280,34 @@ export default function Dashboard() {
                     dataKey="value"
                   >
                     {smokingData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.color}
+                        fillOpacity={inactiveSmoking.has(entry.name) ? 0.25 : 1}
+                        onClick={() => {
+                          setInactiveSmoking(prev => {
+                            const next = new Set(Array.from(prev))
+                            if (next.has(entry.name)) {
+                              next.delete(entry.name)
+                            } else {
+                              next.clear()
+                              next.add(entry.name)
+                            }
+                            return next
+                          })
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
                     ))}
                   </Pie>
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (!active || !payload || payload.length === 0) return null
+                      const name = payload[0]?.name as string
+                      if (inactiveSmoking.has(name)) return null
+                      return <CustomTooltip />
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </Box>

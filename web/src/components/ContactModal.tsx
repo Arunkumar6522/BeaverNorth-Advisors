@@ -665,7 +665,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       borderRadius: '8px',
                       background: formData.smokingStatus === 'non-smoker' ? 'var(--brand-green)' : 'var(--surface-1)',
                       color: formData.smokingStatus === 'non-smoker' ? 'white' : 'var(--text-primary)',
-                      transition: 'all 0.2s'
+                      transition: 'all 0.2s',
+                      opacity: formData.smokingStatus === 'smoker' ? 0.5 : 1,
+                      pointerEvents: formData.smokingStatus === 'smoker' ? 'none' : 'auto'
                     }}>
                       <input
                         type="radio"
@@ -688,7 +690,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       borderRadius: '8px',
                       background: formData.smokingStatus === 'smoker' ? 'var(--brand-yellow)' : 'var(--surface-1)',
                       color: formData.smokingStatus === 'smoker' ? 'white' : 'var(--text-primary)',
-                      transition: 'all 0.2s'
+                      transition: 'all 0.2s',
+                      opacity: formData.smokingStatus === 'non-smoker' ? 0.5 : 1,
+                      pointerEvents: formData.smokingStatus === 'non-smoker' ? 'none' : 'auto'
                     }}>
                       <input
                         type="radio"

@@ -3,6 +3,7 @@ import { Box, Drawer, CssBaseline, AppBar, Toolbar, Typography, List, ListItem, 
 import { Dashboard as DashboardIcon, People as LeadsIcon, Delete as DeletedIcon, Menu as MenuIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Logout as LogoutIcon, History as LogsIcon } from '@mui/icons-material'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { customAuth } from '../lib/custom-auth'
+import bnaLogo from '../assets/bna logo.png'
 import DashboardOverview from './Dashboard'
 import LeadsManagement from './LeadsManagement'
 import DeletedLeads from './DeletedLeads'
@@ -111,7 +112,7 @@ export default function DashboardLayout() {
         {open ? (
           <>
             <Avatar 
-              src="/src/assets/bna logo.png" 
+              src={bnaLogo} 
               alt="BNA" 
               sx={{ width: 40, height: 40, mr: 1 }}
             />
@@ -125,7 +126,7 @@ export default function DashboardLayout() {
         ) : (
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
             <Avatar 
-              src="/src/assets/bna logo.png" 
+              src={bnaLogo} 
               alt="BNA" 
               sx={{ width: 40, height: 40 }}
             />
@@ -232,18 +233,18 @@ export default function DashboardLayout() {
         }}
       >
         <Toolbar>
-          {/* Menu Icon (Both Mobile & Desktop) */}
-          <IconButton
-            color="inherit"
-            aria-label="toggle drawer"
-            edge="start"
-            onClick={handleDrawerToggle}
-            sx={{ mr: 2 }}
-          >
-            {!isMobile && desktopOpen ? <ChevronLeftIcon /> : 
-             !isMobile && !desktopOpen ? <ChevronRightIcon /> : 
-             <MenuIcon />}
-          </IconButton>
+          {/* Mobile menu button only */}
+          {isMobile && (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
           
           <Typography variant="h6" component="div" sx={{ flexGrow: 1, fontWeight: '600' }}>
             {modules.find(m => m.id === selectedModule)?.name || 'Dashboard'}
