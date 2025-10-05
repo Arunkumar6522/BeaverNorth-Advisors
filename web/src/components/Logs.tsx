@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Box, Card, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Avatar, CircularProgress } from '@mui/material'
-import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Info as InfoIcon, Person as PersonIcon } from '@mui/icons-material'
+import { Box, Card, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Chip, Avatar, CircularProgress, Button, Alert } from '@mui/material'
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, Info as InfoIcon, Person as PersonIcon, Refresh as RefreshIcon } from '@mui/icons-material'
 
 interface ActivityLog {
   id: string
@@ -16,14 +16,22 @@ interface ActivityLog {
 export default function Logs() {
   const [logs, setLogs] = useState<ActivityLog[]>([])
   const [loading, setLoading] = useState(true)
+  const [dataSource, setDataSource] = useState<'database' | 'localStorage' | 'none'>('none')
 
   useEffect(() => {
     fetchLogs()
   }, [])
 
+  const handleRefresh = () => {
+    fetchLogs()
+  }
+
   const fetchLogs = async () => {
+    setLoading(true)
     try {
       const { supabase } = await import('../lib/supabase')
+      console.log('🔍 Fetching ALL activity logs from database...')
+      
       const { data, error } = await supabase
         .from('activity_log')
         .select('*')
@@ -31,21 +39,39 @@ export default function Logs() {
 
       if (error) {
         console.error('❌ Error fetching logs:', error)
+        console.error('❌ Error details:', error.message, error.details, error.hint)
+        
         // Fallback to localStorage if table doesn't exist
         if (error.message.includes('relation "activity_log" does not exist')) {
-          console.log('📱 Using localStorage fallback for logs')
+          console.log('📱 Using localStorage fallback for logs - activity_log table does not exist')
+          const tempActivities = JSON.parse(localStorage.getItem('temp_activities') || '[]')
+          console.log('📱 Found', tempActivities.length, 'activities in localStorage')
+          setLogs(tempActivities)
+          setDataSource('localStorage')
+        } else {
+          console.log('❌ Other database error, trying localStorage fallback')
           const tempActivities = JSON.parse(localStorage.getItem('temp_activities') || '[]')
           setLogs(tempActivities)
+          setDataSource('localStorage')
         }
       } else if (data) {
-        console.log('✅ Logs fetched:', data.length, 'activities')
+        console.log('✅ Successfully fetched', data.length, 'activities from database')
+        console.log('📊 Sample activities:', data.slice(0, 3))
         setLogs(data)
+        setDataSource('database')
+      } else {
+        console.log('⚠️ No data returned from database, checking localStorage')
+        const tempActivities = JSON.parse(localStorage.getItem('temp_activities') || '[]')
+        setLogs(tempActivities)
+        setDataSource('localStorage')
       }
     } catch (error) {
-      console.error('❌ Error fetching logs:', error)
+      console.error('❌ Unexpected error fetching logs:', error)
       // Fallback to localStorage
       const tempActivities = JSON.parse(localStorage.getItem('temp_activities') || '[]')
+      console.log('📱 Using localStorage fallback due to error:', tempActivities.length, 'activities')
       setLogs(tempActivities)
+      setDataSource('localStorage')
     } finally {
       setLoading(false)
     }
@@ -118,12 +144,47 @@ export default function Logs() {
     <Box sx={{ height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', backgroundColor: '#F8FAFC' }}>
       {/* Header */}
       <Box sx={{ px: 3, py: 2, flexShrink: 0, backgroundColor: '#ffffff', borderBottom: '1px solid #E5E7EB' }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
-          Activity Logs
-        </Typography>
-        <Typography variant="body1" sx={{ color: '#6B7280', fontSize: '1.1rem' }}>
-          Complete audit trail of all system activities ({logs.length} total activities)
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+          <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', fontSize: '2rem' }}>
+            Activity Logs
+          </Typography>
+          <Button
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            onClick={handleRefresh}
+            disabled={loading}
+            sx={{
+              textTransform: 'none',
+              fontSize: '1rem',
+              fontWeight: '500',
+              borderColor: '#D1D5DB',
+              color: '#374151',
+              '&:hover': {
+                borderColor: '#9CA3AF',
+                backgroundColor: '#F9FAFB'
+              }
+            }}
+          >
+            Refresh
+          </Button>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Typography variant="body1" sx={{ color: '#6B7280', fontSize: '1.1rem' }}>
+            Complete audit trail of all system activities ({logs.length} total activities)
+          </Typography>
+          {dataSource === 'database' && (
+            <Chip label="Database" size="small" color="success" sx={{ fontSize: '0.8rem' }} />
+          )}
+          {dataSource === 'localStorage' && (
+            <Chip label="Local Storage" size="small" color="warning" sx={{ fontSize: '0.8rem' }} />
+          )}
+        </Box>
+        {dataSource === 'localStorage' && (
+          <Alert severity="warning" sx={{ mt: 2, fontSize: '0.9rem' }}>
+            Activity logs are being loaded from local storage. The activity_log table may not exist in the database. 
+            Please run the SQL script in Supabase to create the activity_log table for persistent storage.
+          </Alert>
+        )}
       </Box>
 
       {/* Logs Table */}
