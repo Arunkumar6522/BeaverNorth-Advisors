@@ -115,111 +115,112 @@ export default function Logs() {
   }
 
   return (
-    <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <Box sx={{ height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', backgroundColor: '#F8FAFC' }}>
       {/* Header */}
-      <Box sx={{ px: 1, py: 2, flexShrink: 0 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1 }}>
+      <Box sx={{ px: 3, py: 2, flexShrink: 0, backgroundColor: '#ffffff', borderBottom: '1px solid #E5E7EB' }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
           Activity Logs
         </Typography>
-        <Typography variant="body1" sx={{ color: '#6B7280' }}>
+        <Typography variant="body1" sx={{ color: '#6B7280', fontSize: '1.1rem' }}>
           Complete audit trail of all system activities ({logs.length} total activities)
         </Typography>
       </Box>
 
       {/* Logs Table */}
-      <Box sx={{ flex: 1, overflow: 'hidden', px: 1 }}>
+      <Box sx={{ flex: 1, overflow: 'hidden', px: 3, py: 2 }}>
         {logs.length === 0 ? (
-          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', p: 4, textAlign: 'center' }}>
-            <Typography variant="h6" sx={{ color: '#6B7280', mb: 2 }}>
+          <Card sx={{ borderRadius: 3, backgroundColor: '#ffffff', p: 6, textAlign: 'center', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <Typography variant="h5" sx={{ color: '#6B7280', mb: 2, fontSize: '1.5rem' }}>
               No activity logs found
             </Typography>
-            <Typography variant="body2" sx={{ color: '#9CA3AF' }}>
+            <Typography variant="body1" sx={{ color: '#9CA3AF', fontSize: '1.1rem' }}>
               Activity logs will appear here as users interact with the system.
             </Typography>
           </Card>
         ) : (
-          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%' }}>
-            <TableContainer sx={{ height: '100%', overflow: 'auto', overflowX: 'auto', '&::-webkit-scrollbar': { height: '6px' } }}>
-              <Table stickyHeader sx={{ minWidth: 1000, width: '100%' }}>
+          <Card sx={{ borderRadius: 3, backgroundColor: '#ffffff', height: '100%', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }}>
+            <TableContainer sx={{ height: '100%', overflow: 'auto', overflowX: 'auto', '&::-webkit-scrollbar': { width: '8px', height: '8px' }, '&::-webkit-scrollbar-track': { backgroundColor: '#F1F5F9' }, '&::-webkit-scrollbar-thumb': { backgroundColor: '#CBD5E1', borderRadius: '4px' } }}>
+              <Table stickyHeader sx={{ minWidth: 1400, width: '100%' }}>
                 <TableHead>
-                  <TableRow sx={{ backgroundColor: '#F9FAFB' }}>
-                    <TableCell sx={{ fontWeight: '600', minWidth: 120 }}>Activity Type</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: 300 }}>Description</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: 120 }}>Performed By</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: 100 }}>Time Ago</TableCell>
-                    <TableCell sx={{ fontWeight: '600', minWidth: 180 }}>Date & Time</TableCell>
-                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 200 }}>Changes</TableCell>
+                  <TableRow sx={{ backgroundColor: '#F8FAFC' }}>
+                    <TableCell sx={{ fontWeight: '700', minWidth: 180, fontSize: '1rem', py: 2, borderBottom: '2px solid #E5E7EB' }}>Activity Type</TableCell>
+                    <TableCell sx={{ fontWeight: '700', minWidth: 400, fontSize: '1rem', py: 2, borderBottom: '2px solid #E5E7EB' }}>Description</TableCell>
+                    <TableCell sx={{ fontWeight: '700', minWidth: 150, fontSize: '1rem', py: 2, borderBottom: '2px solid #E5E7EB' }}>Performed By</TableCell>
+                    <TableCell sx={{ fontWeight: '700', minWidth: 120, fontSize: '1rem', py: 2, borderBottom: '2px solid #E5E7EB' }}>Time Ago</TableCell>
+                    <TableCell sx={{ fontWeight: '700', minWidth: 200, fontSize: '1rem', py: 2, borderBottom: '2px solid #E5E7EB' }}>Date & Time</TableCell>
+                    <TableCell sx={{ fontWeight: '700', minWidth: 250, fontSize: '1rem', py: 2, borderBottom: '2px solid #E5E7EB' }}>Changes</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {logs.map((log) => (
-                    <TableRow key={log.id} hover>
-                      <TableCell>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Avatar sx={{ bgcolor: getActivityColor(log.activity_type), width: 28, height: 28 }}>
+                    <TableRow key={log.id} hover sx={{ '&:hover': { backgroundColor: '#F8FAFC' } }}>
+                      <TableCell sx={{ py: 2 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                          <Avatar sx={{ bgcolor: getActivityColor(log.activity_type), width: 36, height: 36 }}>
                             {getActivityIcon(log.activity_type)}
                           </Avatar>
                           <Chip
                             label={getActivityTypeLabel(log.activity_type)}
-                            size="small"
+                            size="medium"
                             sx={{
                               bgcolor: getActivityColor(log.activity_type),
                               color: 'white',
-                              fontSize: '11px',
-                              height: '22px',
-                              fontWeight: '500'
+                              fontSize: '0.9rem',
+                              height: '28px',
+                              fontWeight: '600'
                             }}
                           />
                         </Box>
                       </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" sx={{ fontWeight: '500', lineHeight: 1.4 }}>
+                      <TableCell sx={{ py: 2 }}>
+                        <Typography variant="body1" sx={{ fontWeight: '500', lineHeight: 1.5, fontSize: '1rem' }}>
                           {log.description}
                         </Typography>
                       </TableCell>
-                      <TableCell>
+                      <TableCell sx={{ py: 2 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <PersonIcon sx={{ fontSize: 16, color: '#6B7280' }} />
-                          <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: '500' }}>
+                          <PersonIcon sx={{ fontSize: 20, color: '#6B7280' }} />
+                          <Typography variant="body1" sx={{ color: '#6B7280', fontWeight: '500', fontSize: '1rem' }}>
                             {log.performed_by}
                           </Typography>
                         </Box>
                       </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" sx={{ color: '#6B7280', fontWeight: '500' }}>
+                      <TableCell sx={{ py: 2 }}>
+                        <Typography variant="body1" sx={{ color: '#6B7280', fontWeight: '500', fontSize: '1rem' }}>
                           {formatTimeAgo(log.created_at)}
                         </Typography>
                       </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.8rem' }}>
+                      <TableCell sx={{ py: 2 }}>
+                        <Typography variant="body1" sx={{ color: '#6B7280', fontSize: '0.95rem' }}>
                           {formatDateTime(log.created_at)}
                         </Typography>
                       </TableCell>
-                      <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                      <TableCell sx={{ py: 2 }}>
                         {log.old_value && log.new_value ? (
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                             <Chip
                               label={log.old_value}
                               size="small"
                               variant="outlined"
-                              sx={{ fontSize: '10px', height: '20px' }}
+                              sx={{ fontSize: '0.85rem', height: '24px', fontWeight: '500' }}
                             />
-                            <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                            <Typography variant="body1" sx={{ color: '#6B7280', fontWeight: '600' }}>
                               →
                             </Typography>
                             <Chip
                               label={log.new_value}
                               size="small"
                               sx={{ 
-                                fontSize: '10px', 
-                                height: '20px',
+                                fontSize: '0.85rem', 
+                                height: '24px',
                                 bgcolor: '#E3F2FD',
-                                color: '#1976D2'
+                                color: '#1976D2',
+                                fontWeight: '500'
                               }}
                             />
                           </Box>
                         ) : (
-                          <Typography variant="caption" sx={{ color: '#9CA3AF' }}>
+                          <Typography variant="body1" sx={{ color: '#9CA3AF', fontSize: '0.95rem' }}>
                             No changes
                           </Typography>
                         )}
