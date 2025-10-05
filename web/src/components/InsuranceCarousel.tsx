@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { Box, Typography } from '@mui/material'
 import { useI18n } from '../i18n'
 
@@ -62,16 +61,10 @@ const insuranceLogos: InsuranceLogo[] = [
 ]
 
 export default function InsuranceCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0)
   const { t } = useI18n()
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % insuranceLogos.length)
-    }, 3000) // Change every 3 seconds
-
-    return () => clearInterval(interval)
-  }, [])
+  // Create a continuous loop by duplicating the logos array
+  const continuousLogos = [...insuranceLogos, ...insuranceLogos, ...insuranceLogos]
 
   return (
     <Box sx={{ 
@@ -95,7 +88,7 @@ export default function InsuranceCarousel() {
           {t('insurance_partners')}
         </Typography>
         
-        {/* Carousel Container */}
+        {/* Continuous Scrolling Container */}
         <Box sx={{ 
           position: 'relative',
           height: '120px',
@@ -104,19 +97,26 @@ export default function InsuranceCarousel() {
           bgcolor: '#F9FAFB',
           border: '1px solid rgba(105,131,204,0.1)'
         }}>
-          {/* Sliding Container */}
+          {/* Scrolling Animation */}
           <Box sx={{
             display: 'flex',
             height: '100%',
-            transition: 'transform 0.8s ease-in-out',
-            transform: `translateX(-${currentIndex * (100 / 4)}%)`, // Show 4 logos at a time
-            width: `${(insuranceLogos.length * 100) / 4}%` // Adjust width based on number of logos
+            width: 'fit-content',
+            animation: 'scroll 20s linear infinite',
+            '@keyframes scroll': {
+              '0%': {
+                transform: 'translateX(0)'
+              },
+              '100%': {
+                transform: `translateX(-${(insuranceLogos.length * 200)}px)`
+              }
+            }
           }}>
-            {insuranceLogos.map((logo, index) => (
+            {continuousLogos.map((logo, index) => (
               <Box
-                key={index}
+                key={`${logo.name}-${index}`}
                 sx={{
-                  flex: '0 0 25%', // Each logo takes 25% (4 logos visible)
+                  flex: '0 0 200px', // Fixed width for each logo
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -127,7 +127,6 @@ export default function InsuranceCarousel() {
                 <Box
                   sx={{
                     display: 'flex',
-                    flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
                     height: '100%',
@@ -159,45 +158,8 @@ export default function InsuranceCarousel() {
                       e.currentTarget.style.filter = 'grayscale(20%)'
                     }}
                   />
-                  <Typography 
-                    variant="caption" 
-                    sx={{ 
-                      color: '#6B7280', 
-                      fontSize: '0.75rem',
-                      fontWeight: 500,
-                      mt: 0.5,
-                      textAlign: 'center'
-                    }}
-                  >
-                    {logo.name}
-                  </Typography>
                 </Box>
               </Box>
-            ))}
-          </Box>
-          
-          {/* Dots Indicator */}
-          <Box sx={{
-            position: 'absolute',
-            bottom: 8,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            gap: 1
-          }}>
-            {insuranceLogos.map((_, index) => (
-              <Box
-                key={index}
-                sx={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  bgcolor: index === currentIndex ? '#22C55E' : 'rgba(0,0,0,0.2)',
-                  transition: 'background-color 0.3s ease',
-                  cursor: 'pointer'
-                }}
-                onClick={() => setCurrentIndex(index)}
-              />
             ))}
           </Box>
         </Box>
@@ -215,7 +177,6 @@ export default function InsuranceCarousel() {
               key={index}
               sx={{
                 display: 'flex',
-                flexDirection: 'column',
                 alignItems: 'center',
                 px: 2,
                 py: 1,
@@ -239,18 +200,6 @@ export default function InsuranceCarousel() {
                   e.currentTarget.style.display = 'none'
                 }}
               />
-              <Typography 
-                variant="caption" 
-                sx={{ 
-                  color: '#6B7280', 
-                  fontSize: '0.7rem',
-                  fontWeight: 500,
-                  mt: 0.5,
-                  textAlign: 'center'
-                }}
-              >
-                {logo.name}
-              </Typography>
             </Box>
           ))}
         </Box>

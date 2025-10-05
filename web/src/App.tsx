@@ -40,32 +40,7 @@ export default function App() {
           gap: { xs: 6, lg: 8 }
         }}>
           
-          {/* LEFT SIDE - Asuransi SVG */}
-          <Box sx={{ 
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8 }}
-              style={{ width: '100%', maxWidth: '600px' }}
-            >
-              <img 
-                src={AsuransiSVG} 
-                alt="Insurance Family"
-                style={{ 
-                  width: '100%', 
-                  height: 'auto',
-                  display: 'block'
-                }} 
-              />
-            </motion.div>
-          </Box>
-
-          {/* RIGHT SIDE - Content */}
+          {/* LEFT SIDE - Content */}
           <Box sx={{ 
             textAlign: { xs: 'center', lg: 'left' },
             display: 'flex',
@@ -132,6 +107,31 @@ export default function App() {
               >
                 {t('cta_get_quote')}
               </Button>
+            </motion.div>
+          </Box>
+
+          {/* RIGHT SIDE - Asuransi SVG */}
+          <Box sx={{ 
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              style={{ width: '100%', maxWidth: '600px' }}
+            >
+              <img 
+                src={AsuransiSVG} 
+                alt="Insurance Family"
+                style={{ 
+                  width: '100%', 
+                  height: 'auto',
+                  display: 'block'
+                }} 
+              />
             </motion.div>
           </Box>
         </Box>
