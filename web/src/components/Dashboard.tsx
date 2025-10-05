@@ -75,6 +75,7 @@ export default function Dashboard() {
   const [timePeriod, setTimePeriod] = useState('month')
   const [leadsData, setLeadsData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [inactiveGender, setInactiveGender] = useState<Set<string>>(new Set())
 
   const timePeriods = [
     { value: 'today', label: 'Today', icon: CalendarToday },
@@ -321,10 +322,33 @@ export default function Dashboard() {
                     dataKey="value"
                   >
                     {genderData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.color}
+                        fillOpacity={inactiveGender.has(entry.name) ? 0.25 : 1}
+                        onClick={() => {
+                          setInactiveGender(prev => {
+                            const next = new Set(Array.from(prev))
+                            if (next.has(entry.name)) {
+                              next.delete(entry.name)
+                            } else {
+                              next.add(entry.name)
+                            }
+                            return next
+                          })
+                        }}
+                        style={{ cursor: 'pointer' }}
+                      />
                     ))}
                   </Pie>
-                  <Tooltip content={<CustomTooltip />} />
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (!active || !payload || payload.length === 0) return null
+                      const name = payload[0]?.name as string
+                      if (inactiveGender.has(name)) return null
+                      return <CustomTooltip />
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </Box>
@@ -333,7 +357,7 @@ export default function Dashboard() {
                 const total = genderData.reduce((sum, d) => sum + d.value, 0)
                 const percentage = total > 0 ? Math.round((item.value / total) * 100) : 0
                 return (
-                  <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                  <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 0.5, opacity: inactiveGender.has(item.name) ? 0.5 : 1 }}>
                     <Box sx={{ width: 10, height: 10, bgcolor: item.color, borderRadius: '50%' }} />
                     <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>
                       {item.name}: {item.value} ({percentage}%)
