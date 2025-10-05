@@ -579,9 +579,6 @@ export default function LeadsManagement() {
         <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827', mb: 1, fontSize: '2rem' }}>
           👥 Leads Management
         </Typography>
-        <Typography variant="body1" sx={{ color: '#6B7280', fontSize: '1.1rem' }}>
-          Manage and track your insurance leads pipeline
-        </Typography>
       </Box>
 
       {/* Tabs */}
