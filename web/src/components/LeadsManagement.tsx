@@ -45,6 +45,8 @@ import { customAuth } from '../lib/custom-auth'
 
 interface Lead {
   id: string
+  firstName: string
+  lastName: string
   name: string
   email: string
   phone: string
@@ -225,7 +227,9 @@ export default function LeadsManagement() {
             
             setLeads(activeLeads.map(lead => ({
               id: lead.id ? lead.id.toString() : String(Math.random()),
-              name: lead.name || 'Unknown',
+              firstName: lead.first_name || '',
+              lastName: lead.last_name || '',
+              name: `${lead.first_name || ''} ${lead.last_name || ''}`.trim() || 'Unknown',
               email: lead.email || '',
               phone: lead.phone || '',
               dob: lead.dob || '1985-01-01',

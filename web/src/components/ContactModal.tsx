@@ -12,10 +12,10 @@ interface ContactModalProps {
 
 export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const { locale } = useI18n()
-  const isFr = locale === 'fr'
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     gender: '' as 'male' | 'female' | 'others' | 'prefer-not-to-say',
     dob: '',
     smokingStatus: '',
@@ -75,8 +75,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const saveLeadToSupabase = async () => {
     try {
       // Validate required fields
-      if (!formData.name || !formData.email || !formData.phone) {
-        throw new Error('Missing required fields: name, email, or phone')
+      if (!formData.firstName || !formData.email || !formData.phone) {
+        throw new Error('Missing required fields: first name, email, or phone')
       }
 
       if (!formData.dob || !formData.smokingStatus || !formData.province || !formData.insuranceProduct) {
@@ -84,13 +84,17 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       }
       
       // Check for validation errors
-      if (validationErrors.name || validationErrors.email) {
+      if (validationErrors.firstName || validationErrors.lastName || validationErrors.email) {
         throw new Error('Please fix validation errors before submitting')
       }
       
       // Additional validation checks
-      if (!validateName(formData.name)) {
-        throw new Error('Name contains invalid characters')
+      if (!validateName(formData.firstName)) {
+        throw new Error('First name contains invalid characters')
+      }
+      
+      if (formData.lastName && !validateName(formData.lastName)) {
+        throw new Error('Last name contains invalid characters')
       }
       
       if (!validateEmail(formData.email)) {
@@ -98,7 +102,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       }
 
       const leadData = {
-        name: formData.name,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
         email: formData.email,
         phone: `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`,
         dob: formData.dob,
@@ -148,7 +153,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           .insert({
             lead_id: data[0].id,
             activity_type: 'lead_created',
-            description: `New lead submitted: ${formData.name}`,
+            description: `New lead submitted: ${formData.firstName}`,
             new_value: formData.insuranceProduct,
             performed_by: 'System'
           })
@@ -166,7 +171,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               id: Date.now().toString(),
               lead_id: data[0].id,
               activity_type: 'lead_created',
-              description: `New lead submitted: ${formData.name}`,
+              description: `New lead submitted: ${formData.firstName}`,
               new_value: formData.insuranceProduct,
               performed_by: 'System',
               created_at: new Date().toISOString()
@@ -227,8 +232,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       setValidationErrors(prev => ({ ...prev, [name]: '' }))
     }
     
-    // Special validation for name field
-    if (name === 'name') {
+    // Special validation for name fields
+    if (name === 'firstName' || name === 'lastName') {
       if (value === '' || validateName(value)) {
         setFormData({
           ...formData,
@@ -238,7 +243,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         // Show validation error for invalid characters
         setValidationErrors(prev => ({ 
           ...prev, 
-          [name]: 'Name can only contain letters, spaces, hyphens, and apostrophes' 
+          [name]: `${name === 'firstName' ? 'First name' : 'Last name'} can only contain letters, spaces, hyphens, and apostrophes` 
         }))
       }
       return
@@ -393,7 +398,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
             letterSpacing: '-0.02em'
           }}>
                     {currentStep === 1 ? (locale === 'fr' ? 'Commencer' : 'Get Started') : 
-                     currentStep === 2 ? (locale === 'fr' ? `Salut ${formData.name} 👋` : `Hi ${formData.name} 👋`) :
+                     currentStep === 2 ? (locale === 'fr' ? `Salut ${formData.firstName} 👋` : `Hi ${formData.firstName} 👋`) :
                      (locale === 'fr' ? 'Presque terminé' : 'Almost Done')}
           </h2>
           <p style={{ 
@@ -481,48 +486,93 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 exit={{ opacity: 0, x: -20 }}
                 style={{ display: 'grid', gap: '20px' }}
               >
-                <div>
-                  <label style={{ 
-                            display: 'block', 
-                            fontSize: '14px', 
-                            fontWeight: '500', 
-                            color: '#374151',
-                            marginBottom: '8px'
-                          }}>
-                    Full name <span style={{ color: '#EF4444' }}>*</span>
-                          </label>
-                          <input
-                            type="text"
-                            name="name"
-                            placeholder="John Doe"
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                            style={{
-                              width: '100%',
-                              padding: '16px',
-                              border: `1px solid ${validationErrors.name ? '#EF4444' : '#D1D5DB'}`,
-                              borderRadius: '8px',
-                              fontSize: '16px',
-                              background: '#ffffff',
-                              color: '#111827',
-                              outline: 'none',
-                              transition: 'border-color 0.2s'
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = validationErrors.name ? '#EF4444' : '#22C55E'}
-                            onBlur={(e) => e.target.style.borderColor = validationErrors.name ? '#EF4444' : '#D1D5DB'}
-                            maxLength={25}
-                          />
-                          {validationErrors.name && (
-                            <p style={{
-                              color: '#EF4444',
-                              fontSize: '12px',
-                              margin: '4px 0 0 0',
-                              fontWeight: '500'
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={{ 
+                              display: 'block', 
+                              fontSize: '14px', 
+                              fontWeight: '500', 
+                              color: '#374151',
+                              marginBottom: '8px'
                             }}>
-                              {validationErrors.name}
-                            </p>
-                          )}
+                      {locale === 'fr' ? 'Prénom' : 'First name'} <span style={{ color: '#EF4444' }}>*</span>
+                            </label>
+                            <input
+                              type="text"
+                              name="firstName"
+                              placeholder={locale === 'fr' ? 'Jean' : 'John'}
+                              value={formData.firstName}
+                              onChange={handleChange}
+                              required
+                              maxLength={25}
+                              style={{
+                                width: '100%',
+                                padding: '16px',
+                                border: `1px solid ${validationErrors.firstName ? '#EF4444' : '#D1D5DB'}`,
+                                borderRadius: '8px',
+                                fontSize: '16px',
+                                background: '#ffffff',
+                                color: '#111827',
+                                outline: 'none',
+                                transition: 'border-color 0.2s'
+                              }}
+                              onFocus={(e) => e.target.style.borderColor = validationErrors.firstName ? '#EF4444' : '#22C55E'}
+                              onBlur={(e) => e.target.style.borderColor = validationErrors.firstName ? '#EF4444' : '#D1D5DB'}
+                            />
+                            {validationErrors.firstName && (
+                              <p style={{
+                                color: '#EF4444',
+                                fontSize: '12px',
+                                margin: '4px 0 0 0',
+                                fontWeight: '500'
+                              }}>
+                                {validationErrors.firstName}
+                              </p>
+                            )}
+                  </div>
+                  
+                  <div>
+                    <label style={{ 
+                              display: 'block', 
+                              fontSize: '14px', 
+                              fontWeight: '500', 
+                              color: '#374151',
+                              marginBottom: '8px'
+                            }}>
+                      {locale === 'fr' ? 'Nom de famille' : 'Last name'} <span style={{ color: '#6B7280' }}>({locale === 'fr' ? 'optionnel' : 'optional'})</span>
+                            </label>
+                            <input
+                              type="text"
+                              name="lastName"
+                              placeholder={locale === 'fr' ? 'Dupont' : 'Doe'}
+                              value={formData.lastName}
+                              onChange={handleChange}
+                              maxLength={25}
+                              style={{
+                                width: '100%',
+                                padding: '16px',
+                                border: `1px solid ${validationErrors.lastName ? '#EF4444' : '#D1D5DB'}`,
+                                borderRadius: '8px',
+                                fontSize: '16px',
+                                background: '#ffffff',
+                                color: '#111827',
+                                outline: 'none',
+                                transition: 'border-color 0.2s'
+                              }}
+                              onFocus={(e) => e.target.style.borderColor = validationErrors.lastName ? '#EF4444' : '#22C55E'}
+                              onBlur={(e) => e.target.style.borderColor = validationErrors.lastName ? '#EF4444' : '#D1D5DB'}
+                            />
+                            {validationErrors.lastName && (
+                              <p style={{
+                                color: '#EF4444',
+                                fontSize: '12px',
+                                margin: '4px 0 0 0',
+                                fontWeight: '500'
+                              }}>
+                                {validationErrors.lastName}
+                              </p>
+                            )}
+                  </div>
                 </div>
 
                 <div>
@@ -624,17 +674,17 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <button
                   type="button"
                   onClick={nextStep}
-                  disabled={!formData.name || !formData.gender || !formData.dob || !!validationErrors.name}
+                  disabled={!formData.firstName || !formData.gender || !formData.dob || !!validationErrors.firstName}
                   style={{
                     width: '100%',
-                    background: (!formData.name || !formData.gender || !formData.dob || validationErrors.name) ? 'var(--line)' : 'var(--brand-green)',
+                    background: (!formData.firstName || !formData.gender || !formData.dob || validationErrors.firstName) ? 'var(--line)' : 'var(--brand-green)',
                     color: 'white',
                     padding: '16px',
                     borderRadius: '12px',
                     border: 'none',
                     fontSize: '16px',
                     fontWeight: '600',
-                    cursor: (!formData.name || !formData.gender || !formData.dob || validationErrors.name) ? 'not-allowed' : 'pointer',
+                    cursor: (!formData.firstName || !formData.gender || !formData.dob || validationErrors.firstName) ? 'not-allowed' : 'pointer',
                     marginTop: '12px'
                   }}
                 >

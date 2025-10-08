@@ -25,6 +25,8 @@ import {
 
 interface DeletedLead {
   id: string
+  firstName: string
+  lastName: string
   name: string
   email: string
   phone: string
@@ -110,7 +112,9 @@ export default function DeletedLeads() {
           console.log(`✅ ${data.length} deleted leads fetched`)
           setDeletedLeads(data.map(lead => ({
             id: lead.id.toString(),
-            name: lead.name || 'Unknown',
+            firstName: lead.first_name || '',
+            lastName: lead.last_name || '',
+            name: `${lead.first_name || ''} ${lead.last_name || ''}`.trim() || 'Unknown',
             email: lead.email || '',
             phone: lead.phone || '',
             dob: lead.dob || '1985-01-01',

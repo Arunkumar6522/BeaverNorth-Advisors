@@ -9,7 +9,6 @@ import iaLogo from '../assets/insurance companies/IA_Financial_Group-Logo.wine.p
 import travelanceLogo from '../assets/insurance companies/travelance-logo.png'
 import visitCanadaLogo from '../assets/insurance companies/2-visit-canada_logo.svg'
 import empireLifeLogo from '../assets/insurance companies/logo-en.png'
-import forestersLogo from '../assets/insurance companies/PngItem_4618681.png'
 
 interface InsuranceLogo {
   name: string
@@ -52,11 +51,6 @@ const insuranceLogos: InsuranceLogo[] = [
     name: 'Empire Life',
     src: empireLifeLogo,
     alt: 'Empire Life Insurance'
-  },
-  {
-    name: 'Foresters Financial',
-    src: forestersLogo,
-    alt: 'Foresters Financial'
   }
 ]
 
@@ -141,8 +135,8 @@ export default function InsuranceCarousel() {
                     src={logo.src}
                     alt={logo.alt}
                     style={{
-                      maxHeight: '60px',
-                      maxWidth: '120px',
+                      maxHeight: logo.name === 'Manulife' ? '80px' : '60px',
+                      maxWidth: logo.name === 'Manulife' ? '160px' : '120px',
                       objectFit: 'contain',
                       filter: 'grayscale(20%)',
                       transition: 'filter 0.3s ease'
@@ -190,7 +184,7 @@ export default function InsuranceCarousel() {
                 src={logo.src}
                 alt={logo.alt}
                 style={{
-                  height: '30px',
+                  height: logo.name === 'Manulife' ? '40px' : '30px',
                   width: 'auto',
                   objectFit: 'contain',
                   filter: 'grayscale(20%)'
