@@ -470,6 +470,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                             <input
                               type="text"
                               name="firstName"
+                              placeholder={locale === 'fr' ? 'Votre prénom' : 'Your first name'}
                               value={formData.firstName}
                               onChange={handleChange}
                               required
@@ -513,6 +514,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                             <input
                               type="text"
                               name="lastName"
+                              placeholder={locale === 'fr' ? 'Votre nom de famille' : 'Your last name'}
                               value={formData.lastName}
                               onChange={handleChange}
                               maxLength={25}
