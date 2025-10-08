@@ -135,8 +135,8 @@ export default function InsuranceCarousel() {
                     src={logo.src}
                     alt={logo.alt}
                     style={{
-                      maxHeight: logo.name === 'Manulife' ? '100px' : '60px',
-                      maxWidth: logo.name === 'Manulife' ? '200px' : '120px',
+                      maxHeight: logo.name === 'Manulife' ? '120px' : '60px',
+                      maxWidth: logo.name === 'Manulife' ? '240px' : '120px',
                       objectFit: 'contain',
                       filter: 'grayscale(20%)',
                       transition: 'filter 0.3s ease'
@@ -184,7 +184,7 @@ export default function InsuranceCarousel() {
                 src={logo.src}
                 alt={logo.alt}
                 style={{
-                  height: logo.name === 'Manulife' ? '50px' : '30px',
+                  height: logo.name === 'Manulife' ? '60px' : '30px',
                   width: 'auto',
                   objectFit: 'contain',
                   filter: 'grayscale(20%)'
