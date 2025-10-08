@@ -17,7 +17,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     firstName: '',
     lastName: '',
     gender: '' as 'male' | 'female' | 'prefer-not-to-say',
-    dob: '',
+    dob: '1920-01-01',
     smokingStatus: '',
     province: '',
     insuranceProduct: '',
@@ -61,7 +61,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         onClose()
         setSubmitted(false)
         setCurrentStep(1)
-        setFormData({ firstName: '', lastName: '', gender: '' as 'male' | 'female' | 'prefer-not-to-say', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '' })
+        setFormData({ firstName: '', lastName: '', gender: '' as 'male' | 'female' | 'prefer-not-to-say', dob: '1920-01-01', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '' })
       }, 1000)
     } catch (error: any) {
       const errorMessage = error?.message || 'Unknown error occurred'
