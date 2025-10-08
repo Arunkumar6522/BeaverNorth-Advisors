@@ -58,7 +58,7 @@ export default function InsuranceCarousel() {
   const { t } = useI18n()
 
   // Create a continuous loop by duplicating the logos array
-  const continuousLogos = [...insuranceLogos, ...insuranceLogos, ...insuranceLogos]
+  const continuousLogos = [...insuranceLogos, ...insuranceLogos]
 
   return (
     <Box sx={{ 
@@ -96,7 +96,7 @@ export default function InsuranceCarousel() {
             display: 'flex',
             height: '100%',
             width: 'fit-content',
-            animation: 'scroll 20s linear infinite',
+            animation: 'scroll 30s linear infinite',
             '@keyframes scroll': {
               '0%': {
                 transform: 'translateX(0)'
@@ -135,8 +135,8 @@ export default function InsuranceCarousel() {
                     src={logo.src}
                     alt={logo.alt}
                     style={{
-                      maxHeight: logo.name === 'Manulife' ? '80px' : '60px',
-                      maxWidth: logo.name === 'Manulife' ? '160px' : '120px',
+                      maxHeight: logo.name === 'Manulife' ? '100px' : '60px',
+                      maxWidth: logo.name === 'Manulife' ? '200px' : '120px',
                       objectFit: 'contain',
                       filter: 'grayscale(20%)',
                       transition: 'filter 0.3s ease'
@@ -184,7 +184,7 @@ export default function InsuranceCarousel() {
                 src={logo.src}
                 alt={logo.alt}
                 style={{
-                  height: logo.name === 'Manulife' ? '40px' : '30px',
+                  height: logo.name === 'Manulife' ? '50px' : '30px',
                   width: 'auto',
                   objectFit: 'contain',
                   filter: 'grayscale(20%)'

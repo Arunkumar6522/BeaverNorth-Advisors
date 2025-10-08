@@ -16,7 +16,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    gender: '' as 'male' | 'female' | 'others' | 'prefer-not-to-say',
+    gender: '' as 'male' | 'female' | 'prefer-not-to-say',
     dob: '',
     smokingStatus: '',
     province: '',
@@ -24,8 +24,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     email: '',
     phone: '',
     countryCode: '+1',
-    otp: '',
-    referralCode: ''
+    otp: ''
   })
 
   const [loading, setLoading] = useState(false)
@@ -62,7 +61,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         onClose()
         setSubmitted(false)
         setCurrentStep(1)
-        setFormData({ name: '', gender: '' as 'male' | 'female' | 'others' | 'prefer-not-to-say', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '', referralCode: '' })
+        setFormData({ firstName: '', lastName: '', gender: '' as 'male' | 'female' | 'prefer-not-to-say', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '' })
       }, 1000)
     } catch (error: any) {
       const errorMessage = error?.message || 'Unknown error occurred'
@@ -112,7 +111,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         smoking_status: formData.smokingStatus,
         insurance_product: formData.insuranceProduct,
         status: 'new',
-        referral_code: formData.referralCode || null,
         gender: formData.gender || null
       }
 
@@ -602,11 +600,10 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       transition: 'border-color 0.2s'
                     }}
                   >
-                    <option value="">Select your gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="others">Others</option>
-                    <option value="prefer-not-to-say">Prefer not to say</option>
+                    <option value="">{locale === 'fr' ? 'Sélectionnez votre genre' : 'Select your gender'}</option>
+                    <option value="male">{locale === 'fr' ? 'Homme' : 'Male'}</option>
+                    <option value="female">{locale === 'fr' ? 'Femme' : 'Female'}</option>
+                    <option value="prefer-not-to-say">{locale === 'fr' ? 'Préfère ne pas répondre' : 'Prefer not to say'}</option>
                   </select>
                 </div>
 
@@ -638,36 +635,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       outline: 'none'
                     }}
                     onKeyDown={(e) => e.preventDefault()}
-                  />
-                </div>
-
-                {/* Referral Code Field */}
-                <div>
-                  <label style={{ 
-                    display: 'block', 
-                    fontSize: '14px', 
-                    fontWeight: 600, 
-                    color: 'var(--text-primary)',
-                    marginBottom: '8px'
-                  }}>
-                    Referral Code (Optional)
-                  </label>
-                  <input
-                    type="text"
-                    name="referralCode"
-                    placeholder="Enter code if you have one"
-                    value={formData.referralCode}
-                    onChange={handleChange}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: '2px solid var(--line)',
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      background: 'var(--surface-1)',
-                      color: 'var(--text-primary)',
-                      outline: 'none'
-                    }}
                   />
                 </div>
 
