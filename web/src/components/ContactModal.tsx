@@ -486,7 +486,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 exit={{ opacity: 0, x: -20 }}
                 style={{ display: 'grid', gap: '20px' }}
               >
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
                   <div>
                     <label style={{ 
                               display: 'block', 
