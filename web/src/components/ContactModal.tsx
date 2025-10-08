@@ -592,7 +592,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   <input
                     type="date"
                     name="dob"
-                    value={formData.dob}
                     onChange={handleChange}
                     style={{
                       width: '100%',
