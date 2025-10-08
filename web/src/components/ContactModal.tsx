@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import CountryCodeSelector from './CountryCodeSelector'
 import { supabase } from '../lib/supabase'
 import { useI18n } from '../i18n'
+import { useNavigate } from 'react-router-dom'
 import bnaLogo from '../assets/bna logo.png'
 
 interface ContactModalProps {
@@ -12,6 +12,7 @@ interface ContactModalProps {
 
 export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const { locale } = useI18n()
+  const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState({
     firstName: '',
@@ -52,17 +53,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       // Save lead to Supabase directly without OTP verification
       await saveLeadToSupabase()
       
-      // Show success alert
-      alert('✅ Quote Request Submitted Successfully!\n\nThank you for your interest. Our team will review your information and contact you shortly.')
-      
-      setLoading(false)
-      setSubmitted(true)
-      setTimeout(() => {
-        onClose()
-        setSubmitted(false)
-        setCurrentStep(1)
-        setFormData({ firstName: '', lastName: '', gender: '' as 'male' | 'female' | 'prefer-not-to-say', dob: '1920-01-01', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '' })
-      }, 1000)
+      // Redirect to success page
+      onClose()
+      navigate('/success')
     } catch (error: any) {
       const errorMessage = error?.message || 'Unknown error occurred'
       alert(`❌ Submission Failed\n\nError: ${errorMessage}\n\nPlease check the console for more details or try again.`)
@@ -74,8 +67,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const saveLeadToSupabase = async () => {
     try {
       // Validate required fields
-      if (!formData.firstName || !formData.email || !formData.phone) {
-        throw new Error('Missing required fields: first name, email, or phone')
+      if (!formData.firstName || !formData.phone) {
+        throw new Error('Missing required fields: first name or phone')
       }
 
       if (!formData.dob || !formData.smokingStatus || !formData.province || !formData.insuranceProduct) {
@@ -96,7 +89,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         throw new Error('Last name contains invalid characters')
       }
       
-      if (!validateEmail(formData.email)) {
+      if (formData.email && !validateEmail(formData.email)) {
         throw new Error('Please enter a valid email address')
       }
 
@@ -248,11 +241,14 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       return
     }
     
-    // For all other fields
-    setFormData({
-      ...formData,
-      [name]: value
-    })
+    // Special validation for smoking status - allow toggle
+    if (name === 'smokingStatus') {
+      setFormData({
+        ...formData,
+        [name]: value
+      })
+      return
+    }
   }
 
   if (!isOpen) return null
@@ -838,7 +834,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     color: 'var(--text-primary)',
                     marginBottom: '8px'
                   }}>
-                    Email Address *
+                    {locale === 'fr' ? 'Adresse e-mail' : 'Email Address'} <span style={{ color: '#6B7280' }}>({locale === 'fr' ? 'optionnel' : 'optional'})</span>
                   </label>
                   <input
                     type="email"
@@ -846,7 +842,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     placeholder="your.email@example.com"
                     value={formData.email}
                     onChange={handleChange}
-                    required
                     style={{
                       width: '100%',
                       padding: '14px 16px',
@@ -891,10 +886,21 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     📱 We'll contact you at this number
                   </p>
                   <div style={{ display: 'flex', gap: '0' }}>
-                    <CountryCodeSelector
-                      value={formData.countryCode}
-                      onChange={(code) => setFormData(prev => ({ ...prev, countryCode: code }))}
-                    />
+                    <div style={{
+                      padding: '14px 16px',
+                      border: '2px solid var(--line)',
+                      borderRight: 'none',
+                      borderRadius: '12px 0 0 12px',
+                      fontSize: '16px',
+                      background: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      minWidth: '120px'
+                    }}>
+                      🇨🇦 +1
+                    </div>
                     <input
                       type="tel"
                       name="phone"
