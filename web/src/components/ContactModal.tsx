@@ -17,7 +17,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     firstName: '',
     lastName: '',
     gender: '' as 'male' | 'female' | 'prefer-not-to-say',
-    dob: '',
+    dob: '1980-01-01',
     smokingStatus: '',
     province: '',
     insuranceProduct: '',
@@ -61,7 +61,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         onClose()
         setSubmitted(false)
         setCurrentStep(1)
-        setFormData({ firstName: '', lastName: '', gender: '' as 'male' | 'female' | 'prefer-not-to-say', dob: '', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '' })
+        setFormData({ firstName: '', lastName: '', gender: '' as 'male' | 'female' | 'prefer-not-to-say', dob: '1980-01-01', smokingStatus: '', province: '', insuranceProduct: '', email: '', phone: '', countryCode: '+1', otp: '' })
       }, 1000)
     } catch (error: any) {
       const errorMessage = error?.message || 'Unknown error occurred'
@@ -206,22 +206,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     return emailRegex.test(email)
   }
 
-  const validateDob = (dobString: string) => {
-    if (!dobString) return false
-    const dob = new Date(dobString)
-    if (Number.isNaN(dob.getTime())) return false
-    const year = dob.getFullYear()
-    // Hard bounds to prevent random years
-    if (year < 1920 || year > 2020) return false
-    // Age bounds (approx): 18 to 105
-    const today = new Date()
-    let age = today.getFullYear() - year
-    const m = today.getMonth() - dob.getMonth()
-    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--
-    if (age < 18 || age > 105) return false
-    return true
-  }
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     
@@ -264,23 +248,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       return
     }
     
-    // Special validation for dob field
-    if (name === 'dob') {
-      // Only accept values within bounds; otherwise show error and ignore change
-      if (validateDob(value)) {
-        setFormData({
-          ...formData,
-          [name]: value
-        })
-      } else {
-        setValidationErrors(prev => ({
-          ...prev,
-          [name]: 'Please enter a valid date of birth (1920-2020), age 18-105'
-        }))
-      }
-      return
-    }
-
     // For all other fields
     setFormData({
       ...formData,
@@ -627,8 +594,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     name="dob"
                     value={formData.dob}
                     onChange={handleChange}
-                    min="1920-01-01"
-                    max="2020-12-31"
                     style={{
                       width: '100%',
                       padding: '14px 16px',
