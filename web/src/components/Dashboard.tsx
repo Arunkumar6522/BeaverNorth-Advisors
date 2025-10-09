@@ -78,7 +78,8 @@ export default function Dashboard() {
   const [timePeriod, setTimePeriod] = useState('month')
   const [leadsData, setLeadsData] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [inactiveGender, setInactiveGender] = useState<Set<string>>(new Set())
+  // For gender chart: single active selection, others dimmed
+  const [activeGender, setActiveGender] = useState<string | null>(null)
   // For smoking chart: keep a single active category; others are dimmed
   const [activeSmoking, setActiveSmoking] = useState<string | null>(null)
 
@@ -352,17 +353,9 @@ export default function Dashboard() {
                       <Cell
                         key={`cell-${index}`}
                         fill={entry.color}
-                        fillOpacity={inactiveGender.has(entry.name) ? 0.25 : 1}
+                        fillOpacity={activeGender === null || activeGender === entry.name ? 1 : 0.25}
                         onClick={() => {
-                          setInactiveGender(prev => {
-                            const next = new Set(Array.from(prev))
-                            if (next.has(entry.name)) {
-                              next.delete(entry.name)
-                            } else {
-                              next.add(entry.name)
-                            }
-                            return next
-                          })
+                          setActiveGender(curr => (curr === entry.name ? null : entry.name))
                         }}
                         style={{ cursor: 'pointer' }}
                       />
@@ -372,7 +365,7 @@ export default function Dashboard() {
                     content={({ active, payload }) => {
                       if (!active || !payload || (payload as any[]).length === 0) return null
                       const name = (payload as any[])[0]?.name as string
-                      if (inactiveGender.has(name)) return null
+                      if (activeGender !== null && name !== activeGender) return null
                       return <CustomTooltip />
                     }}
                   />
@@ -384,7 +377,7 @@ export default function Dashboard() {
                 const total = genderData.reduce((sum, d) => sum + d.value, 0)
                 const percentage = total > 0 ? Math.round((item.value / total) * 100) : 0
                 return (
-                  <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 0.5, opacity: inactiveGender.has(item.name) ? 0.5 : 1 }}>
+                  <Box key={index} sx={{ display: 'flex', alignItems: 'center', gap: 0.5, opacity: activeGender === null || activeGender === item.name ? 1 : 0.5 }}>
                     <Box sx={{ width: 10, height: 10, bgcolor: item.color, borderRadius: '50%' }} />
                     <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>
                       {item.name}: {item.value} ({percentage}%)
