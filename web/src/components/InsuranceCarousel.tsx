@@ -82,10 +82,10 @@ export default function InsuranceCarousel() {
           {t('insurance_partners')}
         </Typography>
         
-        {/* Continuous Scrolling Container */}
+        {/* Continuous Scrolling Container - show on all viewports */}
         <Box sx={{ 
           position: 'relative',
-          height: '120px',
+          height: { xs: '100px', md: '120px' },
           overflow: 'hidden',
           borderRadius: 2,
           bgcolor: '#F9FAFB',
@@ -110,7 +110,7 @@ export default function InsuranceCarousel() {
               <Box
                 key={`${logo.name}-${index}`}
                 sx={{
-                  flex: '0 0 200px', // Fixed width for each logo
+                  flex: '0 0 180px', // Slightly smaller on mobile
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -135,8 +135,8 @@ export default function InsuranceCarousel() {
                     src={logo.src}
                     alt={logo.alt}
                     style={{
-                      maxHeight: logo.name === 'Manulife' ? '120px' : '60px',
-                      maxWidth: logo.name === 'Manulife' ? '240px' : '120px',
+                      maxHeight: logo.name === 'Manulife' ? '110px' : '56px',
+                      maxWidth: logo.name === 'Manulife' ? '220px' : '112px',
                       objectFit: 'contain',
                       filter: 'grayscale(20%)',
                       transition: 'filter 0.3s ease'
@@ -158,45 +158,7 @@ export default function InsuranceCarousel() {
           </Box>
         </Box>
         
-        {/* Static Grid Fallback for Mobile */}
-        <Box sx={{ 
-          display: { xs: 'flex', md: 'none' },
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          gap: 2,
-          mt: 3
-        }}>
-          {insuranceLogos.slice(0, 6).map((logo, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                px: 2,
-                py: 1,
-                bgcolor: '#F3F8FF',
-                borderRadius: 2,
-                border: '1px solid rgba(105,131,204,0.1)',
-                minWidth: '100px'
-              }}
-            >
-              <img
-                src={logo.src}
-                alt={logo.alt}
-                style={{
-                  height: logo.name === 'Manulife' ? '60px' : '30px',
-                  width: 'auto',
-                  objectFit: 'contain',
-                  filter: 'grayscale(20%)'
-                }}
-                onError={(e) => {
-                  console.error(`Failed to load mobile logo: ${logo.name}`, e.currentTarget.src)
-                  e.currentTarget.style.display = 'none'
-                }}
-              />
-            </Box>
-          ))}
-        </Box>
+        {/* Removed static mobile fallback to keep animation on mobile */}
       </Box>
     </Box>
   )
