@@ -1,85 +1,82 @@
 export interface CustomUser {
-  id: number
+  id: string
   username: string
-  password?: string
-  email?: string
-  full_name?: string
-  role: string
-  created_at: string
 }
 
 export interface LoginResponse {
   success: boolean
   user?: CustomUser
   error?: string
+  errorCode?: 'no_user' | 'bad_password' | 'cooldown' | 'unknown'
+  cooldownSeconds?: number
 }
 
 export class CustomAuth {
-  private async getUserByUsername(username: string): Promise<CustomUser[]> {
-    const response = await fetch(`https://dkaexqwgaslwfiuiqcml.supabase.co/rest/v1/users?username=eq.${username}&select=*`, {
-      headers: {
-        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrYWV4cXdnYXNsd2ZpdWlxY21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MTQ5MjgsImV4cCI6MjA3NTA5MDkyOH0.0d3RiXkPRqhgXCh3V4xtsJ9P5hak84JYR0LQGJz9W9s',
-        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrYWV4cXdnYXNsd2ZpdWlxY21sIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk1MTQ5MjgsImV4cCI6MjA3NTA5MDkyOH0.0d3RiXkPRqhgXCh3V4xtsJ9P5hak84JYR0LQGJz9W9s',
-        'Content-Type': 'application/json'
-      }
-    })
-
-    return response.json()
+  // Get client IP (best-effort, non-blocking fallback)
+  private async getClientIp(): Promise<string> {
+    try {
+      const res = await fetch('https://api.ipify.org?format=json')
+      const json = await res.json()
+      return json.ip || ''
+    } catch {
+      return ''
+    }
   }
 
   public async login(username: string, password: string): Promise<LoginResponse> {
+    const u = (username || '').trim()
+    const p = password || ''
+    if (u.length < 3 || p.length < 8) {
+      return { success: false, error: 'Invalid username or password', errorCode: 'unknown' }
+    }
+
     try {
-      // First try to fetch from database
-      try {
-        const users = await this.getUserByUsername(username)
-        
-        if (users.length > 0) {
-          const user = users[0]
-          
-          // Check password matches
-          const isValidPassword = user.password === password
-          
-          if (!isValidPassword) {
-            return { success: false, error: 'Invalid username or password' }
-          }
+      const { supabase } = await import('./supabase')
+      const ip = await this.getClientIp()
+      const { data, error } = await (supabase.rpc as any)(
+        'secure_login',
+        { p_username: u, p_password: p, p_ip: ip }
+      )
 
-          // Store user in localStorage for session persistence
-          localStorage.setItem('beavernorth_user', JSON.stringify(user))
-          
-          return { success: true, user }
-        }
-      } catch (dbError) {
-        // Database table might not exist yet
-        console.log('Database not ready, using fallback admin')
+      if (error) {
+        console.error('secure_login RPC error:', error)
+        return { success: false, error: 'Login failed. Please try again.', errorCode: 'unknown' }
       }
 
-      // Fallback: use hardcoded admin credentials
-      if (username === 'admin' && password === 'admin') {
-        const fallbackUser: CustomUser = {
-          id: 1,
-          username: 'admin',
-          email: 'admin@beavernorth.com',
-          full_name: 'Administrator',
-          role: 'admin',
-          created_at: new Date().toISOString()
-        }
-
-        localStorage.setItem('beavernorth_user', JSON.stringify(fallbackUser))
-        return { success: true, user: fallbackUser }
+      const row = Array.isArray(data) ? data[0] : data
+      if (!row) {
+        return { success: false, error: 'Login failed. Please try again.', errorCode: 'unknown' }
       }
 
-      return { success: false, error: 'Invalid username or password' }
-    } catch (error) {
-      return { success: false, error: 'Login failed. Please try again.' }
+      if (!row.success) {
+        if (row.error === 'cooldown') {
+          return { success: false, error: 'Too many attempts. Try again in 10 minutes.', errorCode: 'cooldown', cooldownSeconds: 600 }
+        }
+        if (row.error === 'no_user') {
+          return { success: false, error: 'No user found', errorCode: 'no_user' }
+        }
+        if (row.error === 'bad_password') {
+          return { success: false, error: 'Invalid password', errorCode: 'bad_password' }
+        }
+        return { success: false, error: 'Login failed. Please try again.', errorCode: 'unknown' }
+      }
+
+      const safeUser: CustomUser = { id: row.user_id, username: row.username }
+      // Store minimal info in sessionStorage instead of localStorage
+      sessionStorage.setItem('beavernorth_user', JSON.stringify(safeUser))
+      return { success: true, user: safeUser }
+    } catch (e) {
+      console.error('login fatal error:', e)
+      return { success: false, error: 'Login failed. Please try again.', errorCode: 'unknown' }
     }
   }
 
   public logout(): void {
-    localStorage.removeItem('beavernorth_user')
+    sessionStorage.removeItem('beavernorth_user')
   }
 
   public getCurrentUser(): CustomUser | null {
-    const userStr = localStorage.getItem('beavernorth_user')
+    const userStr = sessionStorage.getItem('beavernorth_user')
     if (!userStr) return null
     
     try {

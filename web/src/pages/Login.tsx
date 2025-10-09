@@ -29,7 +29,15 @@ export default function Login() {
         setMessage('Login successful! Redirecting...')
         setTimeout(() => navigate('/dashboard'), 1000)
       } else {
-        setMessage(result.error || 'Login failed')
+        if (result.errorCode === 'cooldown') {
+          setMessage('Too many attempts. Try again in 10 minutes.')
+        } else if (result.errorCode === 'no_user') {
+          setMessage('No user found')
+        } else if (result.errorCode === 'bad_password') {
+          setMessage('Invalid password')
+        } else {
+          setMessage(result.error || 'Login failed')
+        }
       }
     } catch (error) {
       console.error('Login error:', error)
@@ -88,9 +96,10 @@ export default function Login() {
           <input
             type="text"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value.trimStart())}
             required
             placeholder="Enter username"
+            autoComplete="username"
             disabled={loading}
             style={{ 
               width: '100%', 
@@ -110,6 +119,8 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
             required
             placeholder="••••••••"
+            minLength={8}
+            autoComplete="current-password"
             disabled={loading}
             style={{ 
               width: '100%', 
