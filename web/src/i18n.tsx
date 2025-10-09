@@ -87,7 +87,7 @@ type I18nContextType = {
 const I18nContext = createContext<I18nContextType | undefined>(undefined)
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocale] = useState<Locale>('en')
+  const [locale, setLocale] = useState<Locale>('fr')
   const t = useMemo(() => (key: string) => dictionaries[locale][key] ?? key, [locale])
   const value = useMemo(() => ({ locale, setLocale, t }), [locale, t])
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
