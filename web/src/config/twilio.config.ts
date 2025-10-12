@@ -1,11 +1,18 @@
 // Twilio Configuration
-// Replace [AuthToken] with your actual Twilio Auth Token
+// Uses environment variables with fallbacks for demo mode
 
 export const twilioConfig = {
-  accountSid: process.env.VITE_TWILIO_ACCOUNT_SID || 'YOUR_TWILIO_ACCOUNT_SID',
-  authToken: process.env.VITE_TWILIO_AUTH_TOKEN || 'YOUR_TWILIO_AUTH_TOKEN',
-  serviceSid: process.env.VITE_TWILIO_SERVICE_SID || 'YOUR_TWILIO_SERVICE_SID',
-  fromNumber: process.env.VITE_TWILIO_FROM_NUMBER || '+15551234567'
+  accountSid: import.meta.env.VITE_TWILIO_ACCOUNT_SID || 'demo-account-sid',
+  authToken: import.meta.env.VITE_TWILIO_AUTH_TOKEN || 'demo-auth-token',
+  serviceSid: import.meta.env.VITE_TWILIO_SERVICE_SID || 'demo-service-sid',
+  fromNumber: import.meta.env.VITE_TWILIO_FROM_NUMBER || '+15551234567'
+}
+
+// Check if we're in demo mode
+export const isDemoMode = () => {
+  return twilioConfig.accountSid === 'demo-account-sid' || 
+         twilioConfig.authToken === 'demo-auth-token' ||
+         twilioConfig.serviceSid === 'demo-service-sid'
 }
 
 // Environment variables (for production deployment)

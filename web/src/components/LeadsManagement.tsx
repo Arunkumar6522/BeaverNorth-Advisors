@@ -240,10 +240,10 @@ export default function LeadsManagement() {
             console.log('📋 First lead sample:', data[0])
             
             // Filter out deleted leads in JavaScript (not SQL)
-            const activeLeads = data.filter(lead => !lead.deleted_at)
+            const activeLeads = data.filter((lead: any) => !lead.deleted_at)
             console.log(`📊 Active leads (deleted_at is null): ${activeLeads.length}`)
             
-            setLeads(activeLeads.map(lead => ({
+            setLeads(activeLeads.map((lead: any) => ({
               id: lead.id ? lead.id.toString() : String(Math.random()),
               firstName: lead.name ? lead.name.split(' ')[0] : '',
               lastName: lead.name ? lead.name.split(' ').slice(1).join(' ') : '',

@@ -110,7 +110,7 @@ export default function DeletedLeads() {
 
         if (data && data.length > 0) {
           console.log(`✅ ${data.length} deleted leads fetched`)
-          setDeletedLeads(data.map(lead => ({
+          setDeletedLeads(data.map((lead: any) => ({
             id: lead.id.toString(),
             firstName: lead.first_name || '',
             lastName: lead.last_name || '',
