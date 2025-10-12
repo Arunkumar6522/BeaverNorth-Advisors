@@ -27,7 +27,7 @@ interface MuiSidebarProps {
   selectedModule: string
   onModuleSelect: (module: string) => void
   onLogout: () => void
-  user: { username?: string; full_name?: string }
+  user: { username?: string }
   mobile?: boolean
 }
 
@@ -243,11 +243,11 @@ export default function MuiSidebar({
                 fontSize: 14,
                 fontWeight: 'bold'
               }}>
-                {(user.full_name || user.username || 'A').charAt(0).toUpperCase()}
+                {(user.username || 'A').charAt(0).toUpperCase()}
               </Box>
               <Box sx={{ flex: 1 }}>
                 <Typography variant="body2" sx={{ fontWeight: '600', color: '#333333', fontSize: 13 }}>
-                  {user.full_name || user.username || 'Admin'}
+                  {user.username || 'Admin'}
                 </Typography>
                 <Typography variant="caption" sx={{ color: '#666666', fontSize: 11 }}>
                   Advisor

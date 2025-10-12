@@ -12,57 +12,57 @@ export interface LoginResponse {
 }
 
 export class CustomAuth {
-  // Get client IP (best-effort, non-blocking fallback)
-  private async getClientIp(): Promise<string> {
-    try {
-      const res = await fetch('https://api.ipify.org?format=json')
-      const json = await res.json()
-      return json.ip || ''
-    } catch {
-      return ''
-    }
-  }
-
-  public async login(username: string, password: string): Promise<LoginResponse> {
-    const u = (username || '').trim()
+  public async login(loginInput: string, password: string): Promise<LoginResponse> {
+    const input = (loginInput || '').trim()
     const p = password || ''
-    if (u.length < 3 || p.length < 8) {
-      return { success: false, error: 'Invalid username or password', errorCode: 'unknown' }
+    
+    // Basic validation - just check if input and password are not empty
+    if (input.length < 1 || p.length < 1) {
+      return { success: false, error: 'Please enter username/email and password', errorCode: 'unknown' }
     }
 
     try {
       const { supabase } = await import('./supabase')
-      const ip = await this.getClientIp()
-      const { data, error } = await (supabase.rpc as any)(
-        'secure_login',
-        { p_username: u, p_password: p, p_ip: ip }
-      )
+      
+      // Check if input looks like an email (contains @)
+      const isEmail = input.includes('@')
+      
+      let query
+      if (isEmail) {
+        // Search by email
+        query = supabase
+          .from('users')
+          .select('id, username, password, email, full_name, role')
+          .eq('email', input)
+      } else {
+        // Search by username
+        query = supabase
+          .from('users')
+          .select('id, username, password, email, full_name, role')
+          .eq('username', input)
+      }
+
+      const { data, error } = await query.single()
 
       if (error) {
-        console.error('secure_login RPC error:', error)
-        return { success: false, error: 'Login failed. Please try again.', errorCode: 'unknown' }
-      }
-
-      const row = Array.isArray(data) ? data[0] : data
-      if (!row) {
-        return { success: false, error: 'Login failed. Please try again.', errorCode: 'unknown' }
-      }
-
-      if (!row.success) {
-        if (row.error === 'cooldown') {
-          return { success: false, error: 'Too many attempts. Try again in 10 minutes.', errorCode: 'cooldown', cooldownSeconds: 600 }
-        }
-        if (row.error === 'no_user') {
+        console.error('Database query error:', error)
+        if (error.code === 'PGRST116') {
           return { success: false, error: 'No user found', errorCode: 'no_user' }
         }
-        if (row.error === 'bad_password') {
-          return { success: false, error: 'Invalid password', errorCode: 'bad_password' }
-        }
         return { success: false, error: 'Login failed. Please try again.', errorCode: 'unknown' }
       }
 
-      const safeUser: CustomUser = { id: row.user_id, username: row.username }
-      // Store minimal info in sessionStorage instead of localStorage
+      if (!data) {
+        return { success: false, error: 'No user found', errorCode: 'no_user' }
+      }
+
+      // Check password (simple comparison)
+      if (data.password !== p) {
+        return { success: false, error: 'Invalid password', errorCode: 'bad_password' }
+      }
+
+      const safeUser: CustomUser = { id: data.id.toString(), username: data.username }
+      // Store minimal info in sessionStorage
       sessionStorage.setItem('beavernorth_user', JSON.stringify(safeUser))
       return { success: true, user: safeUser }
     } catch (e) {

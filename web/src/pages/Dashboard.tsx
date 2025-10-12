@@ -195,7 +195,7 @@ export default function Dashboard() {
                 fontWeight: 600,
                 boxShadow: '0 2px 8px rgba(25,118,210,0.3)'
               }}>
-                👋 {user?.full_name || user?.username || 'Admin'}
+                👋 {user?.username || 'Admin'}
               </Box>
             </Box>
           </Toolbar>

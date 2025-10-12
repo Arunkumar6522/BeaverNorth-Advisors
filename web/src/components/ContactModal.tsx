@@ -29,7 +29,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   })
 
   const [loading, setLoading] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
   const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({})
 
   const nextStep = () => {
@@ -50,8 +49,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     setLoading(true)
     
     try {
-      // Save lead to Supabase directly without OTP verification
-      await saveLeadToSupabase()
+      // First verify OTP before saving to database
+      await verifyOTPAndSubmit()
       
       // Redirect to success page
       onClose()
@@ -61,6 +60,41 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       alert(`❌ Submission Failed\n\nError: ${errorMessage}\n\nPlease check the console for more details or try again.`)
       console.error('🔴 Submission error details:', error)
       setLoading(false)
+    }
+  }
+
+  const verifyOTPAndSubmit = async () => {
+    try {
+      // First verify the OTP
+      const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
+      
+      console.log('🔐 Verifying OTP before submission...')
+      
+      const verifyResponse = await fetch('http://localhost:3001/api/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: phoneNumber,
+          code: formData.otp
+        })
+      })
+      
+      const verifyResult = await verifyResponse.json()
+      
+      if (!verifyResult.success) {
+        throw new Error(verifyResult.message || 'OTP verification failed')
+      }
+      
+      console.log('✅ OTP verified successfully, proceeding with submission...')
+      
+      // Only after successful OTP verification, save to database
+      await saveLeadToSupabase()
+      
+    } catch (error: any) {
+      console.error('❌ OTP verification error:', error)
+      throw error
     }
   }
 
@@ -94,8 +128,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       }
 
       const leadData = {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
+        name: `${formData.firstName} ${formData.lastName}`.trim(),
         email: formData.email,
         phone: `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`,
         dob: formData.dob,
@@ -249,6 +282,12 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       })
       return
     }
+    
+    // Default case for all other fields (gender, dob, province, insuranceProduct, phone, countryCode, otp)
+    setFormData({
+      ...formData,
+      [name]: value
+    })
   }
 
   if (!isOpen) return null
@@ -410,36 +449,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           </div>
         </div>
 
-        {submitted ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            style={{ textAlign: 'center', padding: '40px 20px' }}
-          >
-            <div style={{ 
-              width: '60px', 
-              height: '60px', 
-              borderRadius: '50%', 
-              background: 'var(--brand-green)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              margin: '0 auto 20px',
-              fontSize: '24px',
-              color: 'white'
-            }}>
-              ✓
-            </div>
-            <h3 style={{ color: 'var(--brand-green)', marginBottom: '12px' }}>
-              Quote Request Received!
-            </h3>
-            <p style={{ color: 'var(--text-secondary)' }}>
-              Our licensed advisors will contact you within 24 hours with your personalized insurance quote.
-            </p>
-          </motion.div>
-        ) : (
-          <div>
-            {/* Step 1: Personal Information */}
+        <div>
+          {/* Step 1: Personal Information */}
             {currentStep === 1 && (
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
@@ -655,8 +666,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       background: formData.smokingStatus === 'non-smoker' ? 'var(--brand-green)' : 'var(--surface-1)',
                       color: formData.smokingStatus === 'non-smoker' ? 'white' : 'var(--text-primary)',
                       transition: 'all 0.2s',
-                      opacity: formData.smokingStatus !== '' && formData.smokingStatus !== 'non-smoker' ? 0.5 : 1,
-                      pointerEvents: formData.smokingStatus !== '' && formData.smokingStatus !== 'non-smoker' ? 'none' : 'auto'
+                      opacity: 1,
+                      pointerEvents: 'auto'
                     }}>
                       <input
                         type="radio"
@@ -680,8 +691,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       background: formData.smokingStatus === 'smoker' ? 'var(--brand-yellow)' : 'var(--surface-1)',
                       color: formData.smokingStatus === 'smoker' ? 'white' : 'var(--text-primary)',
                       transition: 'all 0.2s',
-                      opacity: formData.smokingStatus !== '' && formData.smokingStatus !== 'smoker' ? 0.5 : 1,
-                      pointerEvents: formData.smokingStatus !== '' && formData.smokingStatus !== 'smoker' ? 'none' : 'auto'
+                      opacity: 1,
+                      pointerEvents: 'auto'
                     }}>
                       <input
                         type="radio"
@@ -886,21 +897,26 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     📱 We'll contact you at this number
                   </p>
                   <div style={{ display: 'flex', gap: '0' }}>
-                    <div style={{
-                      padding: '14px 16px',
-                      border: '2px solid var(--line)',
-                      borderRight: 'none',
-                      borderRadius: '12px 0 0 12px',
-                      fontSize: '16px',
-                      background: 'var(--surface-1)',
-                      color: 'var(--text-primary)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '8px',
-                      minWidth: '120px'
-                    }}>
-                      🇨🇦 +1
-                    </div>
+                    <select
+                      name="countryCode"
+                      value={formData.countryCode}
+                      onChange={handleChange}
+                      style={{
+                        padding: '14px 16px',
+                        border: '2px solid var(--line)',
+                        borderRight: 'none',
+                        borderRadius: '12px 0 0 12px',
+                        fontSize: '16px',
+                        background: 'var(--surface-1)',
+                        color: 'var(--text-primary)',
+                        minWidth: '120px',
+                        outline: 'none',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <option value="+1">🇨🇦 +1 (Canada)</option>
+                      <option value="+91">🇮🇳 +91 (India)</option>
+                    </select>
                     <input
                       type="tel"
                       name="phone"
@@ -928,6 +944,92 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   </div>
                 </div>
 
+                {/* OTP Section */}
+                <div>
+                  <label style={{ 
+                    display: 'block', 
+                    fontSize: '14px', 
+                    fontWeight: 600, 
+                    color: 'var(--text-primary)',
+                    marginBottom: '8px'
+                  }}>
+                    Verification Code *
+                  </label>
+                  <p style={{ 
+                    fontSize: '12px',
+                    color: 'var(--text-secondary)',
+                    marginBottom: '12px'
+                  }}>
+                    🔐 Enter the 6-digit code sent to your phone
+                  </p>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        try {
+                          const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
+                          console.log('📱 Sending OTP to:', phoneNumber)
+                          
+                          const response = await fetch('http://localhost:3001/api/send-otp', {
+                            method: 'POST',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                              to: phoneNumber
+                            })
+                          })
+                          
+                          const result = await response.json()
+                          
+                          if (result.success) {
+                            alert(`✅ OTP sent to ${phoneNumber}`)
+                          } else {
+                            alert(`❌ Failed to send OTP: ${result.message}`)
+                          }
+                        } catch (error) {
+                          console.error('OTP send error:', error)
+                          alert('❌ Failed to send OTP. Please try again.')
+                        }
+                      }}
+                      disabled={!formData.phone}
+                      style={{
+                        padding: '14px 16px',
+                        border: '2px solid var(--brand-green)',
+                        borderRadius: '8px',
+                        background: 'transparent',
+                        color: 'var(--brand-green)',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: formData.phone ? 'pointer' : 'not-allowed',
+                        opacity: formData.phone ? 1 : 0.5
+                      }}
+                    >
+                      Send OTP
+                    </button>
+                    <input
+                      type="text"
+                      name="otp"
+                      placeholder="123456"
+                      value={formData.otp}
+                      onChange={handleChange}
+                      maxLength={6}
+                      style={{
+                        flex: 1,
+                        padding: '14px 16px',
+                        border: '2px solid var(--line)',
+                        borderRadius: '8px',
+                        fontSize: '16px',
+                        background: 'var(--surface-1)',
+                        color: 'var(--text-primary)',
+                        outline: 'none',
+                        textAlign: 'center',
+                        letterSpacing: '2px'
+                      }}
+                    />
+                  </div>
+                </div>
+
                 <form onSubmit={handleSubmit} style={{ marginTop: '24px' }}>
                   <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
                     <button
@@ -949,17 +1051,17 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     </button>
                     <button
                       type="submit"
-                      disabled={loading || !formData.email || !formData.phone || !!validationErrors.email}
+                      disabled={loading || !formData.email || !formData.phone || !formData.otp || !!validationErrors.email}
                       style={{
                         flex: 2,
-                        background: (loading || !formData.email || !formData.phone || validationErrors.email) ? 'var(--line)' : 'var(--brand-green)',
+                        background: (loading || !formData.email || !formData.phone || !formData.otp || validationErrors.email) ? 'var(--line)' : 'var(--brand-green)',
                         color: 'white',
                         padding: '16px',
                         borderRadius: '12px',
                         border: 'none',
                         fontSize: '16px',
                         fontWeight: '600',
-                        cursor: (loading || !formData.email || !formData.phone || validationErrors.email) ? 'not-allowed' : 'pointer'
+                        cursor: (loading || !formData.email || !formData.phone || !formData.otp || validationErrors.email) ? 'not-allowed' : 'pointer'
                       }}
                     >
                         {loading ? 'Submitting...' : 'Submit Quote Request'}
@@ -979,8 +1081,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 </p>
               </motion.div>
             )}
-          </div>
-        )}
+        </div>
       </motion.div>
     </div>
   )

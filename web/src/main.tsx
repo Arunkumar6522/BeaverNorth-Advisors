@@ -10,7 +10,6 @@ import Services from './pages/Services.tsx'
 import Blog from './pages/Blog.tsx'
 import DashboardLayout from './components/DashboardLayout.tsx'
 import SuccessPage from './components/SuccessPage.tsx'
-import Setup from './pages/Setup.tsx'
 import { I18nProvider } from './i18n.tsx'
 
 const router = createBrowserRouter([
@@ -34,7 +33,6 @@ const router = createBrowserRouter([
   { path: '/deleted', element: <DashboardLayout /> },
   { path: '/logs', element: <DashboardLayout /> },
   { path: '/success', element: <SuccessPage /> },
-  { path: '/setup', element: <Setup /> },
 ])
 
 createRoot(document.getElementById('root')!).render(

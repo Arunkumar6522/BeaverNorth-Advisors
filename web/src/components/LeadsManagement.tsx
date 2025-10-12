@@ -37,7 +37,8 @@ import {
   Delete as DeleteIcon,
   Phone as PhoneIcon,
   Email as EmailIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
+  Add as AddIcon
 } from '@mui/icons-material'
 import { useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
@@ -59,6 +60,9 @@ interface Lead {
   last_contact_date?: string
   notes?: string
   deleted_at?: string
+  contacted_by?: string
+  converted_by?: string
+  created_by?: string
 }
 
 // Sample leads data (not used - kept for reference)
@@ -153,6 +157,7 @@ export default function LeadsManagement() {
   const [viewModalOpen, setViewModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [addLeadModalOpen, setAddLeadModalOpen] = useState(false)
   
   // Edit modal states
   const [editLeadId, setEditLeadId] = useState<string | null>(null)
@@ -163,6 +168,19 @@ export default function LeadsManagement() {
   const [deleteLeadId, setDeleteLeadId] = useState<string | null>(null)
   const [deleteReason, setDeleteReason] = useState('')
   const [deleteComment, setDeleteComment] = useState('')
+  
+  // Add lead modal states
+  const [addLeadForm, setAddLeadForm] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    dob: '',
+    province: '',
+    smokingStatus: 'non-smoker' as 'smoker' | 'non-smoker',
+    insuranceProduct: 'term-life' as 'term-life' | 'whole-life' | 'non-medical' | 'mortgage-life' | 'senior-life' | 'travel',
+    notes: ''
+  })
   
   // Pagination
   const [page, setPage] = useState(0)
@@ -227,9 +245,9 @@ export default function LeadsManagement() {
             
             setLeads(activeLeads.map(lead => ({
               id: lead.id ? lead.id.toString() : String(Math.random()),
-              firstName: lead.first_name || '',
-              lastName: lead.last_name || '',
-              name: `${lead.first_name || ''} ${lead.last_name || ''}`.trim() || 'Unknown',
+              firstName: lead.name ? lead.name.split(' ')[0] : '',
+              lastName: lead.name ? lead.name.split(' ').slice(1).join(' ') : '',
+              name: lead.name || 'Unknown',
               email: lead.email || '',
               phone: lead.phone || '',
               dob: lead.dob || '1985-01-01',
@@ -240,7 +258,10 @@ export default function LeadsManagement() {
               created_at: lead.created_at || new Date().toISOString(),
               last_contact_date: lead.last_contact_date || undefined,
               notes: lead.notes || '',
-              deleted_at: lead.deleted_at || undefined
+              deleted_at: lead.deleted_at || undefined,
+              contacted_by: lead.contacted_by || undefined,
+              converted_by: lead.converted_by || undefined,
+              created_by: lead.created_by || undefined
             })))
             
             console.log('✅ Leads state updated successfully')
@@ -303,6 +324,7 @@ export default function LeadsManagement() {
       const currentLead = leads.find(lead => lead.id === leadId)
       const leadName = currentLead?.name || 'Unknown Lead'
       const oldStatus = currentLead?.status || 'new'
+      const username = customAuth.getCurrentUser()?.username || 'Admin'
       
       const updateData: any = { status: newStatus }
       
@@ -310,9 +332,22 @@ export default function LeadsManagement() {
         updateData.last_contact_date = new Date().toISOString()
         updateData.contacted_at = newStatus === 'contacted' ? new Date().toISOString() : undefined
         updateData.converted_at = newStatus === 'converted' ? new Date().toISOString() : undefined
+        
+        // Track who performed the action (only if columns exist)
+        // For now, we'll add this info to notes as a workaround until SQL script is run
+        if (newStatus === 'contacted') {
+          const currentNotes = currentLead?.notes || ''
+          const userInfo = `Contacted by: ${username}`
+          updateData.notes = currentNotes ? `${currentNotes}\n\n${userInfo}` : userInfo
+        } else if (newStatus === 'converted') {
+          const currentNotes = currentLead?.notes || ''
+          const userInfo = `Converted by: ${username}`
+          updateData.notes = currentNotes ? `${currentNotes}\n\n${userInfo}` : userInfo
+        }
       }
 
-      if (notes) {
+      // Handle additional notes from edit modal
+      if (notes && notes !== currentLead?.notes) {
         updateData.notes = notes
       }
 
@@ -345,7 +380,7 @@ export default function LeadsManagement() {
           ? { 
               ...lead, 
               status: newStatus,
-              notes: notes || lead.notes,
+              notes: updateData.notes || notes || lead.notes,
               last_contact_date: newStatus !== 'new' ? new Date().toISOString() : lead.last_contact_date
             }
           : lead
@@ -460,6 +495,98 @@ export default function LeadsManagement() {
       }
     } catch (error) {
       console.error('❌ Error logging activity:', error)
+    }
+  }
+
+  // Function to add a new lead manually
+  const handleAddLead = async () => {
+    try {
+      const { supabase } = await import('../lib/supabase')
+      const username = customAuth.getCurrentUser()?.username || 'Admin'
+      
+      const leadData: any = {
+        name: `${addLeadForm.firstName} ${addLeadForm.lastName}`.trim(),
+        email: addLeadForm.email,
+        phone: addLeadForm.phone,
+        dob: addLeadForm.dob,
+        province: addLeadForm.province,
+        country_code: '+1',
+        smoking_status: addLeadForm.smokingStatus,
+        insurance_product: addLeadForm.insuranceProduct,
+        status: 'new',
+        notes: addLeadForm.notes
+      }
+
+      // Add created_by info to notes until SQL script is run
+      if (addLeadForm.notes) {
+        leadData.notes = `${addLeadForm.notes}\n\nCreated by: ${username}`
+      } else {
+        leadData.notes = `Created by: ${username}`
+      }
+
+      console.log('💾 Adding new lead:', leadData)
+
+      const { data, error } = await supabase
+        .from('leads')
+        .insert([leadData])
+        .select()
+
+      if (error) {
+        console.error('❌ Error adding lead:', error)
+        alert('Failed to add lead. Please try again.')
+        return
+      }
+
+      if (data && data.length > 0) {
+        console.log('✅ Lead added successfully:', data[0])
+        
+        // Add to local state
+        const newLead = {
+          id: data[0].id.toString(),
+          firstName: addLeadForm.firstName,
+          lastName: addLeadForm.lastName,
+          name: leadData.name,
+          email: addLeadForm.email,
+          phone: addLeadForm.phone,
+          dob: addLeadForm.dob,
+          province: addLeadForm.province,
+          smoking_status: addLeadForm.smokingStatus,
+          insurance_product: addLeadForm.insuranceProduct,
+          status: 'new' as const,
+          created_at: data[0].created_at,
+          notes: leadData.notes
+        }
+        
+        setLeads([newLead, ...leads])
+        
+        // Log activity
+        await logActivity(
+          data[0].id.toString(),
+          'lead_created',
+          `Manual lead created: ${leadData.name}`,
+          undefined,
+          'new'
+        )
+        
+        // Reset form and close modal
+        setAddLeadForm({
+          firstName: '',
+          lastName: '',
+          email: '',
+          phone: '',
+          dob: '',
+          province: '',
+          smokingStatus: 'non-smoker',
+          insuranceProduct: 'term-life',
+          notes: ''
+        })
+        setAddLeadModalOpen(false)
+        
+        alert('Lead added successfully!')
+      }
+    } catch (error) {
+      console.error('❌ Error adding lead:', error)
+      alert('Failed to add lead. Please try again.')
     }
   }
 
@@ -625,6 +752,20 @@ export default function LeadsManagement() {
           </Tabs>
           
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<AddIcon />}
+              onClick={() => setAddLeadModalOpen(true)}
+              sx={{ 
+                backgroundColor: '#1976D2',
+                '&:hover': { backgroundColor: '#1565C0' },
+                textTransform: 'none',
+                fontWeight: 600
+              }}
+            >
+              Add Lead
+            </Button>
             <TextField
               size="small"
               placeholder="Search leads..."
@@ -755,16 +896,33 @@ export default function LeadsManagement() {
                     </TableCell>
 
                     <TableCell>
-                      <Chip
-                        label={lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
-                        size="small"
-                        sx={{
-                          backgroundColor: `${getStatusColor(lead.status)}20`,
-                          color: getStatusColor(lead.status),
-                          fontWeight: '600',
-                          fontSize: '0.75rem'
-                        }}
-                      />
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                        <Chip
+                          label={lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
+                          size="small"
+                          sx={{
+                            backgroundColor: `${getStatusColor(lead.status)}20`,
+                            color: getStatusColor(lead.status),
+                            fontWeight: '600',
+                            fontSize: '0.75rem'
+                          }}
+                        />
+                        {lead.status === 'contacted' && lead.notes && lead.notes.includes('Contacted by:') && (
+                          <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                            {lead.notes.split('\n').find(line => line.includes('Contacted by:'))}
+                          </Typography>
+                        )}
+                        {lead.status === 'converted' && lead.notes && lead.notes.includes('Converted by:') && (
+                          <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                            {lead.notes.split('\n').find(line => line.includes('Converted by:'))}
+                          </Typography>
+                        )}
+                        {lead.status === 'new' && lead.notes && lead.notes.includes('Created by:') && (
+                          <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
+                            {lead.notes.split('\n').find(line => line.includes('Created by:'))}
+                          </Typography>
+                        )}
+                      </Box>
                     </TableCell>
 
                     <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
@@ -1049,6 +1207,134 @@ export default function LeadsManagement() {
             disabled={!canDelete()}
           >
             Delete Lead
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Add Lead Modal */}
+      <Dialog open={addLeadModalOpen} onClose={() => setAddLeadModalOpen(false)} maxWidth="md" fullWidth>
+        <DialogTitle>Add New Lead</DialogTitle>
+        <DialogContent>
+          <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <TextField
+                fullWidth
+                label="First Name"
+                value={addLeadForm.firstName}
+                onChange={(e) => setAddLeadForm({...addLeadForm, firstName: e.target.value})}
+                required
+              />
+              <TextField
+                fullWidth
+                label="Last Name"
+                value={addLeadForm.lastName}
+                onChange={(e) => setAddLeadForm({...addLeadForm, lastName: e.target.value})}
+                required
+              />
+            </Box>
+            
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <TextField
+                fullWidth
+                label="Email"
+                type="email"
+                value={addLeadForm.email}
+                onChange={(e) => setAddLeadForm({...addLeadForm, email: e.target.value})}
+                required
+              />
+              <TextField
+                fullWidth
+                label="Phone"
+                value={addLeadForm.phone}
+                onChange={(e) => setAddLeadForm({...addLeadForm, phone: e.target.value})}
+                required
+              />
+            </Box>
+            
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <TextField
+                fullWidth
+                label="Date of Birth"
+                type="date"
+                value={addLeadForm.dob}
+                onChange={(e) => setAddLeadForm({...addLeadForm, dob: e.target.value})}
+                InputLabelProps={{ shrink: true }}
+                required
+              />
+              <FormControl fullWidth required>
+                <InputLabel>Province</InputLabel>
+                <Select
+                  value={addLeadForm.province}
+                  label="Province"
+                  onChange={(e) => setAddLeadForm({...addLeadForm, province: e.target.value})}
+                >
+                  <MenuItem value="Alberta">Alberta</MenuItem>
+                  <MenuItem value="British Columbia">British Columbia</MenuItem>
+                  <MenuItem value="Manitoba">Manitoba</MenuItem>
+                  <MenuItem value="New Brunswick">New Brunswick</MenuItem>
+                  <MenuItem value="Newfoundland and Labrador">Newfoundland and Labrador</MenuItem>
+                  <MenuItem value="Northwest Territories">Northwest Territories</MenuItem>
+                  <MenuItem value="Nova Scotia">Nova Scotia</MenuItem>
+                  <MenuItem value="Nunavut">Nunavut</MenuItem>
+                  <MenuItem value="Ontario">Ontario</MenuItem>
+                  <MenuItem value="Prince Edward Island">Prince Edward Island</MenuItem>
+                  <MenuItem value="Quebec">Quebec</MenuItem>
+                  <MenuItem value="Saskatchewan">Saskatchewan</MenuItem>
+                  <MenuItem value="Yukon">Yukon</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <FormControl fullWidth>
+                <InputLabel>Smoking Status</InputLabel>
+                <Select
+                  value={addLeadForm.smokingStatus}
+                  label="Smoking Status"
+                  onChange={(e) => setAddLeadForm({...addLeadForm, smokingStatus: e.target.value as 'smoker' | 'non-smoker'})}
+                >
+                  <MenuItem value="non-smoker">Non-smoker</MenuItem>
+                  <MenuItem value="smoker">Smoker</MenuItem>
+                </Select>
+              </FormControl>
+              
+              <FormControl fullWidth>
+                <InputLabel>Insurance Product</InputLabel>
+                <Select
+                  value={addLeadForm.insuranceProduct}
+                  label="Insurance Product"
+                  onChange={(e) => setAddLeadForm({...addLeadForm, insuranceProduct: e.target.value as any})}
+                >
+                  <MenuItem value="term-life">Term Life Insurance</MenuItem>
+                  <MenuItem value="whole-life">Whole Life Insurance</MenuItem>
+                  <MenuItem value="non-medical">Non-Medical Insurance</MenuItem>
+                  <MenuItem value="mortgage-life">Mortgage Life Insurance</MenuItem>
+                  <MenuItem value="senior-life">Senior Life Insurance</MenuItem>
+                  <MenuItem value="travel">Travel Insurance</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+            
+            <TextField
+              fullWidth
+              label="Notes"
+              multiline
+              rows={3}
+              value={addLeadForm.notes}
+              onChange={(e) => setAddLeadForm({...addLeadForm, notes: e.target.value})}
+              placeholder="Additional notes about this lead..."
+            />
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setAddLeadModalOpen(false)}>Cancel</Button>
+          <Button 
+            onClick={handleAddLead} 
+            color="primary" 
+            variant="contained"
+            disabled={!addLeadForm.firstName || !addLeadForm.lastName || !addLeadForm.email || !addLeadForm.phone || !addLeadForm.province}
+          >
+            Add Lead
           </Button>
         </DialogActions>
       </Dialog>

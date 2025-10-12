@@ -4,7 +4,7 @@ import { customAuth } from '../lib/custom-auth'
 import { useNavigate } from 'react-router-dom'
 
 export default function Login() {
-  const [username, setUsername] = useState('')
+  const [loginInput, setLoginInput] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -23,7 +23,7 @@ export default function Login() {
     setMessage('')
 
     try {
-      const result = await customAuth.login(username, password)
+      const result = await customAuth.login(loginInput, password)
       
       if (result.success) {
         setMessage('Login successful! Redirecting...')
@@ -83,8 +83,8 @@ export default function Login() {
             padding: 10, 
             borderRadius: 6, 
             marginBottom: 16, 
-            background: message.includes('Success') ? '#d1fae5' : '#fee2e2',
-            color: message.includes('Success') ? '#065f46' : '#dc2626',
+            background: message.includes('successful') || message.includes('Success') ? '#d1fae5' : '#fee2e2',
+            color: message.includes('successful') || message.includes('Success') ? '#065f46' : '#dc2626',
             fontSize: 14
           }}>
             {message}
@@ -92,13 +92,13 @@ export default function Login() {
         )}
 
         <form onSubmit={onSubmit}>
-          <label style={{ display: 'block', fontSize: 14, color: '#333', marginBottom: 6 }}>Username</label>
+          <label style={{ display: 'block', fontSize: 14, color: '#333', marginBottom: 6 }}>Username or Email</label>
           <input
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value.trimStart())}
+            value={loginInput}
+            onChange={(e) => setLoginInput(e.target.value.trimStart())}
             required
-            placeholder="Enter username"
+            placeholder="Enter username or email"
             autoComplete="username"
             disabled={loading}
             style={{ 
@@ -118,8 +118,7 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            placeholder="••••••••"
-            minLength={8}
+            placeholder="Enter password"
             autoComplete="current-password"
             disabled={loading}
             style={{ 

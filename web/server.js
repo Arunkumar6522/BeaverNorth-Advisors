@@ -1,7 +1,14 @@
-const express = require('express');
-const cors = require('cors');
-const twilio = require('twilio');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import twilio from 'twilio';
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -12,9 +19,9 @@ app.use(express.json());
 app.use(express.static('dist'));
 
 // Twilio configuration
-const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID || '[YOUR_TWILIO_ACCOUNT_SID]';
-const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || '[YOUR_TWILIO_AUTH_CONFIG]';
-const twilioServiceSid = process.env.TWILIO_SERVICE_SID || '[YOUR_TWILIO_SERVICE_SID]';
+const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID || 'YOUR_TWILIO_ACCOUNT_SID';
+const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || 'YOUR_TWILIO_AUTH_TOKEN';
+const twilioServiceSid = process.env.TWILIO_SERVICE_SID || 'YOUR_TWILIO_SERVICE_SID';
 
 // Initialize Twilio client
 const client = twilio(twilioAccountSid, twilioAuthToken);
@@ -26,7 +33,7 @@ app.post('/api/send-otp', async (req, res) => {
     
     console.log('📱 Sending OTP to:', to);
     
-    // Send verification via Twilio
+    // Send verification via Twilio Verify Service
     const verification = await client.verify.v2
       .services(twilioServiceSid)
       .verifications
