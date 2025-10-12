@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import { useI18n } from '../i18n'
@@ -30,6 +30,55 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
   const [loading, setLoading] = useState(false)
   const [validationErrors, setValidationErrors] = useState<{[key: string]: string}>({})
+  const [otpSent, setOtpSent] = useState(false)
+  const [otpResendTimer, setOtpResendTimer] = useState(0)
+  const [sendingOtp, setSendingOtp] = useState(false)
+
+  // OTP Timer Effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout
+    if (otpResendTimer > 0) {
+      interval = setInterval(() => {
+        setOtpResendTimer((prev) => prev - 1)
+      }, 1000)
+    }
+    return () => clearInterval(interval)
+  }, [otpResendTimer])
+
+  const sendOTP = async () => {
+    if (sendingOtp || otpResendTimer > 0) return
+    
+    setSendingOtp(true)
+    try {
+      const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
+      console.log('📱 Sending OTP to:', phoneNumber)
+      
+      const response = await fetch('http://localhost:3001/api/send-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: phoneNumber
+        })
+      })
+      
+      const result = await response.json()
+      
+      if (result.success) {
+        setOtpSent(true)
+        setOtpResendTimer(30) // 30 seconds timer
+        alert(`✅ OTP sent to ${phoneNumber}`)
+      } else {
+        alert(`❌ Failed to send OTP: ${result.message}`)
+      }
+    } catch (error) {
+      console.error('OTP send error:', error)
+      alert('❌ Failed to send OTP. Please try again.')
+    } finally {
+      setSendingOtp(false)
+    }
+  }
 
   const nextStep = () => {
     if (currentStep < 3) {
@@ -316,14 +365,15 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         style={{
           background: '#ffffff',
           borderRadius: '24px',
-          padding: '40px',
+          padding: window.innerWidth < 768 ? '24px' : '40px',
           width: '100%',
-          maxWidth: '420px',
+          maxWidth: window.innerWidth < 768 ? '95vw' : '420px',
           maxHeight: '90vh',
           overflow: 'auto',
           boxShadow: '0 32px 64px rgba(0,0,0,0.12)',
           border: '1px solid rgba(0,0,0,0.08)',
-          position: 'relative'
+          position: 'relative',
+          margin: window.innerWidth < 768 ? '16px' : '0'
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -460,7 +510,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               >
                 <div style={{ 
                   display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                  gridTemplateColumns: window.innerWidth < 768 ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))', 
                   gap: '32px', 
                   alignItems: 'start' 
                 }}>
@@ -953,81 +1003,83 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     color: 'var(--text-primary)',
                     marginBottom: '8px'
                   }}>
-                    Verification Code *
+                    Phone Verification *
                   </label>
                   <p style={{ 
                     fontSize: '12px',
                     color: 'var(--text-secondary)',
-                    marginBottom: '12px'
+                    marginBottom: '16px'
                   }}>
-                    🔐 Enter the 6-digit code sent to your phone
+                    🔐 We'll send a verification code to your phone
                   </p>
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  
+                  {/* Send OTP Button */}
+                  <div style={{ marginBottom: '16px' }}>
                     <button
                       type="button"
-                      onClick={async () => {
-                        try {
-                          const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
-                          console.log('📱 Sending OTP to:', phoneNumber)
-                          
-                          const response = await fetch('http://localhost:3001/api/send-otp', {
-                            method: 'POST',
-                            headers: {
-                              'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                              to: phoneNumber
-                            })
-                          })
-                          
-                          const result = await response.json()
-                          
-                          if (result.success) {
-                            alert(`✅ OTP sent to ${phoneNumber}`)
-                          } else {
-                            alert(`❌ Failed to send OTP: ${result.message}`)
-                          }
-                        } catch (error) {
-                          console.error('OTP send error:', error)
-                          alert('❌ Failed to send OTP. Please try again.')
-                        }
-                      }}
-                      disabled={!formData.phone}
+                      onClick={sendOTP}
+                      disabled={!formData.phone || sendingOtp || otpResendTimer > 0}
                       style={{
-                        padding: '14px 16px',
+                        width: '100%',
+                        padding: '16px',
                         border: '2px solid var(--brand-green)',
-                        borderRadius: '8px',
-                        background: 'transparent',
-                        color: 'var(--brand-green)',
-                        fontSize: '14px',
+                        borderRadius: '12px',
+                        background: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'var(--line)' : 'var(--brand-green)',
+                        color: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'var(--text-secondary)' : 'white',
+                        fontSize: '16px',
                         fontWeight: '600',
-                        cursor: formData.phone ? 'pointer' : 'not-allowed',
-                        opacity: formData.phone ? 1 : 0.5
+                        cursor: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'not-allowed' : 'pointer',
+                        transition: 'all 0.2s ease'
                       }}
                     >
-                      Send OTP
+                      {sendingOtp ? 'Sending...' : 
+                       otpResendTimer > 0 ? `Resend in ${otpResendTimer}s` : 
+                       'Send Verification Code'}
                     </button>
-                    <input
-                      type="text"
-                      name="otp"
-                      placeholder="123456"
-                      value={formData.otp}
-                      onChange={handleChange}
-                      maxLength={6}
-                      style={{
-                        flex: 1,
-                        padding: '14px 16px',
-                        border: '2px solid var(--line)',
-                        borderRadius: '8px',
-                        fontSize: '16px',
-                        background: 'var(--surface-1)',
-                        color: 'var(--text-primary)',
-                        outline: 'none',
-                        textAlign: 'center',
-                        letterSpacing: '2px'
-                      }}
-                    />
                   </div>
+
+                  {/* OTP Input - Only show after OTP is sent */}
+                  {otpSent && (
+                    <div>
+                      <label style={{ 
+                        display: 'block', 
+                        fontSize: '14px', 
+                        fontWeight: 600, 
+                        color: 'var(--text-primary)',
+                        marginBottom: '8px'
+                      }}>
+                        Enter Verification Code *
+                      </label>
+                      <p style={{ 
+                        fontSize: '12px',
+                        color: 'var(--text-secondary)',
+                        marginBottom: '12px'
+                      }}>
+                        📱 Enter the 6-digit code sent to {formData.countryCode}{formData.phone}
+                      </p>
+                      <input
+                        type="text"
+                        name="otp"
+                        placeholder="123456"
+                        value={formData.otp}
+                        onChange={handleChange}
+                        maxLength={6}
+                        style={{
+                          width: '100%',
+                          padding: '16px',
+                          border: '2px solid var(--line)',
+                          borderRadius: '12px',
+                          fontSize: '18px',
+                          background: 'var(--surface-1)',
+                          color: 'var(--text-primary)',
+                          outline: 'none',
+                          textAlign: 'center',
+                          letterSpacing: '3px',
+                          fontFamily: 'monospace'
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 <form onSubmit={handleSubmit} style={{ marginTop: '24px' }}>
@@ -1051,20 +1103,23 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     </button>
                     <button
                       type="submit"
-                      disabled={loading || !formData.email || !formData.phone || !formData.otp || !!validationErrors.email}
+                      disabled={loading || !formData.email || !formData.phone || !otpSent || !formData.otp || !!validationErrors.email}
                       style={{
                         flex: 2,
-                        background: (loading || !formData.email || !formData.phone || !formData.otp || validationErrors.email) ? 'var(--line)' : 'var(--brand-green)',
+                        background: (loading || !formData.email || !formData.phone || !otpSent || !formData.otp || validationErrors.email) ? 'var(--line)' : 'var(--brand-green)',
                         color: 'white',
                         padding: '16px',
                         borderRadius: '12px',
                         border: 'none',
                         fontSize: '16px',
                         fontWeight: '600',
-                        cursor: (loading || !formData.email || !formData.phone || !formData.otp || validationErrors.email) ? 'not-allowed' : 'pointer'
+                        cursor: (loading || !formData.email || !formData.phone || !otpSent || !formData.otp || validationErrors.email) ? 'not-allowed' : 'pointer'
                       }}
                     >
-                        {loading ? 'Submitting...' : 'Submit Quote Request'}
+                      {loading ? 'Submitting...' : 
+                       !otpSent ? 'Send OTP First' : 
+                       !formData.otp ? 'Enter OTP Code' : 
+                       'Submit Quote Request'}
                     </button>
                   </div>
                 </form>
