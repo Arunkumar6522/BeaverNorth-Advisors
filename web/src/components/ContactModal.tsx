@@ -493,7 +493,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
               transition={{ duration: 0.3 }}
               style={{
                 height: '100%',
-                background: 'var(--brand-green)',
+                background: 'rgb(255, 203, 5)',
                 borderRadius: '2px'
               }}
             />
@@ -686,7 +686,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   disabled={!formData.firstName || !formData.gender || !formData.dob || !!validationErrors.firstName}
                   style={{
                     width: '100%',
-                    background: (!formData.firstName || !formData.gender || !formData.dob || validationErrors.firstName) ? 'var(--line)' : 'var(--brand-green)',
+                    background: (!formData.firstName || !formData.gender || !formData.dob || validationErrors.firstName) ? 'var(--line)' : 'rgb(255, 203, 5)',
                     color: 'white',
                     padding: '16px',
                     borderRadius: '12px',
@@ -727,9 +727,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       gap: '8px', 
                       cursor: 'pointer',
                       padding: '12px 16px',
-                      border: `2px solid ${formData.smokingStatus === 'non-smoker' ? 'var(--brand-green)' : 'var(--line)'}`,
+                      border: `2px solid ${formData.smokingStatus === 'non-smoker' ? 'rgb(255, 203, 5)' : 'var(--line)'}`,
                       borderRadius: '8px',
-                      background: formData.smokingStatus === 'non-smoker' ? 'var(--brand-green)' : 'var(--surface-1)',
+                      background: formData.smokingStatus === 'non-smoker' ? 'rgb(255, 203, 5)' : 'var(--surface-1)',
                       color: formData.smokingStatus === 'non-smoker' ? 'white' : 'var(--text-primary)',
                       transition: 'all 0.2s',
                       opacity: 1,
@@ -879,7 +879,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     disabled={!formData.smokingStatus || !formData.insuranceProduct || !formData.province}
                     style={{
                       flex: 2,
-                      background: !formData.smokingStatus || !formData.insuranceProduct || !formData.province ? 'var(--line)' : 'var(--brand-green)',
+                      background: !formData.smokingStatus || !formData.insuranceProduct || !formData.province ? 'var(--line)' : 'rgb(255, 203, 5)',
                       color: 'white',
                       padding: '16px',
                       borderRadius: '12px',
@@ -1038,9 +1038,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       style={{
                         width: '100%',
                         padding: '16px',
-                        border: '2px solid var(--brand-green)',
+                        border: '2px solid rgb(255, 203, 5)',
                         borderRadius: '12px',
-                        background: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'var(--line)' : 'var(--brand-green)',
+                        background: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'var(--line)' : 'rgb(255, 203, 5)',
                         color: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'var(--text-secondary)' : 'white',
                         fontSize: '16px',
                         fontWeight: '600',
@@ -1122,7 +1122,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       disabled={loading || !formData.email || !formData.phone || !otpSent || !formData.otp || !!validationErrors.email}
                       style={{
                         flex: 2,
-                        background: (loading || !formData.email || !formData.phone || !otpSent || !formData.otp || validationErrors.email) ? 'var(--line)' : 'var(--brand-green)',
+                        background: (loading || !formData.email || !formData.phone || !otpSent || !formData.otp || validationErrors.email) ? 'var(--line)' : 'rgb(255, 203, 5)',
                         color: 'white',
                         padding: '16px',
                         borderRadius: '12px',

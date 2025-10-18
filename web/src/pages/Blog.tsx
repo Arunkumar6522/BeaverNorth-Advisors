@@ -144,7 +144,7 @@ export default function Blog() {
                   target="_blank" 
                   rel="noopener noreferrer"
                   style={{
-                    color: 'var(--brand-green)',
+                    color: 'rgb(255, 203, 5)',
                     textDecoration: 'none',
                     fontWeight: 600,
                     fontSize: 14
@@ -169,7 +169,7 @@ export default function Blog() {
           target="_blank" 
           rel="noopener noreferrer"
           style={{
-            background: 'var(--brand-green)',
+            background: 'rgb(255, 203, 5)',
             color: 'white',
             padding: '12px 24px',
             borderRadius: 8,

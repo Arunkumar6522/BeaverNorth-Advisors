@@ -59,7 +59,7 @@ function StatCard({ title, value, icon, color, change, onClick }: StatCardProps)
               {value}
             </Typography>
             {change && (
-              <Typography variant="body2" sx={{ mt: 1, color: change.includes('+') ? '#22C55E' : '#EF4444' }}>
+              <Typography variant="body2" sx={{ mt: 1, color: change.includes('+') ? 'rgb(255, 203, 5)' : '#EF4444' }}>
                 {change} from last month
               </Typography>
             )}
@@ -156,7 +156,7 @@ export default function Dashboard() {
     
     return [
       { name: 'Smokers', value: smokers, color: '#EF4444' },
-      { name: 'Non-Smokers', value: nonSmokers, color: '#22C55E' }
+      { name: 'Non-Smokers', value: nonSmokers, color: 'rgb(255, 203, 5)' }
     ]
   }, [leadsData])
 
@@ -252,7 +252,7 @@ export default function Dashboard() {
           title="New Leads"
           value={stats.newLeads}
           icon={<TrendingUp sx={{ fontSize: 28 }} />}
-          color="#22C55E"
+          color="rgb(255, 203, 5)"
           onClick={() => navigate('/leads?filter=new')}
         />
         <StatCard

@@ -156,7 +156,7 @@ export default function CountryCodeSelector({ value, onChange, onCountryChange }
                   </div>
                 </div>
                 {selectedCountry.code === country.code && (
-                  <span style={{ color: 'var(--brand-green)', fontSize: '12px' }}>✓</span>
+                  <span style={{ color: 'rgb(255, 203, 5)', fontSize: '12px' }}>✓</span>
                 )}
               </button>
             ))}

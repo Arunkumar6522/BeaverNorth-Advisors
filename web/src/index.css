@@ -12,7 +12,7 @@
   --text-secondary: #4b5563; /* body */
   --brand-yellow: #f2a900;
   --brand-orange: #ff7a00;
-  --brand-green: #22c55e;   /* lighter green like reference CTA */
+  --brand-green: rgb(255, 203, 5);   /* bright yellow/gold primary color */
 
   color: var(--text-primary);
   background: var(--background);

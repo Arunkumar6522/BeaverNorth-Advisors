@@ -654,7 +654,7 @@ export default function LeadsManagement() {
 
   const getStatusColor = (status: Lead['status']) => {
     switch (status) {
-      case 'new': return '#1976D2'
+      case 'new': return 'rgb(255, 203, 5)'
       case 'contacted': return '#F59E0B'
       case 'converted': return '#10B981'
       default: return '#6B7280'
@@ -734,7 +734,7 @@ export default function LeadsManagement() {
                   <Chip 
                     label={leads.filter(l => l.status !== 'converted' && !l.deleted_at).length} 
                     size="small" 
-                    sx={{ backgroundColor: '#1976D2', color: 'white', fontSize: '0.75rem' }} />
+                    sx={{ backgroundColor: 'rgb(255, 203, 5)', color: 'white', fontSize: '0.75rem' }} />
                 </Stack>
               }
             />
@@ -758,8 +758,8 @@ export default function LeadsManagement() {
               startIcon={<AddIcon />}
               onClick={() => setAddLeadModalOpen(true)}
               sx={{ 
-                backgroundColor: '#1976D2',
-                '&:hover': { backgroundColor: '#1565C0' },
+                backgroundColor: 'rgb(255, 203, 5)',
+                '&:hover': { backgroundColor: 'rgb(255, 193, 0)' },
                 textTransform: 'none',
                 fontWeight: 600
               }}
@@ -820,7 +820,7 @@ export default function LeadsManagement() {
                   <TableRow key={lead.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Avatar sx={{ bgcolor: '#1976D2', width: 40, height: 40 }}>
+                        <Avatar sx={{ bgcolor: 'rgb(255, 203, 5)', width: 40, height: 40 }}>
                           {lead.name.split(' ').map(n => n[0]).join('')}
                         </Avatar>
                         <Box>
@@ -848,11 +848,11 @@ export default function LeadsManagement() {
                         }}
                         onClick={() => handleEmailClick(lead.email)}
                         >
-                          <EmailIcon sx={{ fontSize: 16, color: '#1976D2' }} />
+                          <EmailIcon sx={{ fontSize: 16, color: 'rgb(255, 203, 5)' }} />
                           <Typography 
                             variant="body2"
                             sx={{ 
-                              color: '#1976D2',
+                              color: 'rgb(255, 203, 5)',
                               textDecoration: 'underline',
                               '&:hover': { fontWeight: 'bold' }
                             }}
@@ -871,11 +871,11 @@ export default function LeadsManagement() {
                         }}
                         onClick={() => handlePhoneClick(lead.phone)}
                         >
-                          <PhoneIcon sx={{ fontSize: 16, color: '#1976D2' }} />
+                          <PhoneIcon sx={{ fontSize: 16, color: 'rgb(255, 203, 5)' }} />
                           <Typography 
                             variant="body2"
                             sx={{ 
-                              color: '#1976D2',
+                              color: 'rgb(255, 203, 5)',
                               textDecoration: 'underline',
                               '&:hover': { fontWeight: 'bold' }
                             }}
@@ -942,7 +942,7 @@ export default function LeadsManagement() {
                           size="small"
                           onClick={() => openViewModal(lead.id)}
                           sx={{
-                            color: '#1976D2',
+                            color: 'rgb(255, 203, 5)',
                             backgroundColor: '#f0f4ff',
                             '&:hover': { backgroundColor: '#e3f2fd' }
                           }}
@@ -1027,7 +1027,7 @@ export default function LeadsManagement() {
           {getSelectedLead() && (
             <Box sx={{ p: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
-                <Avatar sx={{ bgcolor: '#1976D2', width: 60, height: 60 }}>
+                <Avatar sx={{ bgcolor: 'rgb(255, 203, 5)', width: 60, height: 60 }}>
                   {getSelectedLead()!.name.split(' ').map(n => n[0]).join('')}
                 </Avatar>
                 <Box>
@@ -1053,7 +1053,7 @@ export default function LeadsManagement() {
                     <Typography 
                       component="span" 
                       sx={{ 
-                        color: '#1976D2', 
+                        color: 'rgb(255, 203, 5)', 
                         textDecoration: 'underline',
                         cursor: 'pointer',
                         ml: 1,
@@ -1069,7 +1069,7 @@ export default function LeadsManagement() {
                     <Typography 
                       component="span" 
                       sx={{ 
-                        color: '#1976D2', 
+                        color: 'rgb(255, 203, 5)', 
                         textDecoration: 'underline',
                         cursor: 'pointer',
                         ml: 1,
