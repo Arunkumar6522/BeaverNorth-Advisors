@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Box, Typography, Card, CardContent, Chip, Button, Container, Grid } from '@mui/material'
 import { CalendarToday, Person, ArrowForward, OpenInNew } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
+import { useNavigate } from 'react-router-dom'
 
 interface BlogPost {
   title: string
@@ -17,6 +18,7 @@ export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   // Helper function to strip HTML tags
   const stripHtml = (html: string) => {
@@ -40,6 +42,21 @@ export default function Blog() {
     return cleanContent.length > maxLength 
       ? cleanContent.substring(0, maxLength) + '...'
       : cleanContent
+  }
+
+  // Helper function to extract post ID from Blogger URL
+  const getPostId = (link: string) => {
+    // Extract post ID from Blogger URL
+    // Example: https://beavernorth.blogspot.com/2024/01/post-title.html
+    const urlParts = link.split('/')
+    const lastPart = urlParts[urlParts.length - 1]
+    return lastPart.split('.html')[0]
+  }
+
+  // Function to handle blog post click
+  const handlePostClick = (post: BlogPost) => {
+    const postId = getPostId(post.link)
+    navigate(`/blog/${postId}`)
   }
 
   useEffect(() => {
@@ -196,7 +213,7 @@ export default function Blog() {
                             cursor: 'pointer',
                             '&:hover': { color: 'rgb(255, 203, 5)' }
                           }}
-                          onClick={() => window.open(post.link, '_blank')}
+                          onClick={() => handlePostClick(post)}
                         >
                           {post.title}
                         </Typography>
@@ -248,7 +265,7 @@ export default function Blog() {
                               color: '#1E377C'
                             }
                           }}
-                          onClick={() => window.open(post.link, '_blank')}
+                          onClick={() => handlePostClick(post)}
                         >
                           Read More
                         </Button>
