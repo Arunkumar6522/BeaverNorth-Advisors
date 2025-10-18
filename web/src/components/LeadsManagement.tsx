@@ -148,10 +148,46 @@ const DELETE_REASONS = [
 
 export default function LeadsManagement() {
   const location = useLocation()
+  
+  // Helper functions for date range calculations
+  const getDateRange = () => {
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    
+    if (dateRangeType === 'custom') {
+      return {
+        start: customStartDate ? new Date(customStartDate) : null,
+        end: customEndDate ? new Date(customEndDate) : null
+      }
+    }
+    
+    switch (presetDateRange) {
+      case 'today':
+        return { start: today, end: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1) }
+      case 'yesterday':
+        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
+        return { start: yesterday, end: new Date(yesterday.getTime() + 24 * 60 * 60 * 1000 - 1) }
+      case 'thisWeek':
+        const startOfWeek = new Date(today)
+        startOfWeek.setDate(today.getDate() - today.getDay())
+        return { start: startOfWeek, end: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1) }
+      case 'thisMonth':
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+        return { start: startOfMonth, end: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1) }
+      default:
+        return { start: null, end: null }
+    }
+  }
   const [leads, setLeads] = useState<Lead[]>([])  // Start with empty array, will load from Supabase
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setFilter] = useState<'all' | 'new' | 'contacted' | 'converted'>('all')
+  const [statusFilter, setFilter] = useState<'all' | 'new' | 'contacted' | 'converted' | 'overall'>('all')
   const [currentTab, setCurrentTab] = useState<'active' | 'closed'>('active')
+  
+  // Date range filter states
+  const [dateRangeType, setDateRangeType] = useState<'preset' | 'custom'>('preset')
+  const [presetDateRange, setPresetDateRange] = useState<'today' | 'yesterday' | 'thisWeek' | 'thisMonth'>('today')
+  const [customStartDate, setCustomStartDate] = useState<string>('')
+  const [customEndDate, setCustomEndDate] = useState<string>('')
   
   // Modal states
   const [viewModalOpen, setViewModalOpen] = useState(false)
@@ -302,8 +338,17 @@ export default function LeadsManagement() {
     }
 
     // Filter by status if not 'all'
-    if (statusFilter !== 'all') {
+    if (statusFilter !== 'all' && statusFilter !== 'overall') {
       filtered = filtered.filter(lead => lead.status === statusFilter)
+    }
+
+    // Filter by date range
+    const dateRange = getDateRange()
+    if (dateRange.start && dateRange.end) {
+      filtered = filtered.filter(lead => {
+        const leadDate = new Date(lead.created_at)
+        return leadDate >= dateRange.start! && leadDate <= dateRange.end!
+      })
     }
 
     return filtered
@@ -781,7 +826,7 @@ export default function LeadsManagement() {
               sx={{ minWidth: 200, width: 200 }}
             />
             
-            {/* Only show status filter for Active Leads tab */}
+            {/* Status filter for Active Leads tab */}
             {currentTab === 'active' && (
               <FormControl size="small" sx={{ minWidth: 120 }}>
                 <InputLabel>Status</InputLabel>
@@ -793,8 +838,63 @@ export default function LeadsManagement() {
                   <MenuItem value="all">All</MenuItem>
                   <MenuItem value="new">New</MenuItem>
                   <MenuItem value="contacted">Contacted</MenuItem>
+                  <MenuItem value="overall">Overall</MenuItem>
                 </Select>
               </FormControl>
+            )}
+
+            {/* Date Range Filter */}
+            <FormControl size="small" sx={{ minWidth: 140 }}>
+              <InputLabel>Date Range</InputLabel>
+              <Select
+                value={dateRangeType}
+                label="Date Range"
+                onChange={(e) => setDateRangeType(e.target.value)}
+              >
+                <MenuItem value="preset">Preset</MenuItem>
+                <MenuItem value="custom">Custom</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Preset Date Range Options */}
+            {dateRangeType === 'preset' && (
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel>Period</InputLabel>
+                <Select
+                  value={presetDateRange}
+                  label="Period"
+                  onChange={(e) => setPresetDateRange(e.target.value)}
+                >
+                  <MenuItem value="today">Today</MenuItem>
+                  <MenuItem value="yesterday">Yesterday</MenuItem>
+                  <MenuItem value="thisWeek">This Week</MenuItem>
+                  <MenuItem value="thisMonth">This Month</MenuItem>
+                </Select>
+              </FormControl>
+            )}
+
+            {/* Custom Date Range Inputs */}
+            {dateRangeType === 'custom' && (
+              <>
+                <TextField
+                  size="small"
+                  type="date"
+                  label="Start Date"
+                  value={customStartDate}
+                  onChange={(e) => setCustomStartDate(e.target.value)}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ minWidth: 140 }}
+                />
+                <TextField
+                  size="small"
+                  type="date"
+                  label="End Date"
+                  value={customEndDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                  InputLabelProps={{ shrink: true }}
+                  sx={{ minWidth: 140 }}
+                />
+              </>
             )}
           </Box>
         </Box>
