@@ -66,9 +66,17 @@ export default function Blog() {
     // Using RSS2JSON proxy to avoid CORS issues
     const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`
     
+    console.log('🔍 Fetching blog posts from:', proxyUrl)
+    
     fetch(proxyUrl)
-      .then(response => response.json())
+      .then(response => {
+        console.log('📡 Response status:', response.status)
+        return response.json()
+      })
       .then(data => {
+        console.log('📊 Raw RSS data:', data)
+        console.log('📊 Items count:', data.items?.length || 0)
+        
         if (data.status === 'ok') {
           const blogPosts = data.items?.map((item: any) => ({
             title: item.title,
@@ -78,13 +86,16 @@ export default function Blog() {
             author: item.author || 'BeaverNorth Advisors',
             categories: item.categories || ['Insurance', 'Financial Planning']
           })) || []
+          
+          console.log('✅ Processed blog posts:', blogPosts)
           setPosts(blogPosts)
         } else {
+          console.error('❌ RSS status not ok:', data)
           setError('Unable to fetch blog posts')
         }
       })
       .catch(err => {
-        console.error('Blog fetch error:', err)
+        console.error('❌ Blog fetch error:', err)
         setError('Failed to load blog posts')
       })
       .finally(() => setLoading(false))
@@ -158,6 +169,37 @@ export default function Blog() {
                   rel="noopener noreferrer"
                 >
                   Visit our blog directly
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {posts.length === 0 && !loading && !error && (
+            <Card sx={{ textAlign: 'center', py: 6 }}>
+              <CardContent>
+                <Typography variant="h5" sx={{ mb: 2, color: '#6B7280' }}>
+                  No Blog Posts Yet
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 3, color: '#6B7280' }}>
+                  We're working on creating valuable content for you. Check back soon!
+                </Typography>
+                <Button
+                  variant="outlined"
+                  endIcon={<OpenInNew />}
+                  href="https://beavernorth.blogspot.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  sx={{
+                    borderColor: 'rgb(255, 203, 5)',
+                    color: '#1E377C',
+                    fontWeight: 600,
+                    '&:hover': {
+                      borderColor: 'rgb(255, 193, 0)',
+                      bgcolor: 'rgba(255, 203, 5, 0.05)'
+                    }
+                  }}
+                >
+                  Visit Our Blogger Site
                 </Button>
               </CardContent>
             </Card>
