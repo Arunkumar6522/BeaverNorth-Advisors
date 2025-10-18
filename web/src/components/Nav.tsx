@@ -14,6 +14,7 @@ export default function Nav() {
     { label: t('nav_home'), path: '/' },
     { label: t('nav_about'), path: '/about' },
     { label: t('nav_services'), path: '/services' },
+    { label: 'Blog', path: '/blog' },
     { label: t('nav_contact'), path: '/contact' }
   ]
 
