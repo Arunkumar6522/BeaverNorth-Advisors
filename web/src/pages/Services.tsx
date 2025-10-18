@@ -1,6 +1,9 @@
+import PublicLayout from '../components/PublicLayout'
+
 export default function Services() {
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 24px' }}>
+    <PublicLayout>
+      <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 24px' }}>
       <h1>Services</h1>
       <ul>
         <li>Life Insurance</li>
@@ -9,7 +12,8 @@ export default function Services() {
         <li>Auto Insurance</li>
         <li>Business Insurance</li>
       </ul>
-    </div>
+      </div>
+    </PublicLayout>
   )
 }
 

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import PublicLayout from '../components/PublicLayout'
 
 interface BlogPost {
   title: string
@@ -43,7 +44,8 @@ export default function Blog() {
   }, [])
 
   return (
-    <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 24px' }}>
+    <PublicLayout>
+      <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 24px' }}>
       <motion.h1 
         initial={{ opacity: 0, y: 12 }} 
         animate={{ opacity: 1, y: 0 }} 
@@ -181,7 +183,8 @@ export default function Blog() {
           Visit Full Blog
         </a>
       </motion.div>
-    </div>
+      </div>
+    </PublicLayout>
   )
 }
 

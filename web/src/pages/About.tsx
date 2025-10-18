@@ -9,6 +9,7 @@ import {
   CheckCircle,
   Schedule
 } from '@mui/icons-material'
+import PublicLayout from '../components/PublicLayout'
 
 export default function About() {
   const services = [
@@ -45,7 +46,8 @@ export default function About() {
   ]
 
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
+    <PublicLayout>
+      <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
       {/* Hero Section */}
       <Box sx={{ 
         bgcolor: 'white', 
@@ -351,7 +353,8 @@ export default function About() {
           </Box>
         </Box>
       </Container>
-    </Box>
+      </Box>
+    </PublicLayout>
   )
 }
 

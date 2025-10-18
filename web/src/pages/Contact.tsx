@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
+import PublicLayout from '../components/PublicLayout'
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false)
@@ -13,7 +14,8 @@ export default function Contact() {
   }
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 24px' }}>
+    <PublicLayout>
+      <div style={{ maxWidth: 900, margin: '0 auto', padding: '32px 24px' }}>
       <motion.h1 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>Contact Us</motion.h1>
       <p style={{ color: 'var(--text-secondary)' }}>We’ll get back within one business day.</p>
       {submitted ? (
@@ -53,7 +55,8 @@ export default function Contact() {
           <button type="submit" style={{ background: 'var(--brand-yellow)', color: '#0a2540', padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer', fontWeight: 700, width: 160 }}>Send</button>
         </form>
       )}
-    </div>
+      </div>
+    </PublicLayout>
   )
 }
 
