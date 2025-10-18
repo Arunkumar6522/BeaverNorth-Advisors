@@ -734,7 +734,7 @@ export default function LeadsManagement() {
                   <Chip 
                     label={leads.filter(l => l.status !== 'converted' && !l.deleted_at).length} 
                     size="small" 
-                    sx={{ backgroundColor: 'rgb(255, 203, 5)', color: 'white', fontSize: '0.75rem' }} />
+                    sx={{ backgroundColor: 'rgb(255, 203, 5)', color: '#1E377C', fontSize: '0.75rem' }} />
                 </Stack>
               }
             />

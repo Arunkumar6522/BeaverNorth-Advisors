@@ -687,7 +687,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   style={{
                     width: '100%',
                     background: (!formData.firstName || !formData.gender || !formData.dob || validationErrors.firstName) ? 'var(--line)' : 'rgb(255, 203, 5)',
-                    color: 'white',
+                    color: '#1E377C',
                     padding: '16px',
                     borderRadius: '12px',
                     border: 'none',
@@ -730,7 +730,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       border: `2px solid ${formData.smokingStatus === 'non-smoker' ? 'rgb(255, 203, 5)' : 'var(--line)'}`,
                       borderRadius: '8px',
                       background: formData.smokingStatus === 'non-smoker' ? 'rgb(255, 203, 5)' : 'var(--surface-1)',
-                      color: formData.smokingStatus === 'non-smoker' ? 'white' : 'var(--text-primary)',
+                      color: formData.smokingStatus === 'non-smoker' ? '#1E377C' : 'var(--text-primary)',
                       transition: 'all 0.2s',
                       opacity: 1,
                       pointerEvents: 'auto'
@@ -755,7 +755,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       border: `2px solid ${formData.smokingStatus === 'smoker' ? 'var(--brand-yellow)' : 'var(--line)'}`,
                       borderRadius: '8px',
                       background: formData.smokingStatus === 'smoker' ? 'var(--brand-yellow)' : 'var(--surface-1)',
-                      color: formData.smokingStatus === 'smoker' ? 'white' : 'var(--text-primary)',
+                      color: formData.smokingStatus === 'smoker' ? '#1E377C' : 'var(--text-primary)',
                       transition: 'all 0.2s',
                       opacity: 1,
                       pointerEvents: 'auto'
@@ -880,7 +880,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     style={{
                       flex: 2,
                       background: !formData.smokingStatus || !formData.insuranceProduct || !formData.province ? 'var(--line)' : 'rgb(255, 203, 5)',
-                      color: 'white',
+                      color: '#1E377C',
                       padding: '16px',
                       borderRadius: '12px',
                       border: 'none',
@@ -1041,7 +1041,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         border: '2px solid rgb(255, 203, 5)',
                         borderRadius: '12px',
                         background: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'var(--line)' : 'rgb(255, 203, 5)',
-                        color: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'var(--text-secondary)' : 'white',
+                        color: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'var(--text-secondary)' : '#1E377C',
                         fontSize: '16px',
                         fontWeight: '600',
                         cursor: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'not-allowed' : 'pointer',
@@ -1123,7 +1123,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       style={{
                         flex: 2,
                         background: (loading || !formData.email || !formData.phone || !otpSent || !formData.otp || validationErrors.email) ? 'var(--line)' : 'rgb(255, 203, 5)',
-                        color: 'white',
+                        color: '#1E377C',
                         padding: '16px',
                         borderRadius: '12px',
                         border: 'none',

@@ -311,7 +311,7 @@ export default function About() {
               href="/contact" 
               sx={{ 
                 bgcolor: 'white',
-                color: 'rgb(255, 203, 5)',
+                color: '#1E377C',
                 px: 4,
                 py: 2,
                 borderRadius: 2,
@@ -342,7 +342,7 @@ export default function About() {
                 transition: 'all 0.3s ease',
                 '&:hover': {
                   bgcolor: 'white',
-                  color: 'rgb(255, 203, 5)'
+                  color: '#1E377C'
                 }
               }}
             >
