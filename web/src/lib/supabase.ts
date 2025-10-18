@@ -1,13 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Use environment variables or fallback to demo values
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://demo-project.supabase.co'
+// Use environment variables or fallback to your actual project
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://dkaexqwgaslwfiuiqcml.supabase.co'
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRlbW8tcHJvamVjdCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjQwOTk1MjAwLCJleHAiOjE5NTYzNTUyMDB9.demo-key'
 
 // Check if we have valid Supabase credentials
 const hasValidCredentials = supabaseUrl.includes('supabase.co') && 
                            supabaseAnonKey.startsWith('eyJ') && 
-                           supabaseUrl !== 'https://demo-project.supabase.co'
+                           supabaseAnonKey !== 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRlbW8tcHJvamVjdCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjQwOTk1MjAwLCJleHAiOjE5NTYzNTUyMDB9.demo-key'
 
 // Log configuration status
 if (!hasValidCredentials) {
