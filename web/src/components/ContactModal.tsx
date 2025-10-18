@@ -192,6 +192,17 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       console.log('💾 Attempting to save lead to Supabase...')
       console.log('📋 Lead data:', leadData)
       
+      // Check if we're using mock client (demo mode)
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://demo-project.supabase.co'
+      const isMockClient = supabaseUrl === 'https://demo-project.supabase.co'
+      
+      if (isMockClient) {
+        console.log('⚠️ Demo mode: Lead data would be saved to database')
+        console.log('📊 Lead data (demo):', leadData)
+        // In demo mode, we'll just log the data and continue
+        return
+      }
+      
       // Real Supabase integration
       console.log('🔗 Supabase client loaded, inserting data...')
       
@@ -220,6 +231,11 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       // Log the lead creation activity
       try {
         console.log('📝 Attempting to log lead creation activity...')
+        
+        if (isMockClient) {
+          console.log('⚠️ Demo mode: Activity logging skipped')
+          return
+        }
         
         const { error: logError } = await supabase
           .from('activity_log')
