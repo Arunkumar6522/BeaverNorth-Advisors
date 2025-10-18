@@ -110,24 +110,32 @@ export default function DeletedLeads() {
 
         if (data && data.length > 0) {
           console.log(`✅ ${data.length} deleted leads fetched`)
-          setDeletedLeads(data.map((lead: any) => ({
-            id: lead.id.toString(),
-            firstName: lead.first_name || '',
-            lastName: lead.last_name || '',
-            name: `${lead.first_name || ''} ${lead.last_name || ''}`.trim() || 'Unknown',
-            email: lead.email || '',
-            phone: lead.phone || '',
-            dob: lead.dob || '1985-01-01',
-            province: lead.province || 'Ontario',
-            smoking_status: lead.smoking_status || 'unknown',
-            insurance_product: lead.insurance_product || 'term-life',
-            status: (lead.status || 'new') as 'new' | 'contacted' | 'converted',
-            created_at: lead.created_at || new Date().toISOString(),
-            deleted_at: lead.deleted_at || new Date().toISOString(),
-            deleted_by: lead.deleted_by || 'Unknown',
-            delete_reason: lead.delete_reason || 'No reason provided',
-            delete_comment: lead.delete_comment || 'No comment'
-          })))
+          setDeletedLeads(data.map((lead: any) => {
+            // Parse name from single field (like in LeadsManagement)
+            const fullName = lead.name || 'Unknown'
+            const nameParts = fullName.split(' ')
+            const firstName = nameParts[0] || ''
+            const lastName = nameParts.slice(1).join(' ') || ''
+            
+            return {
+              id: lead.id.toString(),
+              firstName: firstName,
+              lastName: lastName,
+              name: fullName,
+              email: lead.email || '',
+              phone: lead.phone || '',
+              dob: lead.dob || '1985-01-01',
+              province: lead.province || 'Ontario',
+              smoking_status: lead.smoking_status || 'unknown',
+              insurance_product: lead.insurance_product || 'term-life',
+              status: (lead.status || 'new') as 'new' | 'contacted' | 'converted',
+              created_at: lead.created_at || new Date().toISOString(),
+              deleted_at: lead.deleted_at || new Date().toISOString(),
+              deleted_by: lead.deleted_by || 'Unknown',
+              delete_reason: lead.delete_reason || 'No reason provided',
+              delete_comment: lead.delete_comment || 'No comment'
+            }
+          }))
         } else {
           console.log('⚠️ No deleted leads found')
           setDeletedLeads([])
@@ -220,6 +228,41 @@ export default function DeletedLeads() {
     return age
   }
 
+  // Helper function to format phone numbers
+  const formatPhoneNumber = (phone: string) => {
+    if (!phone) return 'No phone'
+    
+    // If phone starts with +1 but looks like an Indian number (10 digits after +1)
+    if (phone.startsWith('+1') && phone.length === 13) {
+      // Convert +1 to +91 for Indian numbers
+      return '+91' + phone.substring(2)
+    }
+    
+    // If phone starts with +91, keep it as is
+    if (phone.startsWith('+91')) {
+      return phone
+    }
+    
+    // If phone starts with +1 and is shorter (Canadian number), keep as is
+    if (phone.startsWith('+1')) {
+      return phone
+    }
+    
+    // If phone doesn't start with +, assume it needs a country code
+    if (!phone.startsWith('+')) {
+      // If it's 10 digits, assume it's Indian
+      if (phone.length === 10) {
+        return '+91' + phone
+      }
+      // If it's 11 digits, assume it's Canadian
+      if (phone.length === 11) {
+        return '+1' + phone
+      }
+    }
+    
+    return phone
+  }
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'new': return '#1976D2'
@@ -277,6 +320,7 @@ export default function DeletedLeads() {
                     <TableCell sx={{ fontWeight: '600', minWidth: { xs: 150, sm: 200 } }}>Contact</TableCell>
                     <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 180 }}>Product</TableCell>
                     <TableCell sx={{ fontWeight: '600', minWidth: { xs: 100, sm: 140 } }}>Status</TableCell>
+                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 150 }}>Created On</TableCell>
                     <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 150 }}>Deleted On</TableCell>
                     <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 140 }}>Deleted By</TableCell>
                     <TableCell sx={{ fontWeight: '600', textAlign: 'center', minWidth: { xs: 100, sm: 120 } }}>Actions</TableCell>
@@ -332,7 +376,7 @@ export default function DeletedLeads() {
                             cursor: 'pointer',
                             '&:hover': { backgroundColor: '#f5f5f5', borderRadius: 1 }
                           }}
-                          onClick={() => handlePhoneClick(lead.phone)}
+                          onClick={() => handlePhoneClick(formatPhoneNumber(lead.phone))}
                           >
                             <PhoneIcon sx={{ fontSize: 14, color: '#1976D2' }} />
                             <Typography 
@@ -343,7 +387,7 @@ export default function DeletedLeads() {
                                 '&:hover': { fontWeight: 'bold' }
                               }}
                             >
-                              {lead.phone}
+                              {formatPhoneNumber(lead.phone)}
                             </Typography>
                           </Box>
                         </Box>
@@ -369,6 +413,12 @@ export default function DeletedLeads() {
                           fontSize: '0.7rem'
                         }}
                       />
+                    </TableCell>
+
+                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                      <Typography variant="caption" sx={{ fontWeight: '500' }}>
+                        {formatDate(lead.created_at)}
+                      </Typography>
                     </TableCell>
 
                     <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
