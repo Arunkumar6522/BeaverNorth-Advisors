@@ -796,106 +796,132 @@ export default function LeadsManagement() {
             />
           </Tabs>
           
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              startIcon={<AddIcon />}
-              onClick={() => setAddLeadModalOpen(true)}
-              sx={{ 
-                backgroundColor: 'rgb(255, 203, 5)',
-                '&:hover': { backgroundColor: 'rgb(255, 193, 0)' },
-                textTransform: 'none',
-                fontWeight: 600
-              }}
-            >
-              Add Lead
-            </Button>
-            <TextField
-              size="small"
-              placeholder="Search leads..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon sx={{ color: '#6B7280' }} />
-                  </InputAdornment>
-                ),
-              }}
-              sx={{ minWidth: 200, width: 200 }}
-            />
-            
-            {/* Status filter for Active Leads tab */}
-            {currentTab === 'active' && (
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Status</InputLabel>
-                <Select
-                  value={statusFilter}
-                  label="Status"
-                  onChange={(e) => setFilter(e.target.value)}
-                >
-                  <MenuItem value="all">All</MenuItem>
-                  <MenuItem value="new">New</MenuItem>
-                  <MenuItem value="contacted">Contacted</MenuItem>
-                  <MenuItem value="overall">Overall</MenuItem>
-                </Select>
-              </FormControl>
-            )}
-
-            {/* Date Range Filter */}
-            <FormControl size="small" sx={{ minWidth: 140 }}>
-              <InputLabel>Date Range</InputLabel>
-              <Select
-                value={dateRangeType}
-                label="Date Range"
-                onChange={(e) => setDateRangeType(e.target.value)}
+          {/* Filters Container - Responsive Layout */}
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', md: 'row' }, 
+            alignItems: { xs: 'stretch', md: 'center' }, 
+            gap: 2,
+            flexWrap: 'wrap'
+          }}>
+            {/* Top Row - Main Actions */}
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 2,
+              flexWrap: 'wrap',
+              minWidth: 0
+            }}>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<AddIcon />}
+                onClick={() => setAddLeadModalOpen(true)}
+                sx={{ 
+                  backgroundColor: 'rgb(255, 203, 5)',
+                  '&:hover': { backgroundColor: 'rgb(255, 193, 0)' },
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  flexShrink: 0
+                }}
               >
-                <MenuItem value="preset">Preset</MenuItem>
-                <MenuItem value="custom">Custom</MenuItem>
-              </Select>
-            </FormControl>
+                Add Lead
+              </Button>
+              <TextField
+                size="small"
+                placeholder="Search leads..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon sx={{ color: '#6B7280' }} />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ minWidth: 200, width: { xs: '100%', sm: 200 } }}
+              />
+            </Box>
 
-            {/* Preset Date Range Options */}
-            {dateRangeType === 'preset' && (
-              <FormControl size="small" sx={{ minWidth: 120 }}>
-                <InputLabel>Period</InputLabel>
+            {/* Bottom Row - Filters */}
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 2,
+              flexWrap: 'wrap',
+              minWidth: 0
+            }}>
+              {/* Status filter for Active Leads tab */}
+              {currentTab === 'active' && (
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel>Status</InputLabel>
+                  <Select
+                    value={statusFilter}
+                    label="Status"
+                    onChange={(e) => setFilter(e.target.value)}
+                  >
+                    <MenuItem value="all">All</MenuItem>
+                    <MenuItem value="new">New</MenuItem>
+                    <MenuItem value="contacted">Contacted</MenuItem>
+                    <MenuItem value="overall">Overall</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+
+              {/* Date Range Filter */}
+              <FormControl size="small" sx={{ minWidth: 140 }}>
+                <InputLabel>Date Range</InputLabel>
                 <Select
-                  value={presetDateRange}
-                  label="Period"
-                  onChange={(e) => setPresetDateRange(e.target.value)}
+                  value={dateRangeType}
+                  label="Date Range"
+                  onChange={(e) => setDateRangeType(e.target.value)}
                 >
-                  <MenuItem value="today">Today</MenuItem>
-                  <MenuItem value="yesterday">Yesterday</MenuItem>
-                  <MenuItem value="thisWeek">This Week</MenuItem>
-                  <MenuItem value="thisMonth">This Month</MenuItem>
+                  <MenuItem value="preset">Preset</MenuItem>
+                  <MenuItem value="custom">Custom</MenuItem>
                 </Select>
               </FormControl>
-            )}
 
-            {/* Custom Date Range Inputs */}
-            {dateRangeType === 'custom' && (
-              <>
-                <TextField
-                  size="small"
-                  type="date"
-                  label="Start Date"
-                  value={customStartDate}
-                  onChange={(e) => setCustomStartDate(e.target.value)}
-                  InputLabelProps={{ shrink: true }}
-                  sx={{ minWidth: 140 }}
-                />
-                <TextField
-                  size="small"
-                  type="date"
-                  label="End Date"
-                  value={customEndDate}
-                  onChange={(e) => setCustomEndDate(e.target.value)}
-                  InputLabelProps={{ shrink: true }}
-                  sx={{ minWidth: 140 }}
-                />
-              </>
-            )}
+              {/* Preset Date Range Options */}
+              {dateRangeType === 'preset' && (
+                <FormControl size="small" sx={{ minWidth: 120 }}>
+                  <InputLabel>Period</InputLabel>
+                  <Select
+                    value={presetDateRange}
+                    label="Period"
+                    onChange={(e) => setPresetDateRange(e.target.value)}
+                  >
+                    <MenuItem value="today">Today</MenuItem>
+                    <MenuItem value="yesterday">Yesterday</MenuItem>
+                    <MenuItem value="thisWeek">This Week</MenuItem>
+                    <MenuItem value="thisMonth">This Month</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+
+              {/* Custom Date Range Inputs */}
+              {dateRangeType === 'custom' && (
+                <>
+                  <TextField
+                    size="small"
+                    type="date"
+                    label="Start Date"
+                    value={customStartDate}
+                    onChange={(e) => setCustomStartDate(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ minWidth: 140 }}
+                  />
+                  <TextField
+                    size="small"
+                    type="date"
+                    label="End Date"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    InputLabelProps={{ shrink: true }}
+                    sx={{ minWidth: 140 }}
+                  />
+                </>
+              )}
+            </Box>
           </Box>
         </Box>
       </Box>
