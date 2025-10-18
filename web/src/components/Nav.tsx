@@ -66,7 +66,7 @@ export default function Nav() {
                 letterSpacing: '-0.02em'
               }}>
                 BeaverNorth <Box component="span" sx={{ 
-                  color: '#6983CC',
+                  color: 'rgb(255, 203, 5)',
                   fontWeight: 600,
                   fontSize: '0.9rem',
                   letterSpacing: '0.5px',
@@ -92,12 +92,12 @@ export default function Nav() {
                   borderRadius: 8,
                   fontSize: '15px',
                   fontWeight: 600,
-                  color: isActive ? '#6983CC' : '#417F73',
+                  color: isActive ? 'rgb(255, 203, 5)' : '#417F73',
                   transition: 'all 0.2s ease',
                   backgroundColor: isActive ? 'rgba(105,131,204,0.08)' : 'transparent'
                 })}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.color = '#6983CC'
+                  e.currentTarget.style.color = 'rgb(255, 203, 5)'
                   e.currentTarget.style.backgroundColor = 'rgba(105,131,204,0.08)'
                 }}
                 onMouseLeave={(e) => {
@@ -120,7 +120,7 @@ export default function Nav() {
               alignItems: 'center',
               gap: 1
             }}>
-              <Language sx={{ fontSize: 18, color: '#6983CC' }} />
+              <Language sx={{ fontSize: 18, color: 'rgb(255, 203, 5)' }} />
               <select
                 value={locale}
                 onChange={(e) => {
@@ -147,7 +147,7 @@ export default function Nav() {
           <Box sx={{ display: { xs: 'flex', lg: 'none' }, alignItems: 'center', gap: 2 }}>
             {/* Mobile Language Switcher */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Language sx={{ fontSize: 16, color: '#6983CC' }} />
+              <Language sx={{ fontSize: 16, color: 'rgb(255, 203, 5)' }} />
               <select
                 value={locale}
                 onChange={(e) => {
@@ -172,7 +172,7 @@ export default function Nav() {
             <IconButton
               onClick={toggleMenu}
               sx={{
-                color: '#6983CC',
+                color: 'rgb(255, 203, 5)',
                 '&:hover': {
                   backgroundColor: 'rgba(105,131,204,0.08)'
                 }
@@ -220,7 +220,7 @@ export default function Nav() {
           <IconButton
             onClick={toggleMenu}
             sx={{
-              color: '#6983CC',
+              color: 'rgb(255, 203, 5)',
               '&:hover': {
                 backgroundColor: 'rgba(105,131,204,0.08)'
               }
@@ -244,7 +244,7 @@ export default function Nav() {
                   borderRadius: 8,
                   backgroundColor: isActive ? 'rgba(105,131,204,0.1)' : 'transparent',
                   transition: 'all 0.2s ease',
-                  color: isActive ? '#6983CC' : '#417F73',
+                  color: isActive ? 'rgb(255, 203, 5)' : '#417F73',
                   fontWeight: isActive ? 700 : 600,
                   fontSize: '15px',
                   display: 'block'

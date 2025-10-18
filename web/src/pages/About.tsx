@@ -13,32 +13,32 @@ import {
 export default function About() {
   const services = [
     {
-      icon: <Security sx={{ fontSize: 40, color: '#1E377C' }} />,
+      icon: <Security sx={{ fontSize: 40, color: 'rgb(255, 203, 5)' }} />,
       title: 'Life Insurance',
       description: 'Comprehensive life insurance solutions tailored to your family\'s needs'
     },
     {
-      icon: <TrendingUp sx={{ fontSize: 40, color: '#1E377C' }} />,
+      icon: <TrendingUp sx={{ fontSize: 40, color: 'rgb(255, 203, 5)' }} />,
       title: 'Investments',
       description: 'Strategic investment planning for long-term wealth building'
     },
     {
-      icon: <AccountBalance sx={{ fontSize: 40, color: '#1E377C' }} />,
+      icon: <AccountBalance sx={{ fontSize: 40, color: 'rgb(255, 203, 5)' }} />,
       title: 'Budgeting',
       description: 'Personalized budgeting strategies to optimize your finances'
     },
     {
-      icon: <Assessment sx={{ fontSize: 40, color: '#1E377C' }} />,
+      icon: <Assessment sx={{ fontSize: 40, color: 'rgb(255, 203, 5)' }} />,
       title: 'Tax Reduction',
       description: 'Expert strategies to minimize your tax burden legally'
     },
     {
-      icon: <CreditCard sx={{ fontSize: 40, color: '#1E377C' }} />,
+      icon: <CreditCard sx={{ fontSize: 40, color: 'rgb(255, 203, 5)' }} />,
       title: 'Debt Management',
       description: 'Effective debt reduction and management solutions'
     },
     {
-      icon: <School sx={{ fontSize: 40, color: '#1E377C' }} />,
+      icon: <School sx={{ fontSize: 40, color: 'rgb(255, 203, 5)' }} />,
       title: 'Financial Literacy',
       description: 'Education and guidance to improve your financial knowledge'
     }
@@ -58,7 +58,7 @@ export default function About() {
               variant="h2" 
               sx={{ 
                 fontWeight: 700, 
-                color: '#1E377C', 
+                color: 'rgb(255, 203, 5)', 
                 mb: 3,
                 fontSize: { xs: '2.5rem', md: '3.5rem' }
               }}
@@ -89,7 +89,7 @@ export default function About() {
             variant="h4" 
             sx={{ 
               fontWeight: 600, 
-              color: '#1E377C', 
+              color: 'rgb(255, 203, 5)', 
               mb: 4,
               textAlign: 'center'
             }}
@@ -124,7 +124,7 @@ export default function About() {
           </Box>
 
           <Box sx={{ 
-            bgcolor: '#1E377C', 
+            bgcolor: 'rgb(255, 203, 5)', 
             color: 'white',
             p: 6, 
             borderRadius: 3,
@@ -166,7 +166,7 @@ export default function About() {
             variant="h4" 
             sx={{ 
               fontWeight: 600, 
-              color: '#1E377C', 
+              color: 'rgb(255, 203, 5)', 
               mb: 6,
               textAlign: 'center'
             }}
@@ -195,7 +195,7 @@ export default function About() {
                       variant="h6" 
                       sx={{ 
                         fontWeight: 600, 
-                        color: '#1E377C', 
+                        color: 'rgb(255, 203, 5)', 
                         mb: 2
                       }}
                     >
@@ -223,7 +223,7 @@ export default function About() {
             variant="h4" 
             sx={{ 
               fontWeight: 600, 
-              color: '#1E377C', 
+              color: 'rgb(255, 203, 5)', 
               mb: 6,
               textAlign: 'center'
             }}
@@ -235,7 +235,7 @@ export default function About() {
             <Grid size={{ xs: 12, md: 4 }}>
               <Box sx={{ textAlign: 'center', p: 3 }}>
                 <CheckCircle sx={{ fontSize: 60, color: '#417F73', mb: 2 }} />
-                <Typography variant="h6" sx={{ fontWeight: 600, color: '#1E377C', mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, color: 'rgb(255, 203, 5)', mb: 2 }}>
                   LLQP Licensed
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#666', lineHeight: 1.6 }}>
@@ -247,7 +247,7 @@ export default function About() {
             <Grid size={{ xs: 12, md: 4 }}>
               <Box sx={{ textAlign: 'center', p: 3 }}>
                 <Schedule sx={{ fontSize: 60, color: '#417F73', mb: 2 }} />
-                <Typography variant="h6" sx={{ fontWeight: 600, color: '#1E377C', mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, color: 'rgb(255, 203, 5)', mb: 2 }}>
                   Free Consultation
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#666', lineHeight: 1.6 }}>
@@ -259,7 +259,7 @@ export default function About() {
             <Grid size={{ xs: 12, md: 4 }}>
               <Box sx={{ textAlign: 'center', p: 3 }}>
                 <TrendingUp sx={{ fontSize: 60, color: '#417F73', mb: 2 }} />
-                <Typography variant="h6" sx={{ fontWeight: 600, color: '#1E377C', mb: 2 }}>
+                <Typography variant="h6" sx={{ fontWeight: 600, color: 'rgb(255, 203, 5)', mb: 2 }}>
                   Comprehensive Solutions
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#666', lineHeight: 1.6 }}>
@@ -272,7 +272,7 @@ export default function About() {
 
         {/* Call to Action */}
         <Box sx={{ 
-          bgcolor: '#417F73', 
+          bgcolor: 'rgb(255, 203, 5)', 
           color: 'white',
           p: 6, 
           borderRadius: 3,
@@ -311,7 +311,7 @@ export default function About() {
               href="/contact" 
               sx={{ 
                 bgcolor: 'white',
-                color: '#417F73',
+                color: 'rgb(255, 203, 5)',
                 px: 4,
                 py: 2,
                 borderRadius: 2,
@@ -342,7 +342,7 @@ export default function About() {
                 transition: 'all 0.3s ease',
                 '&:hover': {
                   bgcolor: 'white',
-                  color: '#417F73'
+                  color: 'rgb(255, 203, 5)'
                 }
               }}
             >

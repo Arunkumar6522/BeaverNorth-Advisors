@@ -88,7 +88,7 @@ export default function App() {
                 size="large"
                 endIcon={<ArrowForward />}
                 sx={{
-                  bgcolor: '#6983CC',
+                  bgcolor: 'rgb(255, 203, 5)',
                   color: 'white',
                   px: 6,
                   py: 3,
@@ -96,11 +96,11 @@ export default function App() {
                   fontWeight: 700,
                   borderRadius: 3,
                   textTransform: 'none',
-                  boxShadow: '0 8px 24px rgba(105,131,204,0.3)',
+                  boxShadow: '0 8px 24px rgba(255, 203, 5, 0.3)',
                   '&:hover': {
-                    bgcolor: '#1E377C',
+                    bgcolor: 'rgb(255, 193, 0)',
                     transform: 'translateY(-2px)',
-                    boxShadow: '0 12px 32px rgba(105,131,204,0.4)'
+                    boxShadow: '0 12px 32px rgba(255, 203, 5, 0.4)'
                   },
                   transition: 'all 0.3s ease'
                 }}

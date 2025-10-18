@@ -39,7 +39,7 @@ export default function Footer() {
               <Typography variant="body2" sx={{ color: '#417F73', mb: 1 }}>
                 Professional insurance guidance for Canadian families.
               </Typography>
-              <Typography variant="body2" sx={{ color: '#6983CC', fontSize: '0.85rem' }}>
+              <Typography variant="body2" sx={{ color: 'rgb(255, 203, 5)', fontSize: '0.85rem' }}>
                 © {new Date().getFullYear()} BeaverNorth Advisors
               </Typography>
             </Box>
@@ -57,21 +57,21 @@ export default function Footer() {
               
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Phone sx={{ fontSize: 18, color: '#6983CC' }} />
+                  <Phone sx={{ fontSize: 18, color: 'rgb(255, 203, 5)' }} />
                   <Typography variant="body2" sx={{ color: '#417F73', fontSize: '0.9rem' }}>
                     (438) 763-5120
                   </Typography>
                 </Box>
                 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Email sx={{ fontSize: 18, color: '#6983CC' }} />
+                  <Email sx={{ fontSize: 18, color: 'rgb(255, 203, 5)' }} />
                   <Typography variant="body2" sx={{ color: '#417F73', fontSize: '0.9rem' }}>
                     beavernorthadvisors@gmail.com
                   </Typography>
                 </Box>
                 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <LocationOn sx={{ fontSize: 18, color: '#6983CC' }} />
+                  <LocationOn sx={{ fontSize: 18, color: 'rgb(255, 203, 5)' }} />
                   <Typography variant="body2" sx={{ color: '#417F73', fontSize: '0.9rem' }}>
                     Montreal, Quebec, Canada
                   </Typography>
@@ -98,7 +98,7 @@ export default function Footer() {
                     color: '#417F73', 
                     textDecoration: 'none',
                     fontSize: '0.9rem',
-                    '&:hover': { color: '#6983CC' },
+                    '&:hover': { color: 'rgb(255, 203, 5)' },
                     transition: 'color 0.2s'
                   }}
                 >
@@ -111,7 +111,7 @@ export default function Footer() {
                     color: '#417F73', 
                     textDecoration: 'none',
                     fontSize: '0.9rem',
-                    '&:hover': { color: '#6983CC' },
+                    '&:hover': { color: 'rgb(255, 203, 5)' },
                     transition: 'color 0.2s'
                   }}
                 >
@@ -124,7 +124,7 @@ export default function Footer() {
                     color: '#417F73', 
                     textDecoration: 'none',
                     fontSize: '0.9rem',
-                    '&:hover': { color: '#6983CC' },
+                    '&:hover': { color: 'rgb(255, 203, 5)' },
                     transition: 'color 0.2s'
                   }}
                 >
@@ -137,7 +137,7 @@ export default function Footer() {
                     color: '#417F73', 
                     textDecoration: 'none',
                     fontSize: '0.9rem',
-                    '&:hover': { color: '#6983CC' },
+                    '&:hover': { color: 'rgb(255, 203, 5)' },
                     transition: 'color 0.2s'
                   }}
                 >
@@ -154,14 +154,14 @@ export default function Footer() {
             borderTop: '1px solid rgba(105,131,204,0.1)',
             textAlign: 'center'
           }}>
-            <Typography variant="body2" sx={{ color: '#6983CC', fontSize: '0.85rem', mb: 1 }}>
+            <Typography variant="body2" sx={{ color: 'rgb(255, 203, 5)', fontSize: '0.85rem', mb: 1 }}>
               {t('footer_tag')}
             </Typography>
             <Typography 
               component="button"
               onClick={() => setPrivacyModalOpen(true)}
               sx={{ 
-                color: '#6983CC', 
+                color: 'rgb(255, 203, 5)', 
                 fontSize: '0.85rem',
                 textDecoration: 'underline',
                 background: 'none',
