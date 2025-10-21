@@ -77,6 +77,8 @@ export default function Blog() {
           
           if (data.success && data.posts && data.posts.length > 0) {
             console.log('✅ Success with server endpoint:', data.posts.length, 'posts')
+            console.log('📊 Posts with thumbnails:', data.posts.filter(p => p.thumbnail).length)
+            console.log('🖼️ Thumbnail URLs:', data.posts.map(p => ({ title: p.title, thumbnail: p.thumbnail })))
             setPosts(data.posts)
           } else {
             console.log('❌ No posts found in server response')
@@ -226,7 +228,7 @@ export default function Blog() {
                       onClick={() => handlePostClick(post)}
                     >
                       {/* Thumbnail Image */}
-                      {post.thumbnail && (
+                      {post.thumbnail ? (
                         <Box
                           component="img"
                           src={post.thumbnail}
@@ -237,7 +239,29 @@ export default function Blog() {
                             objectFit: 'cover',
                             borderRadius: '8px 8px 0 0'
                           }}
+                          onError={(e) => {
+                            console.log('❌ Image failed to load:', post.thumbnail)
+                            e.currentTarget.style.display = 'none'
+                          }}
+                          onLoad={() => {
+                            console.log('✅ Image loaded successfully:', post.thumbnail)
+                          }}
                         />
+                      ) : (
+                        <Box
+                          sx={{
+                            width: '100%',
+                            height: 200,
+                            bgcolor: '#f3f4f6',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '8px 8px 0 0',
+                            color: '#6B7280'
+                          }}
+                        >
+                          <Typography variant="body2">No Image</Typography>
+                        </Box>
                       )}
                       
                       <CardContent sx={{ flexGrow: 1, p: 3 }}>

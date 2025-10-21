@@ -278,30 +278,6 @@ export default function BlogPost() {
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 
-                {/* External Link */}
-                <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid #e5e7eb' }}>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    This post was originally published on our Blogger site.
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    endIcon={<OpenInNew />}
-                    href={post.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    sx={{
-                      bgcolor: 'rgb(255, 203, 5)',
-                      color: '#1E377C',
-                      fontWeight: 600,
-                      '&:hover': {
-                        bgcolor: 'rgb(255, 193, 0)',
-                        color: '#1E377C'
-                      }
-                    }}
-                  >
-                    Read Original Post
-                  </Button>
-                </Box>
               </CardContent>
             </Card>
           </motion.div>
