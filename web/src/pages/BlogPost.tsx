@@ -52,38 +52,113 @@ export default function BlogPost() {
     const fetchBlogPost = async () => {
       try {
         setLoading(true)
-        console.log('🔍 Fetching blog post from server...')
+        console.log('🔍 Fetching blog post...')
         
-        // Use Netlify function for production, local server for development
+        // Try Netlify function first, then fallback to direct RSS parsing
         const apiUrl = import.meta.env.DEV ? 'http://localhost:3001/api/blog-posts' : '/.netlify/functions/blog-posts'
-        const response = await fetch(apiUrl)
-        console.log('📡 Response status:', response.status)
         
-        if (response.ok) {
-          const data = await response.json()
-          console.log('📊 Server response:', data)
+        try {
+          const response = await fetch(apiUrl)
+          console.log('📡 Response status:', response.status)
           
-          if (data.success && data.posts) {
-            // Find the specific post by ID
-            const foundPost = data.posts.find((item: any) => {
-              const postLinkId = item.link.split('/').pop()?.split('.html')[0]
-              return postLinkId === postId
-            })
+          if (response.ok) {
+            const contentType = response.headers.get('content-type')
+            console.log('📊 Content-Type:', contentType)
             
-            if (foundPost) {
-              console.log('✅ Found blog post:', foundPost.title)
-              setPost(foundPost)
+            if (contentType && contentType.includes('application/json')) {
+              const data = await response.json()
+              console.log('📊 Server response:', data)
+              
+              if (data.success && data.posts) {
+                // Find the specific post by ID
+                const foundPost = data.posts.find((item: any) => {
+                  const postLinkId = item.link.split('/').pop()?.split('.html')[0]
+                  return postLinkId === postId
+                })
+                
+                if (foundPost) {
+                  console.log('✅ Found blog post:', foundPost.title)
+                  setPost(foundPost)
+                  return
+                }
+              }
             } else {
-              console.log('❌ Blog post not found for ID:', postId)
-              setError('Blog post not found')
+              console.log('⚠️ Server returned non-JSON response, trying fallback')
             }
-          } else {
-            setError('Unable to fetch blog posts')
           }
-        } else {
-          console.log('❌ Server request failed:', response.status)
-          setError('Failed to fetch blog post from server')
+        } catch (serverError) {
+          console.log('⚠️ Server endpoint failed, trying fallback:', serverError)
         }
+        
+        // Fallback: Direct RSS parsing
+        console.log('🔄 Trying direct RSS parsing...')
+        const rssUrl = 'https://beavernorth.blogspot.com/feeds/posts/default?alt=rss'
+        const rssResponse = await fetch(rssUrl)
+        
+        if (!rssResponse.ok) {
+          throw new Error(`RSS fetch failed: ${rssResponse.status}`)
+        }
+        
+        const xmlText = await rssResponse.text()
+        console.log('📊 RSS feed fetched, length:', xmlText.length)
+        
+        // Simple XML parsing
+        const itemRegex = /<item>([\s\S]*?)<\/item>/g
+        let match
+        
+        while ((match = itemRegex.exec(xmlText)) !== null) {
+          const itemContent = match[1]
+          
+          // Extract link to check if this is the post we want
+          const linkMatch = itemContent.match(/<link>(.*?)<\/link>/)
+          const link = linkMatch ? linkMatch[1] : ''
+          const postLinkId = link.split('/').pop()?.split('.html')[0]
+          
+          if (postLinkId === postId) {
+            // Extract other fields
+            const titleMatch = itemContent.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>|<title>(.*?)<\/title>/)
+            const title = titleMatch ? (titleMatch[1] || titleMatch[2]) : 'Untitled'
+            
+            const descMatch = itemContent.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>|<description>([\s\S]*?)<\/description>/)
+            const description = descMatch ? (descMatch[1] || descMatch[2]) : ''
+            
+            const pubDateMatch = itemContent.match(/<pubDate>(.*?)<\/pubDate>/)
+            const pubDate = pubDateMatch ? pubDateMatch[1] : ''
+            
+            const authorMatch = itemContent.match(/<author>(.*?)<\/author>/)
+            const author = authorMatch ? authorMatch[1] : 'BeaverNorth Advisors'
+            
+            // Extract thumbnail
+            let thumbnail = undefined
+            const thumbnailMatch = itemContent.match(/<media:thumbnail[^>]+url="([^"]+)"/)
+            if (thumbnailMatch) {
+              thumbnail = thumbnailMatch[1]
+            } else if (description) {
+              const imgMatch = description.match(/<img[^>]+src="([^"]+)"/i)
+              if (imgMatch) {
+                thumbnail = imgMatch[1]
+              }
+            }
+            
+            const foundPost = {
+              title: title.trim(),
+              content: description.trim(),
+              link: link.trim(),
+              pubDate: pubDate.trim(),
+              author: author.trim(),
+              thumbnail,
+              categories: ['Blog Post']
+            }
+            
+            console.log('✅ Found blog post via fallback:', foundPost.title)
+            setPost(foundPost)
+            return
+          }
+        }
+        
+        console.log('❌ Blog post not found for ID:', postId)
+        setError('Blog post not found')
+        
       } catch (err) {
         console.error('❌ Blog post fetch error:', err)
         setError('Failed to load blog post')
