@@ -39,6 +39,23 @@ body {
   background: var(--background);
 }
 
+/* Remove any padding from root element */
+#root {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Ensure no padding on html and body */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;

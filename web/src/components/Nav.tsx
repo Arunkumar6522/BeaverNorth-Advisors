@@ -3,7 +3,6 @@ import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
 import { Box, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material'
 import { Menu as MenuIcon, Close as CloseIcon, Language } from '@mui/icons-material'
-import bnaLogo from '../assets/bna logo.png'
 
 export default function Nav() {
   const location = useLocation()
@@ -21,11 +20,11 @@ export default function Nav() {
       const scrollY = window.scrollY
       const direction = scrollY > lastScrollY ? 'down' : 'up'
       
-      if (direction !== scrollDirection && Math.abs(scrollY - lastScrollY) > 10) {
+      if (direction !== scrollDirection && Math.abs(scrollY - lastScrollY) > 5) {
         setScrollDirection(direction)
       }
       
-      setIsScrolled(scrollY > 50)
+      setIsScrolled(scrollY > 30)
       lastScrollY = scrollY > 0 ? scrollY : 0
       ticking = false
     }
@@ -46,6 +45,7 @@ export default function Nav() {
     { label: t('nav_about'), path: '/about' },
     { label: t('nav_services'), path: '/services' },
     { label: 'Blog', path: '/blog' },
+    { label: 'Testimonials', path: '/testimonials' },
     { label: t('nav_contact'), path: '/contact' }
   ]
 
@@ -53,187 +53,187 @@ export default function Nav() {
 
   return (
     <>
+      {/* Container for proper centering */}
       <Box sx={{
         position: 'sticky',
         top: 0,
         zIndex: 1000,
-        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-        // Scroll Up: Full width, normal styling
-        ...(scrollDirection === 'up' && {
+        width: '100%',
+        left: 0,
+        right: 0,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        transform: scrollDirection === 'down' && isScrolled ? 
+          { xs: 'scale(1)', md: 'scale(0.95)' } : 
+          'scale(1)',
+        opacity: scrollDirection === 'down' && isScrolled ? 
+          { xs: 1, md: 0.9 } : 
+          1
+      }}>
+        {/* Navigation Bar */}
+        <Box sx={{
+          transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           width: '100%',
-          left: 0,
-          right: 0,
           bgcolor: 'rgba(255,255,255,0.98)',
           backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(105,131,204,0.1)',
           boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
-          borderRadius: 0
-        }),
-        // Scroll Down: Rounded rectangle, centered
-        ...(scrollDirection === 'down' && isScrolled && {
-          width: 'auto',
-          maxWidth: '90%',
-          left: '50%',
-          right: 'auto',
-          transform: 'translateX(-50%)',
-          bgcolor: 'rgba(255,255,255,0.95)',
-          backdropFilter: 'blur(15px)',
-          borderBottom: 'none',
-          boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
-          borderRadius: '24px',
-          border: '1px solid rgba(255,255,255,0.2)',
-          marginTop: '16px'
-        })
-      }}>
-        <Box sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          maxWidth: '1400px',
-          mx: 'auto',
-          px: { xs: 3, md: 6 },
-          py: scrollDirection === 'down' && isScrolled ? 1.5 : 2.5,
-          transition: 'all 0.3s ease'
+          borderRadius: 0,
+          // Scroll Down: Rounded corners (desktop only)
+          ...(scrollDirection === 'down' && isScrolled && {
+            borderRadius: { xs: 0, md: '24px' },
+            bgcolor: 'rgba(255,255,255,0.95)',
+            backdropFilter: 'blur(15px)',
+            boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+            border: '1px solid rgba(255,255,255,0.2)'
+          })
         }}>
-          
-          {/* Logo - Bigger with Company Name */}
-          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <img 
-              src={bnaLogo} 
-              alt="BeaverNorth Advisors" 
-              style={{ 
-                height: scrollDirection === 'down' && isScrolled ? '50px' : '70px',
-                width: 'auto',
-                transition: 'height 0.3s ease'
-              }} 
-              onError={(e) => {
-                console.error('Logo failed to load:', e.currentTarget.src)
-                e.currentTarget.style.display = 'none'
-              }}
-            />
-            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+          <Box sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            py: scrollDirection === 'down' && isScrolled ? 
+              { xs: 1.5, md: 0.5 } : 
+              { xs: 1.5, md: 2.5 },
+            transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            px: { xs: 1.5, sm: 2, md: 4, lg: 6 },
+            maxWidth: '1400px',
+            mx: 'auto'
+          }}>
+            
+            {/* Company Name Only */}
+            <Link to="/" style={{ textDecoration: 'none' }}>
               <Box sx={{ 
                 fontWeight: 800,
                 color: '#1E377C',
-                fontSize: '1.5rem',
+                fontSize: scrollDirection === 'down' && isScrolled ? 
+                  { xs: '1.2rem', sm: '1.3rem', md: '0.9rem' } : 
+                  { xs: '1.2rem', sm: '1.3rem', md: '1.5rem' },
                 lineHeight: 1.2,
-                letterSpacing: '-0.02em'
+                letterSpacing: '-0.02em',
+                transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                transform: scrollDirection === 'down' && isScrolled ? 
+                  { xs: 'scale(1)', md: 'scale(0.85)' } : 
+                  'scale(1)'
               }}>
-                BeaverNorth <Box component="span" sx={{ 
-                  color: '#6B7280',
-                  fontWeight: 600,
-                  fontSize: '0.9rem',
-                  letterSpacing: '0.5px',
-                  textTransform: 'uppercase'
-                }}>ADVISORS</Box>
+                BeaverNorth Advisors
               </Box>
-            </Box>
-          </Link>
+            </Link>
 
-          {/* Desktop Navigation - Clean & Simple */}
-          <Box sx={{ 
-            display: { xs: 'none', lg: 'flex' },
-            alignItems: 'center',
-            gap: 1
-          }}>
-            {navItems.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                style={({ isActive }) => ({
-                  textDecoration: 'none',
-                  padding: '10px 20px',
-                  borderRadius: 8,
-                  fontSize: '15px',
-                  fontWeight: 600,
-                  color: isActive ? '#1E377C' : '#417F73',
-                  transition: 'all 0.2s ease',
-                  backgroundColor: isActive ? 'rgba(105,131,204,0.08)' : 'transparent'
-                })}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.color = '#1E377C'
-                  e.currentTarget.style.backgroundColor = 'rgba(105,131,204,0.08)'
-                }}
-                onMouseLeave={(e) => {
-                  if (location.pathname !== e.currentTarget.getAttribute('href')) {
-                    e.currentTarget.style.color = '#417F73'
-                    e.currentTarget.style.backgroundColor = 'transparent'
+            {/* Desktop Navigation - Clean & Simple */}
+            <Box sx={{ 
+              display: { xs: 'none', lg: 'flex' },
+              alignItems: 'center',
+              gap: { lg: 0.5, xl: 1 },
+              flex: 1,
+              justifyContent: 'center',
+              minWidth: 0
+            }}>
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  style={({ isActive }) => ({
+                    textDecoration: 'none',
+                    padding: scrollDirection === 'down' && isScrolled ? '8px 12px' : '10px 16px',
+                    borderRadius: 8,
+                    fontSize: scrollDirection === 'down' && isScrolled ? '14px' : '15px',
+                    fontWeight: 600,
+                    color: isActive ? '#1E377C' : '#417F73',
+                    transition: 'all 0.2s ease',
+                    backgroundColor: isActive ? 'rgba(105,131,204,0.08)' : 'transparent',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0
+                  })}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#1E377C'
+                    e.currentTarget.style.backgroundColor = 'rgba(105,131,204,0.08)'
+                  }}
+                  onMouseLeave={(e) => {
+                    if (location.pathname !== e.currentTarget.getAttribute('href')) {
+                      e.currentTarget.style.color = '#417F73'
+                      e.currentTarget.style.backgroundColor = 'transparent'
+                    }
+                  }}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+            </Box>
+
+            {/* Language Switcher - Right Side */}
+            <Box sx={{
+              display: { xs: 'none', lg: 'flex' },
+              alignItems: 'center',
+              gap: { lg: 0.5, xl: 0.5 },
+              flexShrink: 0
+            }}>
+                <Language sx={{ fontSize: 18, color: '#6B7280' }} />
+                <select
+                  value={locale}
+                  onChange={(e) => {
+                    console.log('Language changed to:', e.target.value)
+                    setLocale(e.target.value as 'en' | 'fr')
+                  }}
+                  style={{
+                    border: 'none',
+                    background: 'transparent',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    color: '#417F73',
+                    cursor: 'pointer',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="en">EN</option>
+                  <option value="fr">FR</option>
+                </select>
+            </Box>
+
+            {/* Mobile Menu Button */}
+            <Box sx={{ 
+              display: { xs: 'flex', lg: 'none' }, 
+              alignItems: 'center', 
+              gap: { xs: 1, sm: 1.5 }
+            }}>
+              {/* Mobile Language Switcher */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                <Language sx={{ fontSize: { xs: 14, sm: 16 }, color: '#6B7280' }} />
+                <select
+                  value={locale}
+                  onChange={(e) => {
+                    console.log('Mobile language changed to:', e.target.value)
+                    setLocale(e.target.value as 'en' | 'fr')
+                  }}
+                  style={{
+                    border: 'none',
+                    background: 'transparent',
+                    fontSize: window.innerWidth < 400 ? '12px' : '13px',
+                    fontWeight: 600,
+                    color: '#417F73',
+                    cursor: 'pointer',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="en">EN</option>
+                  <option value="fr">FR</option>
+                </select>
+              </Box>
+
+              <IconButton
+                onClick={toggleMenu}
+                sx={{
+                  color: '#6B7280',
+                  '&:hover': {
+                    backgroundColor: 'rgba(105,131,204,0.08)'
                   }
                 }}
               >
-                {item.label}
-              </NavLink>
-            ))}
-            
-            {/* Language Switcher - Minimal */}
-            <Box sx={{
-              ml: 2,
-              pl: 2,
-              borderLeft: '1px solid rgba(105,131,204,0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 1
-            }}>
-              <Language sx={{ fontSize: 18, color: '#6B7280' }} />
-              <select
-                value={locale}
-                onChange={(e) => {
-                  console.log('Language changed to:', e.target.value)
-                  setLocale(e.target.value as 'en' | 'fr')
-                }}
-                style={{
-                  border: 'none',
-                  background: 'transparent',
-                  fontSize: '14px',
-                  fontWeight: 600,
-                  color: '#417F73',
-                  cursor: 'pointer',
-                  outline: 'none'
-                }}
-              >
-                <option value="en">EN</option>
-                <option value="fr">FR</option>
-              </select>
+                <MenuIcon />
+              </IconButton>
             </Box>
-          </Box>
-
-          {/* Mobile Menu Button */}
-          <Box sx={{ display: { xs: 'flex', lg: 'none' }, alignItems: 'center', gap: 2 }}>
-            {/* Mobile Language Switcher */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Language sx={{ fontSize: 16, color: '#6B7280' }} />
-              <select
-                value={locale}
-                onChange={(e) => {
-                  console.log('Mobile language changed to:', e.target.value)
-                  setLocale(e.target.value as 'en' | 'fr')
-                }}
-                style={{
-                  border: 'none',
-                  background: 'transparent',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  color: '#417F73',
-                  cursor: 'pointer',
-                  outline: 'none'
-                }}
-              >
-                <option value="en">EN</option>
-                <option value="fr">FR</option>
-              </select>
-            </Box>
-            
-            <IconButton
-              onClick={toggleMenu}
-              sx={{
-                color: '#6B7280',
-                '&:hover': {
-                  backgroundColor: 'rgba(105,131,204,0.08)'
-                }
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
           </Box>
         </Box>
       </Box>
@@ -259,18 +259,15 @@ export default function Nav() {
           p: 3,
           borderBottom: '1px solid rgba(105,131,204,0.1)'
         }}>
-          <img 
-            src={bnaLogo} 
-            alt="BeaverNorth Advisors" 
-            style={{ 
-              height: '40px',
-              width: 'auto'
-            }} 
-            onError={(e) => {
-              console.error('Mobile logo failed to load:', e.currentTarget.src)
-              e.currentTarget.style.display = 'none'
-            }}
-          />
+              <Box sx={{
+                fontWeight: 800,
+                color: '#1E377C',
+                fontSize: '1.2rem',
+                lineHeight: 1.2,
+                letterSpacing: '-0.02em'
+              }}>
+                BeaverNorth Advisors
+              </Box>
           <IconButton
             onClick={toggleMenu}
             sx={{
