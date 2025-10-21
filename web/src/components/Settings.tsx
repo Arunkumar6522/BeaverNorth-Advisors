@@ -22,10 +22,6 @@ import {
   Alert,
   Chip,
   Switch,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Grid
 } from '@mui/material';
 import {
@@ -101,11 +97,22 @@ export default function Settings() {
     fetchSettings();
   }, []);
 
-  // Handle add new setting
-  const handleAddSetting = () => {
+  // Handle add new email
+  const handleAddEmail = () => {
     setEditingSetting(null);
     setFormData({
       type: 'email',
+      value: '',
+      is_active: true
+    });
+    setOpenDialog(true);
+  };
+
+  // Handle add new phone
+  const handleAddPhone = () => {
+    setEditingSetting(null);
+    setFormData({
+      type: 'phone',
       value: '',
       is_active: true
     });
@@ -322,7 +329,7 @@ export default function Settings() {
             <Button
               variant="contained"
               startIcon={<AddIcon />}
-              onClick={handleAddSetting}
+              onClick={handleAddEmail}
               size="small"
             >
               Add Email
@@ -401,15 +408,7 @@ export default function Settings() {
             <Button
               variant="contained"
               startIcon={<AddIcon />}
-              onClick={() => {
-                setEditingSetting(null);
-                setFormData({
-                  type: 'phone',
-                  value: '',
-                  is_active: true
-                });
-                setOpenDialog(true);
-              }}
+              onClick={handleAddPhone}
               size="small"
             >
               Add Phone
@@ -480,22 +479,10 @@ export default function Settings() {
       {/* Add/Edit Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
         <DialogTitle>
-          {editingSetting ? 'Edit Notification Setting' : 'Add Notification Setting'}
+          {editingSetting ? `Edit ${formData.type === 'email' ? 'Email' : 'Phone'} Setting` : `Add ${formData.type === 'email' ? 'Email' : 'Phone'} Address`}
         </DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 2 }}>
-            <FormControl fullWidth sx={{ mb: 2 }}>
-              <InputLabel>Type</InputLabel>
-              <Select
-                value={formData.type}
-                label="Type"
-                onChange={(e) => setFormData({ ...formData, type: e.target.value as 'email' | 'phone' })}
-              >
-                <MenuItem value="email">Email</MenuItem>
-                <MenuItem value="phone">Phone</MenuItem>
-              </Select>
-            </FormControl>
-
             <TextField
               fullWidth
               label={formData.type === 'email' ? 'Email Address' : 'Phone Number (with country code)'}
