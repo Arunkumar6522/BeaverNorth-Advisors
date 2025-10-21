@@ -53,24 +53,27 @@ export default function Nav() {
   return (
     <>
       {/* Container for proper centering */}
-      <Box sx={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000,
-        width: '100%',
-        left: 0,
-        right: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-        transform: scrollDirection === 'down' && isScrolled ? 
-          { xs: 'scale(1)', md: 'scale(0.95)' } : 
-          'scale(1)',
-        opacity: scrollDirection === 'down' && isScrolled ? 
-          { xs: 1, md: 0.9 } : 
-          1
-      }}>
+      <Box 
+        className="sticky-nav"
+        sx={{
+          position: 'sticky',
+          top: 0,
+          zIndex: 1000,
+          width: '100%',
+          left: 0,
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transform: scrollDirection === 'down' && isScrolled ? 
+            { xs: 'scale(1)', md: 'scale(0.95)' } : 
+            'scale(1)',
+          opacity: scrollDirection === 'down' && isScrolled ? 
+            { xs: 1, md: 0.9 } : 
+            1
+        }}
+      >
         {/* Navigation Bar */}
         <Box sx={{
           transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',

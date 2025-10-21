@@ -132,6 +132,14 @@ button:focus-visible {
     box-sizing: border-box;
   }
   
+  /* Ensure sticky navigation works on tablets */
+  .sticky-nav {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1000 !important;
+    width: 100% !important;
+  }
+  
   /* Tablet container adjustments */
   .MuiContainer-root {
     padding-left: 16px !important;
@@ -188,4 +196,12 @@ select:focus {
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+}
+
+/* Ensure sticky navigation works on all devices */
+.sticky-nav {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+  width: 100% !important;
 }
