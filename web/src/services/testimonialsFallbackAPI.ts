@@ -157,4 +157,3 @@ class TestimonialsFallbackAPI {
 }
 
 export const testimonialsFallbackAPI = new TestimonialsFallbackAPI()
-export type { Testimonial, ApiResponse }

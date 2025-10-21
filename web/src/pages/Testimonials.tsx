@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Box, Typography, Container, Card, CardContent, Grid, Avatar, Rating, CircularProgress, Alert } from '@mui/material'
+import { Box, Typography, Container, Card, CardContent, Avatar, Rating, CircularProgress, Alert } from '@mui/material'
 import { motion } from 'framer-motion'
 import PublicLayout from '../components/PublicLayout'
 import { testimonialsFallbackAPI, type Testimonial } from '../services/testimonialsFallbackAPI'
@@ -127,9 +127,9 @@ export default function Testimonials() {
               </Typography>
             </Box>
           ) : (
-            <Grid container spacing={4}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
               {testimonials.map((testimonial, index) => (
-                <Grid item xs={12} md={6} key={testimonial.id}>
+                <Box sx={{ flex: '1 1 300px', minWidth: '300px' }} key={testimonial.id}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -227,9 +227,9 @@ export default function Testimonials() {
                       </CardContent>
                     </Card>
                   </motion.div>
-                </Grid>
+                </Box>
               ))}
-            </Grid>
+            </Box>
           )}
         </Container>
 

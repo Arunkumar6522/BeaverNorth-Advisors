@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { Box, Container, Typography, Grid, Card, CardContent, Button, TextField, FormControl, InputLabel, Select, MenuItem, TextareaAutosize } from '@mui/material'
-import { Phone, Email, LocationOn, Schedule, Business, Support } from '@mui/icons-material'
+import { Box, Container, Typography, Button, TextField, FormControl, InputLabel, Select, MenuItem, Card } from '@mui/material'
+import { Phone, Email, LocationOn, Schedule } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
 import ContactModal from '../components/ContactModal'
 
@@ -61,9 +61,9 @@ export default function Contact() {
         </Box>
 
         <Container maxWidth="lg" sx={{ py: 8 }}>
-          <Grid container spacing={6}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {/* Contact Information */}
-            <Grid item xs={12} md={4}>
+            <Box sx={{ flex: '1 1 300px', minWidth: '300px' }}>
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -127,10 +127,10 @@ export default function Contact() {
                   </Card>
                 </Box>
               </motion.div>
-            </Grid>
+            </Box>
 
             {/* Contact Form */}
-            <Grid item xs={12} md={8}>
+            <Box sx={{ flex: '2 1 400px', minWidth: '400px' }}>
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -176,38 +176,36 @@ export default function Contact() {
                         }}
                       />
                       
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            name="email"
-                            type="email"
-                            label="Email"
-                            required
-                            placeholder="you@example.com"
-                            fullWidth
-                            variant="outlined"
-                            sx={{
-                              '& .MuiOutlinedInput-root': {
-                                borderRadius: 2
-                              }
-                            }}
-                          />
-                        </Grid>
-                        <Grid item xs={12} sm={6}>
-                          <TextField
-                            name="phone"
-                            label="Phone"
-                            placeholder="(555) 123-4567"
-                            fullWidth
-                            variant="outlined"
-                            sx={{
-                              '& .MuiOutlinedInput-root': {
-                                borderRadius: 2
-                              }
-                            }}
-                          />
-                        </Grid>
-                      </Grid>
+                      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                        <TextField
+                          name="email"
+                          type="email"
+                          label="Email"
+                          required
+                          placeholder="you@example.com"
+                          variant="outlined"
+                          sx={{ 
+                            flex: '1 1 200px', 
+                            minWidth: '200px',
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: 2
+                            }
+                          }}
+                        />
+                        <TextField
+                          name="phone"
+                          label="Phone"
+                          placeholder="(555) 123-4567"
+                          variant="outlined"
+                          sx={{ 
+                            flex: '1 1 200px', 
+                            minWidth: '200px',
+                            '& .MuiOutlinedInput-root': {
+                              borderRadius: 2
+                            }
+                          }}
+                        />
+                      </Box>
 
                       <FormControl fullWidth>
                         <InputLabel>Coverage Interest</InputLabel>
@@ -286,8 +284,8 @@ export default function Contact() {
                   )}
                 </Card>
               </motion.div>
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </Container>
 
         {/* Call to Action */}
@@ -352,7 +350,7 @@ export default function Contact() {
       </Box>
 
       {/* Contact Modal */}
-      <ContactModal open={openModal} onClose={() => setOpenModal(false)} />
+      <ContactModal isOpen={openModal} onClose={() => setOpenModal(false)} />
     </PublicLayout>
   )
 }

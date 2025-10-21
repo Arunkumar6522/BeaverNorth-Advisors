@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   Typography,
@@ -28,7 +28,6 @@ import {
   Snackbar,
   TablePagination,
   InputAdornment,
-  Grid,
   Card,
   CardContent
 } from '@mui/material'
@@ -36,7 +35,6 @@ import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
-  Visibility as ViewIcon,
   Search as SearchIcon,
   Person as PersonIcon,
   LocationOn as LocationIcon,
@@ -282,84 +280,76 @@ export default function TestimonialsManagement() {
       </Box>
 
       {/* Stats Cards */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Avatar sx={{ bgcolor: 'rgb(255, 203, 5)', color: '#1E377C' }}>
-                  <TestimonialIcon />
-                </Avatar>
-                <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C' }}>
-                    {testimonials.length}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Total Testimonials
-                  </Typography>
-                </Box>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 3, mb: 3 }}>
+        <Card sx={{ borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)', flex: '1 1 200px', minWidth: '200px' }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Avatar sx={{ bgcolor: 'rgb(255, 203, 5)', color: '#1E377C' }}>
+                <TestimonialIcon />
+              </Avatar>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C' }}>
+                  {testimonials.length}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Total Testimonials
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Avatar sx={{ bgcolor: '#4CAF50', color: 'white' }}>
-                  <PersonIcon />
-                </Avatar>
-                <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C' }}>
-                    {testimonials.filter(t => t.status === 'active').length}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Active Testimonials
-                  </Typography>
-                </Box>
+            </Box>
+          </CardContent>
+        </Card>
+        <Card sx={{ borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)', flex: '1 1 200px', minWidth: '200px' }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Avatar sx={{ bgcolor: '#4CAF50', color: 'white' }}>
+                <PersonIcon />
+              </Avatar>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C' }}>
+                  {testimonials.filter(t => t.status === 'active').length}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Active Testimonials
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Avatar sx={{ bgcolor: '#FF9800', color: 'white' }}>
-                  <BusinessIcon />
-                </Avatar>
-                <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C' }}>
-                    {new Set(testimonials.map(t => t.service)).size}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    Services Covered
-                  </Typography>
-                </Box>
+            </Box>
+          </CardContent>
+        </Card>
+        <Card sx={{ borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)', flex: '1 1 200px', minWidth: '200px' }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Avatar sx={{ bgcolor: '#FF9800', color: 'white' }}>
+                <BusinessIcon />
+              </Avatar>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C' }}>
+                  {new Set(testimonials.map(t => t.service)).size}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Services Covered
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <Card sx={{ borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-            <CardContent>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Avatar sx={{ bgcolor: '#9C27B0', color: 'white' }}>
-                  <LocationIcon />
-                </Avatar>
-                <Box>
-                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C' }}>
-                    {new Set(testimonials.map(t => t.state)).size}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    States Covered
-                  </Typography>
-                </Box>
+            </Box>
+          </CardContent>
+        </Card>
+        <Card sx={{ borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.1)', flex: '1 1 200px', minWidth: '200px' }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Avatar sx={{ bgcolor: '#9C27B0', color: 'white' }}>
+                <LocationIcon />
+              </Avatar>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C' }}>
+                  {new Set(testimonials.map(t => t.state)).size}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  States Covered
+                </Typography>
               </Box>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
 
       {/* Filters */}
       <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>

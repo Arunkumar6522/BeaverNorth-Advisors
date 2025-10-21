@@ -84,4 +84,3 @@ class TestimonialsAPI {
 }
 
 export const testimonialsAPI = new TestimonialsAPI()
-export type { Testimonial, ApiResponse }
