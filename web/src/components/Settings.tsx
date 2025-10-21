@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -49,7 +49,7 @@ interface NotificationSetting {
 
 export default function Settings() {
   const [settings, setSettings] = useState<NotificationSetting[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [editingSetting, setEditingSetting] = useState<NotificationSetting | null>(null);
   const [formData, setFormData] = useState({
