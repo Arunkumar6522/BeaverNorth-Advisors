@@ -123,11 +123,15 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
       
       console.log('🔐 Verifying OTP before submission...')
+      console.log('📱 Phone number:', phoneNumber)
+      console.log('🔢 OTP code:', formData.otp)
       
       // Use Netlify function in production, local server in development
       const apiUrl = window.location.hostname === 'localhost' 
         ? 'http://localhost:3001/api/verify-otp'
         : '/.netlify/functions/verify-otp'
+      
+      console.log('🌐 API URL:', apiUrl)
       
       const verifyResponse = await fetch(apiUrl, {
         method: 'POST',
@@ -140,7 +144,10 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         })
       })
       
+      console.log('📡 Response status:', verifyResponse.status)
+      
       const verifyResult = await verifyResponse.json()
+      console.log('📋 Response data:', verifyResult)
       
       if (!verifyResult.success) {
         throw new Error(verifyResult.message || 'OTP verification failed')
