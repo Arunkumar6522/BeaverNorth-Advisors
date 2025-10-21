@@ -22,7 +22,10 @@ import {
   Alert,
   Chip,
   Switch,
-  Grid
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -52,6 +55,8 @@ export default function Settings() {
   const [formData, setFormData] = useState({
     type: 'email' as 'email' | 'phone',
     value: '',
+    countryCode: '+1',
+    phoneNumber: '',
     is_active: true
   });
   const [snackbar, setSnackbar] = useState({
@@ -103,6 +108,8 @@ export default function Settings() {
     setFormData({
       type: 'email',
       value: '',
+      countryCode: '+1',
+      phoneNumber: '',
       is_active: true
     });
     setOpenDialog(true);
@@ -114,6 +121,8 @@ export default function Settings() {
     setFormData({
       type: 'phone',
       value: '',
+      countryCode: '+1',
+      phoneNumber: '',
       is_active: true
     });
     setOpenDialog(true);
@@ -122,31 +131,48 @@ export default function Settings() {
   // Handle edit setting
   const handleEditSetting = (setting: NotificationSetting) => {
     setEditingSetting(setting);
-    setFormData({
-      type: setting.type,
-      value: setting.value,
-      is_active: setting.is_active
-    });
+    
+    // Parse phone number if it's a phone setting
+    if (setting.type === 'phone' && setting.value.startsWith('+')) {
+      const match = setting.value.match(/^(\+\d{1,4})(\d+)$/);
+      if (match) {
+        setFormData({
+          type: setting.type,
+          value: setting.value,
+          countryCode: match[1],
+          phoneNumber: match[2],
+          is_active: setting.is_active
+        });
+      } else {
+        setFormData({
+          type: setting.type,
+          value: setting.value,
+          countryCode: '+1',
+          phoneNumber: setting.value,
+          is_active: setting.is_active
+        });
+      }
+    } else {
+      setFormData({
+        type: setting.type,
+        value: setting.value,
+        countryCode: '+1',
+        phoneNumber: '',
+        is_active: setting.is_active
+      });
+    }
     setOpenDialog(true);
   };
 
   // Handle save setting
   const handleSaveSetting = async () => {
     try {
-      // Validate input
-      if (!formData.value.trim()) {
-        setSnackbar({
-          open: true,
-          message: 'Please enter a valid email or phone number',
-          severity: 'error'
-        });
-        return;
-      }
-
-      // Validate email format
+      // Prepare the final value based on type
+      let finalValue = '';
+      
       if (formData.type === 'email') {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.value)) {
+        finalValue = formData.value.trim();
+        if (!finalValue) {
           setSnackbar({
             open: true,
             message: 'Please enter a valid email address',
@@ -154,15 +180,37 @@ export default function Settings() {
           });
           return;
         }
-      }
-
-      // Validate phone format (should include country code)
-      if (formData.type === 'phone') {
-        const phoneRegex = /^\+[1-9]\d{1,14}$/;
-        if (!phoneRegex.test(formData.value)) {
+        
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(finalValue)) {
           setSnackbar({
             open: true,
-            message: 'Please enter a valid phone number with country code (e.g., +1234567890)',
+            message: 'Please enter a valid email address',
+            severity: 'error'
+          });
+          return;
+        }
+      } else {
+        // Phone number
+        if (!formData.phoneNumber.trim()) {
+          setSnackbar({
+            open: true,
+            message: 'Please enter a phone number',
+            severity: 'error'
+          });
+          return;
+        }
+        
+        // Combine country code and phone number
+        finalValue = `${formData.countryCode}${formData.phoneNumber.replace(/\D/g, '')}`;
+        
+        // Validate phone format
+        const phoneRegex = /^\+[1-9]\d{1,14}$/;
+        if (!phoneRegex.test(finalValue)) {
+          setSnackbar({
+            open: true,
+            message: 'Please enter a valid phone number',
             severity: 'error'
           });
           return;
@@ -175,7 +223,7 @@ export default function Settings() {
           .from('notification_settings')
           .update({
             type: formData.type,
-            value: formData.value.trim(),
+            value: finalValue,
             is_active: formData.is_active
           })
           .eq('id', editingSetting.id);
@@ -201,7 +249,7 @@ export default function Settings() {
           .from('notification_settings')
           .insert([{
             type: formData.type,
-            value: formData.value.trim(),
+            value: finalValue,
             is_active: formData.is_active
           }]);
 
@@ -483,14 +531,45 @@ export default function Settings() {
         </DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 2 }}>
-            <TextField
-              fullWidth
-              label={formData.type === 'email' ? 'Email Address' : 'Phone Number (with country code)'}
-              value={formData.value}
-              onChange={(e) => setFormData({ ...formData, value: e.target.value })}
-              placeholder={formData.type === 'email' ? 'example@gmail.com' : '+1234567890'}
-              sx={{ mb: 2 }}
-            />
+            {formData.type === 'email' ? (
+              <TextField
+                fullWidth
+                label="Email Address"
+                value={formData.value}
+                onChange={(e) => setFormData({ ...formData, value: e.target.value })}
+                placeholder="example@gmail.com"
+                sx={{ mb: 2 }}
+              />
+            ) : (
+              <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                <FormControl sx={{ minWidth: 120 }}>
+                  <InputLabel>Country Code</InputLabel>
+                  <Select
+                    value={formData.countryCode}
+                    label="Country Code"
+                    onChange={(e) => setFormData({ ...formData, countryCode: e.target.value })}
+                  >
+                    <MenuItem value="+1">🇺🇸 +1</MenuItem>
+                    <MenuItem value="+91">🇮🇳 +91</MenuItem>
+                    <MenuItem value="+44">🇬🇧 +44</MenuItem>
+                    <MenuItem value="+33">🇫🇷 +33</MenuItem>
+                    <MenuItem value="+49">🇩🇪 +49</MenuItem>
+                    <MenuItem value="+81">🇯🇵 +81</MenuItem>
+                    <MenuItem value="+86">🇨🇳 +86</MenuItem>
+                    <MenuItem value="+61">🇦🇺 +61</MenuItem>
+                    <MenuItem value="+55">🇧🇷 +55</MenuItem>
+                    <MenuItem value="+52">🇲🇽 +52</MenuItem>
+                  </Select>
+                </FormControl>
+                <TextField
+                  fullWidth
+                  label="Phone Number"
+                  value={formData.phoneNumber}
+                  onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                  placeholder="1234567890"
+                />
+              </Box>
+            )}
 
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Switch
