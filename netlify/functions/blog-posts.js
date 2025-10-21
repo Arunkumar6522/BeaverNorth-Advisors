@@ -19,6 +19,8 @@ exports.handler = async (event, context) => {
   try {
     console.log('🔍 Fetching blog posts from RSS feed...')
     
+    // Use node-fetch or native fetch
+    const fetch = (await import('node-fetch')).default;
     const rssUrl = 'https://beavernorth.blogspot.com/feeds/posts/default?alt=rss'
     const response = await fetch(rssUrl)
     
@@ -32,7 +34,7 @@ exports.handler = async (event, context) => {
     // Simple XML parsing without external dependencies
     const blogPosts = []
     
-    // Extract items using regex since we can't use JSDOM
+    // Extract items using regex
     const itemRegex = /<item>([\s\S]*?)<\/item>/g
     let match
     
@@ -60,7 +62,7 @@ exports.handler = async (event, context) => {
       const author = authorMatch ? authorMatch[1] : 'BeaverNorth Advisors'
       
       // Extract thumbnail from description
-      let thumbnail = null
+      let thumbnail = undefined
       if (description) {
         const imgMatch = description.match(/<img[^>]+src="([^"]+)"/i)
         if (imgMatch) {
