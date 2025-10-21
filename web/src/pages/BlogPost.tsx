@@ -54,8 +54,8 @@ export default function BlogPost() {
         setLoading(true)
         console.log('🔍 Fetching blog post from server...')
         
-        // Use our server-side endpoint to avoid CORS issues
-        const apiUrl = import.meta.env.DEV ? 'http://localhost:3001/api/blog-posts' : '/api/blog-posts'
+        // Use Netlify function for production, local server for development
+        const apiUrl = import.meta.env.DEV ? 'http://localhost:3001/api/blog-posts' : '/.netlify/functions/blog-posts'
         const response = await fetch(apiUrl)
         console.log('📡 Response status:', response.status)
         

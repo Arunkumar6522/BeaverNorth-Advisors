@@ -1,0 +1,12 @@
+{
+  "name": "beavernorth-advisors-netlify-functions",
+  "version": "1.0.0",
+  "description": "Netlify serverless functions for BeaverNorth Advisors",
+  "private": true,
+  "dependencies": {
+    "jsdom": "^27.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
