@@ -26,6 +26,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  CircularProgress,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -49,7 +50,7 @@ interface NotificationSetting {
 
 export default function Settings() {
   const [settings, setSettings] = useState<NotificationSetting[]>([]);
-  const [, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [editingSetting, setEditingSetting] = useState<NotificationSetting | null>(null);
   const [formData, setFormData] = useState({
@@ -415,12 +416,18 @@ export default function Settings() {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Settings
-      </Typography>
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-        Manage notification recipients for lead alerts
-      </Typography>
+      {loading ? (
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 200 }}>
+          <CircularProgress />
+        </Box>
+      ) : (
+        <>
+          <Typography variant="h4" gutterBottom>
+            Settings
+          </Typography>
+          <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            Manage notification recipients for lead alerts
+          </Typography>
 
       {/* Email Settings */}
       <Card sx={{ mb: 3 }}>
@@ -660,6 +667,8 @@ export default function Settings() {
           {snackbar.message}
         </Alert>
       </Snackbar>
+        </>
+      )}
     </Box>
   );
 }

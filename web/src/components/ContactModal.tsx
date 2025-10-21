@@ -36,7 +36,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
   // OTP Timer Effect
   useEffect(() => {
-    let interval: ReturnType<typeof setInterval>
+    let interval: number
     if (otpResendTimer > 0) {
       interval = setInterval(() => {
         setOtpResendTimer((prev) => prev - 1)
