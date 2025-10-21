@@ -2,7 +2,7 @@ import './App.css'
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Box, Typography, Button, Container, Grid, Card, CardContent, Avatar, Rating, Chip } from '@mui/material'
-import { ArrowForward, Star, CalendarToday, Person, OpenInNew } from '@mui/icons-material'
+import { ArrowForward, CalendarToday, OpenInNew } from '@mui/icons-material'
 import Nav from './components/Nav'
 import Footer from './components/Footer'
 import ContactModal from './components/ContactModal'
@@ -270,69 +270,87 @@ export default function App() {
                     >
                       <Card sx={{ 
                         height: '100%',
+                        minHeight: 280, // Fixed minimum height for consistency
                         borderRadius: 4,
                         boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
                         border: '1px solid rgba(0,0,0,0.05)',
                         transition: 'all 0.3s ease',
+                        display: 'flex',
+                        flexDirection: 'column',
                         '&:hover': {
                           transform: 'translateY(-4px)',
                           boxShadow: '0 16px 48px rgba(0,0,0,0.12)'
                         }
                       }}>
-                        <CardContent sx={{ p: 4 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                            <Avatar 
-                              src={testimonial.photo_url || undefined}
+                        <CardContent sx={{ 
+                          p: 4, 
+                          display: 'flex', 
+                          flexDirection: 'column', 
+                          height: '100%',
+                          justifyContent: 'space-between'
+                        }}>
+                          <Box>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+                              <Avatar 
+                                src={testimonial.photo_url || undefined}
+                                sx={{ 
+                                  bgcolor: testimonial.photo_url ? 'transparent' : '#417F73', 
+                                  color: testimonial.photo_url ? 'inherit' : 'white',
+                                  width: 48,
+                                  height: 48,
+                                  mr: 2,
+                                  fontSize: '1.1rem',
+                                  fontWeight: 600
+                                }}
+                              >
+                                {!testimonial.photo_url && getInitials(testimonial.name)}
+                              </Avatar>
+                              <Box>
+                                <Typography variant="h6" sx={{ fontWeight: 600, color: '#1E377C', mb: 0.5 }}>
+                                  {testimonial.name}
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                                  {testimonial.state}
+                                </Typography>
+                              </Box>
+                            </Box>
+                            
+                            <Rating 
+                              value={5} 
+                              readOnly 
+                              sx={{ mb: 2, '& .MuiRating-iconFilled': { color: 'rgb(255, 203, 5)' } }} 
+                            />
+                            
+                            <Typography 
+                              variant="body2" 
                               sx={{ 
-                                bgcolor: testimonial.photo_url ? 'transparent' : '#417F73', 
-                                color: testimonial.photo_url ? 'inherit' : 'white',
-                                width: 48,
-                                height: 48,
-                                mr: 2,
-                                fontSize: '1.1rem',
-                                fontWeight: 600
+                                color: '#374151',
+                                lineHeight: 1.6,
+                                fontStyle: 'italic',
+                                mb: 2,
+                                minHeight: 60, // Fixed height for testimony text
+                                display: '-webkit-box',
+                                WebkitLineClamp: 3,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden'
                               }}
                             >
-                              {!testimonial.photo_url && getInitials(testimonial.name)}
-                            </Avatar>
-                            <Box>
-                              <Typography variant="h6" sx={{ fontWeight: 600, color: '#1E377C', mb: 0.5 }}>
-                                {testimonial.name}
-                              </Typography>
-                              <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                                {testimonial.state}
-                              </Typography>
-                            </Box>
+                              "{testimonial.testimony}"
+                            </Typography>
                           </Box>
                           
-                          <Rating 
-                            value={5} 
-                            readOnly 
-                            sx={{ mb: 2, '& .MuiRating-iconFilled': { color: 'rgb(255, 203, 5)' } }} 
-                          />
-                          
-                          <Typography 
-                            variant="body2" 
-                            sx={{ 
-                              color: '#374151',
-                              lineHeight: 1.6,
-                              fontStyle: 'italic',
-                              mb: 2
-                            }}
-                          >
-                            "{testimonial.testimony}"
-                          </Typography>
-                          
-                          <Chip
-                            label={testimonial.service}
-                            size="small"
-                            sx={{
-                              bgcolor: 'rgba(255, 203, 5, 0.1)',
-                              color: '#1E377C',
-                              fontWeight: 500,
-                              fontSize: '0.75rem'
-                            }}
-                          />
+                          <Box sx={{ mt: 'auto' }}>
+                            <Chip
+                              label={testimonial.service}
+                              size="small"
+                              sx={{
+                                bgcolor: 'rgba(255, 203, 5, 0.1)',
+                                color: '#1E377C',
+                                fontWeight: 500,
+                                fontSize: '0.75rem'
+                              }}
+                            />
+                          </Box>
                         </CardContent>
                       </Card>
                     </motion.div>
