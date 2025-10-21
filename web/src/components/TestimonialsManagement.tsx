@@ -108,7 +108,8 @@ export default function TestimonialsManagement() {
       state: '',
       testimony: '',
       service: '',
-      status: 'active'
+      status: 'active' as 'active' | 'inactive',
+      photo_url: ''
     })
     setOpenDialog(true)
   }
@@ -779,7 +780,7 @@ export default function TestimonialsManagement() {
                         setSnackbar({ 
                           open: true, 
                           message: 'Photo will be removed when you save changes', 
-                          severity: 'info' 
+                          severity: 'success' 
                         })
                       }}
                       sx={{ fontSize: '0.75rem' }}
