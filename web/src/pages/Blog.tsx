@@ -247,7 +247,7 @@ export default function Blog() {
                           alt={post.title}
                           sx={{
                             width: '100%',
-                            height: 200,
+                            height: { xs: 160, sm: 180, md: 200 },
                             objectFit: 'cover',
                             borderRadius: '8px 8px 0 0'
                           }}
@@ -263,7 +263,7 @@ export default function Blog() {
                         <Box
                           sx={{
                             width: '100%',
-                            height: 200,
+                            height: { xs: 160, sm: 180, md: 200 },
                             bgcolor: '#f3f4f6',
                             display: 'flex',
                             alignItems: 'center',
@@ -272,22 +272,28 @@ export default function Blog() {
                             color: '#6B7280'
                           }}
                         >
-                          <Typography variant="body2">No Image</Typography>
+                          <Typography variant="body2" sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>No Image</Typography>
                         </Box>
                       )}
                       
-                      <CardContent sx={{ flexGrow: 1, p: 3 }}>
+                      <CardContent sx={{ flexGrow: 1, p: { xs: 2, sm: 3 } }}>
                         {/* Post Meta */}
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <CalendarToday sx={{ fontSize: 16, color: '#6B7280' }} />
-                            <Typography variant="caption" color="text.secondary">
+                        <Box sx={{ 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: { xs: 1, sm: 2 }, 
+                          mb: 2,
+                          flexWrap: 'wrap'
+                        }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <CalendarToday sx={{ fontSize: { xs: 14, sm: 16 }, color: '#6B7280' }} />
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
                               {formatDate(post.pubDate)}
                             </Typography>
                           </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Person sx={{ fontSize: 16, color: '#6B7280' }} />
-                            <Typography variant="caption" color="text.secondary">
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                            <Person sx={{ fontSize: { xs: 14, sm: 16 }, color: '#6B7280' }} />
+                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
                               {post.author}
                             </Typography>
                           </Box>
@@ -303,6 +309,7 @@ export default function Blog() {
                             mb: 2,
                             lineHeight: 1.3,
                             cursor: 'pointer',
+                            fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' },
                             '&:hover': { color: 'rgb(255, 203, 5)' }
                           }}
                           onClick={() => handlePostClick(post)}
@@ -315,19 +322,20 @@ export default function Blog() {
                           variant="body2" 
                           color="text.secondary" 
                           sx={{ 
-                            mb: 3,
+                            mb: { xs: 2, sm: 3 },
                             lineHeight: 1.6,
                             display: '-webkit-box',
-                            WebkitLineClamp: 3,
+                            WebkitLineClamp: { xs: 2, sm: 3 },
                             WebkitBoxOrient: 'vertical',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
+                            fontSize: { xs: '0.8rem', sm: '0.875rem' }
                           }}
                         >
                           {getExcerpt(post.content)}
                         </Typography>
 
                         {/* Categories */}
-                        <Box sx={{ display: 'flex', gap: 1, mb: 3, flexWrap: 'wrap' }}>
+                        <Box sx={{ display: 'flex', gap: 0.5, mb: { xs: 2, sm: 3 }, flexWrap: 'wrap' }}>
                           {post.categories?.slice(0, 2).map((category) => (
                             <Chip
                               key={category}
@@ -337,7 +345,8 @@ export default function Blog() {
                                 bgcolor: 'rgba(255, 203, 5, 0.1)',
                                 color: '#1E377C',
                                 fontWeight: 500,
-                                fontSize: '0.75rem'
+                                fontSize: { xs: '0.65rem', sm: '0.75rem' },
+                                height: { xs: 20, sm: 24 }
                               }}
                             />
                           ))}
@@ -352,6 +361,9 @@ export default function Blog() {
                             color: '#1E377C',
                             fontWeight: 600,
                             textTransform: 'none',
+                            fontSize: { xs: '0.8rem', sm: '0.875rem' },
+                            py: { xs: 0.5, sm: 1 },
+                            px: { xs: 1.5, sm: 2 },
                             '&:hover': {
                               bgcolor: 'rgb(255, 193, 0)',
                               color: '#1E377C'

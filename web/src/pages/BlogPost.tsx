@@ -181,7 +181,7 @@ export default function BlogPost() {
             transition={{ duration: 0.6 }}
           >
             <Card sx={{ mb: 4 }}>
-              <CardContent sx={{ p: 4 }}>
+              <CardContent sx={{ p: { xs: 2, sm: 3, md: 4 } }}>
                 {/* Back Button */}
                 <Button
                   variant="outlined"
@@ -193,16 +193,22 @@ export default function BlogPost() {
                 </Button>
 
                 {/* Post Meta */}
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, mb: 3 }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <CalendarToday sx={{ fontSize: 18, color: '#6B7280' }} />
-                    <Typography variant="body2" color="text.secondary">
+                <Box sx={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: { xs: 2, sm: 3 }, 
+                  mb: 3,
+                  flexWrap: 'wrap'
+                }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <CalendarToday sx={{ fontSize: { xs: 16, sm: 18 }, color: '#6B7280' }} />
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                       {formatDate(post.pubDate)}
                     </Typography>
                   </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Person sx={{ fontSize: 18, color: '#6B7280' }} />
-                    <Typography variant="body2" color="text.secondary">
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                    <Person sx={{ fontSize: { xs: 16, sm: 18 }, color: '#6B7280' }} />
+                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                       {post.author}
                     </Typography>
                   </Box>
@@ -216,7 +222,8 @@ export default function BlogPost() {
                     fontWeight: 700, 
                     color: '#1E377C',
                     mb: 3,
-                    lineHeight: 1.2
+                    lineHeight: 1.2,
+                    fontSize: { xs: '1.5rem', sm: '2rem', md: '2.5rem' }
                   }}
                 >
                   {post.title}
