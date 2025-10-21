@@ -18,7 +18,8 @@ import {
   DeleteForever as DeletedLeadsIcon,
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
-  Logout as LogoutIcon
+  Logout as LogoutIcon,
+  RateReview as TestimonialsIcon
 } from '@mui/icons-material'
 
 interface MuiSidebarProps {
@@ -46,6 +47,7 @@ export default function MuiSidebar({
   const modules = [
     { id: 'dashboard', name: 'Dashboard', icon: DashboardIcon, tooltip: 'Dashboard Overview' },
     { id: 'leads', name: 'Leads Management', icon: PeopleIcon, tooltip: 'Manage Leads' },
+    { id: 'testimonials', name: 'Testimonials', icon: TestimonialsIcon, tooltip: 'Manage Testimonials' },
     { id: 'deleted', name: 'Deleted Leads', icon: DeletedLeadsIcon, tooltip: 'View Deleted Leads' }
   ]
 

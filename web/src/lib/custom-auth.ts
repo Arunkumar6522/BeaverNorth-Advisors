@@ -1,6 +1,8 @@
 export interface CustomUser {
   id: string
   username: string
+  email?: string
+  role?: string
 }
 
 export interface LoginResponse {
@@ -11,7 +13,33 @@ export interface LoginResponse {
   cooldownSeconds?: number
 }
 
+export interface SessionData {
+  user: CustomUser
+  expiresAt: number
+  token: string
+}
+
 export class CustomAuth {
+  private readonly SESSION_KEY = 'beavernorth_session'
+  private readonly SESSION_DURATION = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+
+  private generateToken(): string {
+    // Cryptographically secure token generation
+    const crypto = window.crypto || (window as any).msCrypto
+    if (crypto && crypto.getRandomValues) {
+      const array = new Uint8Array(32)
+      crypto.getRandomValues(array)
+      return 'bn_' + Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
+    } else {
+      // Fallback for older browsers
+      return 'bn_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now().toString(36) + '_' + Math.random().toString(36).substr(2, 9)
+    }
+  }
+
+  private isSessionValid(sessionData: SessionData): boolean {
+    return Date.now() < sessionData.expiresAt
+  }
+
   public async login(loginInput: string, password: string): Promise<LoginResponse> {
     const input = (loginInput || '').trim()
     const p = password || ''
@@ -29,16 +57,16 @@ export class CustomAuth {
       
       let query
       if (isEmail) {
-        // Search by email
+        // Search by email - only select password_hash column
         query = supabase
           .from('users')
-          .select('id, username, password, email, full_name, role')
+          .select('id, username, password_hash, email, full_name, role')
           .eq('email', input)
       } else {
-        // Search by username
+        // Search by username - only select password_hash column
         query = supabase
           .from('users')
-          .select('id, username, password, email, full_name, role')
+          .select('id, username, password_hash, email, full_name, role')
           .eq('username', input)
       }
 
@@ -47,7 +75,7 @@ export class CustomAuth {
       if (error) {
         console.error('Database query error:', error)
         if (error.code === 'PGRST116') {
-          return { success: false, error: 'No user found', errorCode: 'no_user' }
+          return { success: false, error: 'No user found with this email/username', errorCode: 'no_user' }
         }
         return { success: false, error: 'Login failed. Please try again.', errorCode: 'unknown' }
       }
@@ -56,15 +84,32 @@ export class CustomAuth {
         return { success: false, error: 'No user found', errorCode: 'no_user' }
       }
 
-      // Check password (simple comparison)
-      if (data.password !== p) {
+      // Check password using bcrypt
+      const bcrypt = await import('bcryptjs')
+      const isValidPassword = await bcrypt.compare(p, data.password_hash)
+      
+      if (!isValidPassword) {
         return { success: false, error: 'Invalid password', errorCode: 'bad_password' }
       }
 
-      const safeUser: CustomUser = { id: data.id.toString(), username: data.username }
-      // Store minimal info in sessionStorage
-      sessionStorage.setItem('beavernorth_user', JSON.stringify(safeUser))
-      return { success: true, user: safeUser }
+      const user: CustomUser = { 
+        id: data.id.toString(), 
+        username: data.username,
+        email: data.email,
+        role: data.role
+      }
+
+      // Create session with expiration
+      const sessionData: SessionData = {
+        user,
+        expiresAt: Date.now() + this.SESSION_DURATION,
+        token: this.generateToken()
+      }
+
+      // Store session in sessionStorage
+      sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(sessionData))
+      
+      return { success: true, user }
     } catch (e) {
       console.error('login fatal error:', e)
       return { success: false, error: 'Login failed. Please try again.', errorCode: 'unknown' }
@@ -72,22 +117,70 @@ export class CustomAuth {
   }
 
   public logout(): void {
-    sessionStorage.removeItem('beavernorth_user')
+    sessionStorage.removeItem(this.SESSION_KEY)
+    // Also clear any additional localStorage items
+    localStorage.removeItem('isAuthenticated')
+    localStorage.removeItem('username')
+    localStorage.removeItem('temp_activities')
   }
 
   public getCurrentUser(): CustomUser | null {
-    const userStr = sessionStorage.getItem('beavernorth_user')
-    if (!userStr) return null
+    const sessionStr = sessionStorage.getItem(this.SESSION_KEY)
+    if (!sessionStr) return null
     
     try {
-      return JSON.parse(userStr)
+      const sessionData: SessionData = JSON.parse(sessionStr)
+      
+      // Check if session is still valid
+      if (!this.isSessionValid(sessionData)) {
+        this.logout() // Clear expired session
+        return null
+      }
+      
+      return sessionData.user
     } catch {
+      this.logout() // Clear invalid session
       return null
     }
   }
 
   public isAuthenticated(): boolean {
-    return this.getCurrentUser() !== null
+    const user = this.getCurrentUser()
+    return user !== null
+  }
+
+  public getSessionToken(): string | null {
+    const sessionStr = sessionStorage.getItem(this.SESSION_KEY)
+    if (!sessionStr) return null
+    
+    try {
+      const sessionData: SessionData = JSON.parse(sessionStr)
+      
+      if (!this.isSessionValid(sessionData)) {
+        this.logout()
+        return null
+      }
+      
+      return sessionData.token
+    } catch {
+      this.logout()
+      return null
+    }
+  }
+
+  public refreshSession(): boolean {
+    const user = this.getCurrentUser()
+    if (!user) return false
+
+    // Refresh the session by extending expiration
+    const sessionData: SessionData = {
+      user,
+      expiresAt: Date.now() + this.SESSION_DURATION,
+      token: this.generateToken()
+    }
+
+    sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(sessionData))
+    return true
   }
 }
 

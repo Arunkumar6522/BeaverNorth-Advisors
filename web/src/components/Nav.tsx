@@ -45,7 +45,7 @@ export default function Nav() {
     { label: t('nav_about'), path: '/about' },
     { label: t('nav_services'), path: '/services' },
     { label: 'Blog', path: '/blog' },
-    { label: 'Testimonials', path: '/testimonials' },
+    { label: 'Testimonial', path: '/testimonial' },
     { label: t('nav_contact'), path: '/contact' }
   ]
 

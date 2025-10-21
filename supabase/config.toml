@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "testimonials": {
+      "verify_jwt": false
+    }
+  }
+}

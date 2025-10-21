@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { JSDOM } from 'jsdom';
+import rateLimit from 'express-rate-limit';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,25 +15,78 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3001;
 
+// Rate limiting configuration
+const otpRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 requests per windowMs
+  message: {
+    success: false,
+    error: 'Too many OTP requests, please try again later.',
+    retryAfter: '15 minutes'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const generalRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: {
+    success: false,
+    error: 'Too many requests, please try again later.'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Secure CORS configuration
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://yourdomain.com', 'https://www.yourdomain.com'] // Replace with your actual domains
+    : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:3001'],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors(corsOptions));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static('dist'));
+
+// Apply rate limiting
+app.use('/api/', generalRateLimit);
 
 // Twilio configuration
 const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID || 'YOUR_TWILIO_ACCOUNT_SID';
 const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || 'YOUR_TWILIO_AUTH_TOKEN';
 const twilioServiceSid = process.env.TWILIO_SERVICE_SID || 'YOUR_TWILIO_SERVICE_SID';
 
-// Initialize Twilio client
-const client = twilio(twilioAccountSid, twilioAuthToken);
+// Initialize Twilio client (with demo mode support)
+let client = null;
+if (twilioAccountSid && twilioAccountSid.startsWith('AC') && twilioAuthToken && twilioAuthToken !== 'demo_auth_token') {
+  client = twilio(twilioAccountSid, twilioAuthToken);
+} else {
+  console.log('🔧 Running in demo mode - Twilio client not initialized');
+}
 
 // API Routes
-app.post('/api/send-otp', async (req, res) => {
+app.post('/api/send-otp', otpRateLimit, async (req, res) => {
   try {
     const { to, serviceSid } = req.body;
     
     console.log('📱 Sending OTP to:', to);
+    
+    // Demo mode - return success without actually sending
+    if (!client) {
+      console.log('🔧 Demo mode: Simulating OTP send to', to);
+      res.json({
+        success: true,
+        message: 'OTP sent successfully (Demo Mode)',
+        verificationSid: 'demo_verification_sid',
+        to: to
+      });
+      return;
+    }
     
     // Send verification via Twilio Verify Service
     const verification = await client.verify.v2
@@ -63,11 +117,31 @@ app.post('/api/send-otp', async (req, res) => {
   }
 });
 
-app.post('/api/verify-otp', async (req, res) => {
+app.post('/api/verify-otp', otpRateLimit, async (req, res) => {
   try {
     const { to, code, verificationSid } = req.body;
     
     console.log('🔐 Verifying OTP:', code, 'for:', to);
+    
+    // Demo mode - accept any 6-digit code
+    if (!client) {
+      console.log('🔧 Demo mode: Simulating OTP verification');
+      if (code && code.length === 6 && /^\d+$/.test(code)) {
+        res.json({
+          success: true,
+          message: 'OTP verified successfully (Demo Mode)',
+          status: 'approved'
+        });
+        return;
+      } else {
+        res.json({
+          success: false,
+          message: 'Invalid OTP code (Demo Mode)',
+          status: 'denied'
+        });
+        return;
+      }
+    }
     
     // Verify the code with Twilio
     const verificationCheck = await client.verify.v2
