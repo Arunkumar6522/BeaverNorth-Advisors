@@ -12,6 +12,12 @@ VALUES (
 )
 ON CONFLICT (id) DO NOTHING;
 
+-- Drop existing policies if they exist (to avoid conflicts)
+DROP POLICY IF EXISTS "Public read access for testimonials images" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can upload testimonials images" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can update testimonials images" ON storage.objects;
+DROP POLICY IF EXISTS "Authenticated users can delete testimonials images" ON storage.objects;
+
 -- Create RLS policy for public read access
 CREATE POLICY "Public read access for testimonials images" ON storage.objects
 FOR SELECT USING (bucket_id = 'testimonials');
