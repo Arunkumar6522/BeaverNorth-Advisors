@@ -417,13 +417,42 @@ Time: ${new Date().toLocaleString()}`;
     console.log('📱 SMS message prepared:', smsMessage);
     console.log('📱 Will send to phone numbers:', phoneNumbers);
     
-    // Simulate successful SMS sending (in demo mode)
+    // Send SMS to all configured phone numbers
+    const smsResults = [];
+    for (const phoneNumber of phoneNumbers) {
+      try {
+        // Use Twilio's messaging API (not verification service)
+        const message = await client.messages.create({
+          body: smsMessage,
+          from: process.env.TWILIO_PHONE_NUMBER || '+15551234567', // Use your Twilio phone number
+          to: phoneNumber
+        });
+        
+        console.log(`✅ SMS sent to ${phoneNumber}:`, message.sid);
+        smsResults.push({
+          phoneNumber,
+          messageId: message.sid,
+          status: 'sent'
+        });
+      } catch (smsError) {
+        console.error(`❌ Failed to send SMS to ${phoneNumber}:`, smsError.message);
+        smsResults.push({
+          phoneNumber,
+          error: smsError.message,
+          status: 'failed'
+        });
+      }
+    }
+    
+    const successCount = smsResults.filter(result => result.status === 'sent').length;
+    const failureCount = smsResults.filter(result => result.status === 'failed').length;
+    
     res.json({
       success: true,
-      message: `Lead notification SMS sent successfully (Demo Mode) to ${phoneNumbers.length} numbers`,
+      message: `SMS notifications sent: ${successCount} successful, ${failureCount} failed`,
       leadName: leadData.name,
       recipients: phoneNumbers,
-      smsMessage: smsMessage
+      results: smsResults
     });
     
   } catch (error) {
