@@ -71,6 +71,7 @@ export default function TestimonialsManagement() {
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [imageUploadSuccess, setImageUploadSuccess] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -364,7 +365,13 @@ export default function TestimonialsManagement() {
         
         // Fallback: Convert to base64 for temporary storage
         console.log('🔄 Falling back to base64 storage...')
-        return await convertToBase64(file)
+        const base64Url = await convertToBase64(file)
+        
+        // Show success toast for base64 fallback
+        setImageUploadSuccess(true)
+        setTimeout(() => setImageUploadSuccess(false), 3000)
+        
+        return base64Url
       }
 
       console.log('✅ Upload successful:', data)
@@ -375,13 +382,24 @@ export default function TestimonialsManagement() {
         .getPublicUrl(fileName)
 
       console.log('🔗 Public URL:', publicUrl)
+      
+      // Show success toast
+      setImageUploadSuccess(true)
+      setTimeout(() => setImageUploadSuccess(false), 3000)
+      
       return publicUrl
     } catch (error) {
       console.error('❌ Upload error:', error)
       
       // Fallback: Convert to base64 for temporary storage
       console.log('🔄 Falling back to base64 storage...')
-      return await convertToBase64(file)
+      const base64Url = await convertToBase64(file)
+      
+      // Show success toast for base64 fallback
+      setImageUploadSuccess(true)
+      setTimeout(() => setImageUploadSuccess(false), 3000)
+      
+      return base64Url
     } finally {
       setUploadingImage(false)
     }
@@ -399,9 +417,15 @@ export default function TestimonialsManagement() {
   const removeSelectedImage = () => {
     setSelectedImage(null)
     setImagePreview(null)
+    setFormData({ ...formData, photo_url: '' })
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
+    setSnackbar({ 
+      open: true, 
+      message: 'Photo removed successfully', 
+      severity: 'success' 
+    })
   }
 
   if (loading) {
@@ -713,6 +737,56 @@ export default function TestimonialsManagement() {
                       <CloseIcon fontSize="small" />
                     </IconButton>
                   </Box>
+                  <Box sx={{ mt: 1 }}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      startIcon={<CloseIcon />}
+                      onClick={removeSelectedImage}
+                      sx={{ fontSize: '0.75rem' }}
+                    >
+                      Remove Photo
+                    </Button>
+                  </Box>
+                </Box>
+              )}
+
+              {/* Show existing photo if editing */}
+              {editingTestimonial && editingTestimonial.photo_url && !imagePreview && (
+                <Box sx={{ mb: 2, textAlign: 'center' }}>
+                  <Box sx={{ position: 'relative', display: 'inline-block' }}>
+                    <img
+                      src={editingTestimonial.photo_url}
+                      alt="Current Photo"
+                      style={{
+                        width: 120,
+                        height: 120,
+                        objectFit: 'cover',
+                        borderRadius: '50%',
+                        border: '2px solid #e0e0e0'
+                      }}
+                    />
+                  </Box>
+                  <Box sx={{ mt: 1 }}>
+                    <Button
+                      size="small"
+                      variant="outlined"
+                      color="error"
+                      startIcon={<CloseIcon />}
+                      onClick={() => {
+                        setFormData({ ...formData, photo_url: '' })
+                        setSnackbar({ 
+                          open: true, 
+                          message: 'Photo will be removed when you save changes', 
+                          severity: 'info' 
+                        })
+                      }}
+                      sx={{ fontSize: '0.75rem' }}
+                    >
+                      Remove Current Photo
+                    </Button>
+                  </Box>
                 </Box>
               )}
 
@@ -850,6 +924,23 @@ export default function TestimonialsManagement() {
           sx={{ width: '100%' }}
         >
           {snackbar.message}
+        </Alert>
+      </Snackbar>
+
+      {/* Image Upload Success Toast */}
+      <Snackbar
+        open={imageUploadSuccess}
+        autoHideDuration={3000}
+        onClose={() => setImageUploadSuccess(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setImageUploadSuccess(false)}
+          severity="success"
+          sx={{ width: '100%' }}
+          icon={<ImageIcon />}
+        >
+          🎉 Image uploaded successfully!
         </Alert>
       </Snackbar>
     </Box>
