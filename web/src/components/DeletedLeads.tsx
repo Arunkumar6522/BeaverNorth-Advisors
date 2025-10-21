@@ -149,62 +149,6 @@ export default function DeletedLeads() {
     fetchDeletedLeads()
   }, [])
 
-  /* DISABLED: Restore functionality removed per requirement
-  const handleRestoreLead = async (leadId: string) => {
-    try {
-      const { supabase } = await import('../lib/supabase')
-      const { error } = await supabase
-        .from('leads')
-        .update({ deleted: false, deleted_at: null })
-        .eq('id', leadId)
-
-      if (error) {
-        console.error('❌ Error restoring lead:', error)
-        return
-      }
-
-      // Remove from local state
-      setDeletedLeads(deletedLeads.filter(lead => lead.id !== leadId))
-      console.log('✅ Lead restored successfully')
-    } catch (error) {
-      console.error('❌ Error restoring lead:', error)
-    }
-
-    // Update local state for demo
-    setDeletedLeads(deletedLeads.filter(lead => lead.id !== leadId))
-  }
-  */
-
-  /* DISAB LED: Delete functionality removed per requirement  
-  const handlePermanentDelete = async (leadId: string) => {
-    if (!confirm('Are you sure you want to permanently delete this lead? This action cannot be undone.')) {
-      return
-    }
-
-    try {
-      const { supabase } = await import('../lib/supabase')
-      const { error } = await supabase
-        .from('leads')
-        .delete()
-        .eq('id', leadId)
-
-      if (error) {
-        console.error('❌ Error permanently deleting lead:', error)
-        return
-      }
-
-      // Remove from local state
-      setDeletedLeads(deletedLeads.filter(lead => lead.id !== leadId))
-      console.log('✅ Lead permanently deleted')
-    } catch (error) {
-      console.error('❌ Error permanently deleting lead:', error)
-    }
-
-    // Update local state for demo
-    setDeletedLeads(deletedLeads.filter(lead => lead.id !== leadId))
-  }
-  */
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',

@@ -252,11 +252,7 @@ export default function Blog() {
                             borderRadius: '8px 8px 0 0'
                           }}
                           onError={(e) => {
-                            console.log('❌ Image failed to load:', post.thumbnail || getFirstImage(post.content))
                             e.currentTarget.style.display = 'none'
-                          }}
-                          onLoad={() => {
-                            console.log('✅ Image loaded successfully:', post.thumbnail || getFirstImage(post.content))
                           }}
                         />
                       ) : (

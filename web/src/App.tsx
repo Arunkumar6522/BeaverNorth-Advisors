@@ -4,7 +4,6 @@ import { motion } from 'framer-motion'
 import { Box, Typography, Button } from '@mui/material'
 import { ArrowForward } from '@mui/icons-material'
 import Nav from './components/Nav'
-import TopBar from './components/TopBar'
 import Footer from './components/Footer'
 import ContactModal from './components/ContactModal'
 import InsuranceCarousel from './components/InsuranceCarousel'
@@ -17,7 +16,6 @@ export default function App() {
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#F3F8FF' }}>
-      <TopBar />
       <Nav />
       
       {/* HERO Section - Minimalist Clean Design */}
