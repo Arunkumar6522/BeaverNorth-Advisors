@@ -19,7 +19,7 @@ const port = process.env.PORT || 3001;
 // Rate limiting configuration
 const otpRateLimit = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // Limit each IP to 5 requests per windowMs
+  max: process.env.NODE_ENV === 'production' ? 5 : 50, // 5 in production, 50 in development
   message: {
     success: false,
     error: 'Too many OTP requests, please try again later.',
