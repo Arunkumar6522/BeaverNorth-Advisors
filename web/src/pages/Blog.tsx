@@ -12,6 +12,7 @@ interface BlogPost {
   pubDate: string
   author?: string
   categories?: string[]
+  thumbnail?: string
 }
 
 export default function Blog() {
@@ -60,45 +61,41 @@ export default function Blog() {
   }
 
   useEffect(() => {
-    // Blogger RSS feed URL
-    const rssUrl = 'https://beavernorth.blogspot.com/feeds/posts/default?alt=rss'
-    
-    // Using RSS2JSON proxy to avoid CORS issues
-    const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`
-    
-    console.log('🔍 Fetching blog posts from:', proxyUrl)
-    
-    fetch(proxyUrl)
-      .then(response => {
-        console.log('📡 Response status:', response.status)
-        return response.json()
-      })
-      .then(data => {
-        console.log('📊 Raw RSS data:', data)
-        console.log('📊 Items count:', data.items?.length || 0)
+    const fetchBlogPosts = async () => {
+      try {
+        setLoading(true)
+        console.log('🔍 Fetching blog posts from server...')
         
-        if (data.status === 'ok') {
-          const blogPosts = data.items?.map((item: any) => ({
-            title: item.title,
-            content: item.description,
-            link: item.link,
-            pubDate: item.pubDate,
-            author: item.author || 'BeaverNorth Advisors',
-            categories: item.categories || ['Insurance', 'Financial Planning']
-          })) || []
+        // Use our server-side endpoint to avoid CORS issues
+        const apiUrl = import.meta.env.DEV ? 'http://localhost:3001/api/blog-posts' : '/api/blog-posts'
+        const response = await fetch(apiUrl)
+        console.log('📡 Response status:', response.status)
+        
+        if (response.ok) {
+          const data = await response.json()
+          console.log('📊 Server response:', data)
           
-          console.log('✅ Processed blog posts:', blogPosts)
-          setPosts(blogPosts)
+          if (data.success && data.posts && data.posts.length > 0) {
+            console.log('✅ Success with server endpoint:', data.posts.length, 'posts')
+            setPosts(data.posts)
+          } else {
+            console.log('❌ No posts found in server response')
+            setError('No blog posts found')
+          }
         } else {
-          console.error('❌ RSS status not ok:', data)
-          setError('Unable to fetch blog posts')
+          console.log('❌ Server request failed:', response.status)
+          setError('Failed to fetch blog posts from server')
         }
-      })
-      .catch(err => {
+        
+      } catch (err) {
         console.error('❌ Blog fetch error:', err)
         setError('Failed to load blog posts')
-      })
-      .finally(() => setLoading(false))
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchBlogPosts()
   }, [])
 
   return (
@@ -220,12 +217,29 @@ export default function Blog() {
                         display: 'flex',
                         flexDirection: 'column',
                         transition: 'all 0.3s ease',
+                        cursor: 'pointer',
                         '&:hover': {
                           transform: 'translateY(-4px)',
                           boxShadow: '0 12px 24px rgba(0,0,0,0.15)'
                         }
                       }}
+                      onClick={() => handlePostClick(post)}
                     >
+                      {/* Thumbnail Image */}
+                      {post.thumbnail && (
+                        <Box
+                          component="img"
+                          src={post.thumbnail}
+                          alt={post.title}
+                          sx={{
+                            width: '100%',
+                            height: 200,
+                            objectFit: 'cover',
+                            borderRadius: '8px 8px 0 0'
+                          }}
+                        />
+                      )}
+                      
                       <CardContent sx={{ flexGrow: 1, p: 3 }}>
                         {/* Post Meta */}
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>

@@ -30,6 +30,7 @@ interface BlogPost {
   pubDate: string
   author?: string
   categories?: string[]
+  thumbnail?: string
 }
 
 export default function BlogPost() {
@@ -52,39 +53,40 @@ export default function BlogPost() {
     const fetchBlogPost = async () => {
       try {
         setLoading(true)
+        console.log('🔍 Fetching blog post from server...')
         
-        // Fetch all blog posts from RSS feed
-        const rssUrl = 'https://beavernorth.blogspot.com/feeds/posts/default?alt=rss'
-        const proxyUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`
+        // Use our server-side endpoint to avoid CORS issues
+        const apiUrl = import.meta.env.DEV ? 'http://localhost:3001/api/blog-posts' : '/api/blog-posts'
+        const response = await fetch(apiUrl)
+        console.log('📡 Response status:', response.status)
         
-        const response = await fetch(proxyUrl)
-        const data = await response.json()
-        
-        if (data.status === 'ok' && data.items) {
-          // Find the specific post by ID (using link as identifier)
-          const foundPost = data.items.find((item: any) => {
-            // Extract post ID from the link
-            const postLinkId = item.link.split('/').pop()?.split('.html')[0]
-            return postLinkId === postId
-          })
+        if (response.ok) {
+          const data = await response.json()
+          console.log('📊 Server response:', data)
           
-          if (foundPost) {
-            setPost({
-              title: foundPost.title,
-              content: foundPost.description,
-              link: foundPost.link,
-              pubDate: foundPost.pubDate,
-              author: foundPost.author || 'BeaverNorth Advisors',
-              categories: foundPost.categories || ['Insurance', 'Financial Planning']
+          if (data.success && data.posts) {
+            // Find the specific post by ID
+            const foundPost = data.posts.find((item: any) => {
+              const postLinkId = item.link.split('/').pop()?.split('.html')[0]
+              return postLinkId === postId
             })
+            
+            if (foundPost) {
+              console.log('✅ Found blog post:', foundPost.title)
+              setPost(foundPost)
+            } else {
+              console.log('❌ Blog post not found for ID:', postId)
+              setError('Blog post not found')
+            }
           } else {
-            setError('Blog post not found')
+            setError('Unable to fetch blog posts')
           }
         } else {
-          setError('Unable to fetch blog posts')
+          console.log('❌ Server request failed:', response.status)
+          setError('Failed to fetch blog post from server')
         }
       } catch (err) {
-        console.error('Blog post fetch error:', err)
+        console.error('❌ Blog post fetch error:', err)
         setError('Failed to load blog post')
       } finally {
         setLoading(false)
