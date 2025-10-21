@@ -149,45 +149,45 @@ const DELETE_REASONS = [
 export default function LeadsManagement() {
   const location = useLocation()
   
-  // Helper functions for date range calculations
-  const getDateRange = () => {
-    const now = new Date()
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    
-    if (dateRangeType === 'custom') {
-      return {
-        start: customStartDate ? new Date(customStartDate) : null,
-        end: customEndDate ? new Date(customEndDate) : null
-      }
-    }
-    
-    switch (presetDateRange) {
-      case 'today':
-        return { start: today, end: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1) }
-      case 'yesterday':
-        const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
-        return { start: yesterday, end: new Date(yesterday.getTime() + 24 * 60 * 60 * 1000 - 1) }
-      case 'thisWeek':
-        const startOfWeek = new Date(today)
-        startOfWeek.setDate(today.getDate() - today.getDay())
-        return { start: startOfWeek, end: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1) }
-      case 'thisMonth':
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-        return { start: startOfMonth, end: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1) }
-      default:
-        return { start: null, end: null }
-    }
-  }
+  // Helper functions for date range calculations (commented out as date filtering is disabled)
+  // const getDateRange = () => {
+  //   const now = new Date()
+  //   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  //   
+  //   if (dateRangeType === 'custom') {
+  //     return {
+  //       start: customStartDate ? new Date(customStartDate) : null,
+  //       end: customEndDate ? new Date(customEndDate) : null
+  //     }
+  //   }
+  //   
+  //   switch (presetDateRange) {
+  //     case 'today':
+  //       return { start: today, end: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1) }
+  //     case 'yesterday':
+  //       const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000)
+  //       return { start: yesterday, end: new Date(yesterday.getTime() + 24 * 60 * 60 * 1000 - 1) }
+  //     case 'thisWeek':
+  //       const startOfWeek = new Date(today)
+  //       startOfWeek.setDate(today.getDate() - today.getDay())
+  //       return { start: startOfWeek, end: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1) }
+  //     case 'thisMonth':
+  //       const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+  //       return { start: startOfMonth, end: new Date(today.getTime() + 24 * 60 * 60 * 1000 - 1) }
+  //     default:
+  //       return { start: null, end: null }
+  //   }
+  // }
   const [leads, setLeads] = useState<Lead[]>([])  // Start with empty array, will load from Supabase
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setFilter] = useState<'all' | 'new' | 'contacted' | 'converted' | 'overall'>('all')
   const [currentTab, setCurrentTab] = useState<'active' | 'closed'>('active')
   
-  // Date range filter states
-  const [dateRangeType, setDateRangeType] = useState<'preset' | 'custom'>('preset')
-  const [presetDateRange, setPresetDateRange] = useState<'today' | 'yesterday' | 'thisWeek' | 'thisMonth'>('today')
-  const [customStartDate, setCustomStartDate] = useState<string>('')
-  const [customEndDate, setCustomEndDate] = useState<string>('')
+  // Date range filter states (commented out as date filtering is disabled)
+  // const [dateRangeType, setDateRangeType] = useState<'preset' | 'custom'>('preset')
+  // const [presetDateRange, setPresetDateRange] = useState<'today' | 'yesterday' | 'thisWeek' | 'thisMonth'>('today')
+  // const [customStartDate, setCustomStartDate] = useState<string>('')
+  // const [customEndDate, setCustomEndDate] = useState<string>('')
   
   // Modal states
   const [viewModalOpen, setViewModalOpen] = useState(false)
@@ -223,6 +223,10 @@ export default function LeadsManagement() {
   // Pagination
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(10)
+  
+  // Sorting
+  const [sortField, setSortField] = useState<'created_at' | 'last_contact_date'>('created_at')
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
 
   // Tab change handler
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
@@ -352,6 +356,27 @@ export default function LeadsManagement() {
     //     return leadDate >= dateRange.start! && leadDate <= dateRange.end!
     //   })
     // }
+
+    // Sort by date
+    filtered.sort((a, b) => {
+      let dateA: Date
+      let dateB: Date
+      
+      if (sortField === 'created_at') {
+        dateA = new Date(a.created_at)
+        dateB = new Date(b.created_at)
+      } else {
+        // Use last_contact_date if available, otherwise fallback to created_at
+        dateA = new Date(a.last_contact_date || a.created_at)
+        dateB = new Date(b.last_contact_date || b.created_at)
+      }
+      
+      if (sortDirection === 'asc') {
+        return dateA.getTime() - dateB.getTime()
+      } else {
+        return dateB.getTime() - dateA.getTime()
+      }
+    })
 
     return filtered
   }
@@ -701,9 +726,9 @@ export default function LeadsManagement() {
 
   const getStatusColor = (status: Lead['status']) => {
     switch (status) {
-      case 'new': return 'rgb(255, 203, 5)'
-      case 'contacted': return '#F59E0B'
-      case 'converted': return '#10B981'
+      case 'new': return '#1E377C' // Professional Blue
+      case 'contacted': return '#417F73' // Trust Green
+      case 'converted': return 'rgb(255, 203, 5)' // Confidence Gold
       default: return '#6B7280'
     }
   }
@@ -870,6 +895,32 @@ export default function LeadsManagement() {
                 </FormControl>
               )}
 
+              {/* Sort by Date */}
+              <FormControl size="small" sx={{ minWidth: 140 }}>
+                <InputLabel>Sort By</InputLabel>
+                <Select
+                  value={sortField}
+                  label="Sort By"
+                  onChange={(e) => setSortField(e.target.value as 'created_at' | 'last_contact_date')}
+                >
+                  <MenuItem value="created_at">Created Date</MenuItem>
+                  <MenuItem value="last_contact_date">Last Contact</MenuItem>
+                </Select>
+              </FormControl>
+
+              {/* Sort Direction */}
+              <FormControl size="small" sx={{ minWidth: 100 }}>
+                <InputLabel>Order</InputLabel>
+                <Select
+                  value={sortDirection}
+                  label="Order"
+                  onChange={(e) => setSortDirection(e.target.value as 'asc' | 'desc')}
+                >
+                  <MenuItem value="desc">Newest First</MenuItem>
+                  <MenuItem value="asc">Oldest First</MenuItem>
+                </Select>
+              </FormControl>
+
               {/* Date Range Filter - HIDDEN as requested */}
               {/* <FormControl size="small" sx={{ minWidth: 140 }}>
                 <InputLabel>Date Range</InputLabel>
@@ -968,11 +1019,11 @@ export default function LeadsManagement() {
                         }}
                         onClick={() => handleEmailClick(lead.email)}
                         >
-                          <EmailIcon sx={{ fontSize: 16, color: 'rgb(255, 203, 5)' }} />
+                          <EmailIcon sx={{ fontSize: 16, color: '#1E377C' }} />
                           <Typography 
                             variant="body2"
                             sx={{ 
-                              color: 'rgb(255, 203, 5)',
+                              color: '#1E377C',
                               textDecoration: 'underline',
                               '&:hover': { fontWeight: 'bold' }
                             }}
@@ -991,11 +1042,11 @@ export default function LeadsManagement() {
                         }}
                         onClick={() => handlePhoneClick(lead.phone)}
                         >
-                          <PhoneIcon sx={{ fontSize: 16, color: 'rgb(255, 203, 5)' }} />
+                          <PhoneIcon sx={{ fontSize: 16, color: '#1E377C' }} />
                           <Typography 
                             variant="body2"
                             sx={{ 
-                              color: 'rgb(255, 203, 5)',
+                              color: '#1E377C',
                               textDecoration: 'underline',
                               '&:hover': { fontWeight: 'bold' }
                             }}
@@ -1173,7 +1224,7 @@ export default function LeadsManagement() {
                     <Typography 
                       component="span" 
                       sx={{ 
-                        color: 'rgb(255, 203, 5)', 
+                        color: '#1E377C', 
                         textDecoration: 'underline',
                         cursor: 'pointer',
                         ml: 1,
@@ -1189,7 +1240,7 @@ export default function LeadsManagement() {
                     <Typography 
                       component="span" 
                       sx={{ 
-                        color: 'rgb(255, 203, 5)', 
+                        color: '#1E377C', 
                         textDecoration: 'underline',
                         cursor: 'pointer',
                         ml: 1,
