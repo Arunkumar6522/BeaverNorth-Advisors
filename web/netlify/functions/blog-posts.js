@@ -30,6 +30,19 @@ exports.handler = async (event, context) => {
     const xmlText = await response.text()
     console.log('📊 RSS feed fetched, length:', xmlText.length)
     
+    // Helper function to decode HTML entities
+    const decodeHtmlEntities = (text) => {
+      const entities = {
+        '&lt;': '<',
+        '&gt;': '>',
+        '&amp;': '&',
+        '&quot;': '"',
+        '&#39;': "'",
+        '&nbsp;': ' '
+      }
+      return text.replace(/&[a-zA-Z0-9#]+;/g, (entity) => entities[entity] || entity)
+    }
+    
     // Simple XML parsing without external dependencies
     const blogPosts = []
     
@@ -80,8 +93,8 @@ exports.handler = async (event, context) => {
       const finalCategories = categories.length > 0 ? categories : ['Blog Post']
       
       blogPosts.push({
-        title: title.trim(),
-        content: description.trim(),
+        title: decodeHtmlEntities(title.trim()),
+        content: decodeHtmlEntities(description.trim()),
         link: link.trim(),
         pubDate: pubDate.trim(),
         author: author.trim(),
