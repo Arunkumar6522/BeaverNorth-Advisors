@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import {
   Box,
   Typography,
@@ -29,7 +29,8 @@ import {
   TablePagination,
   InputAdornment,
   Card,
-  CardContent
+  CardContent,
+  CircularProgress
 } from '@mui/material'
 import {
   Add as AddIcon,
@@ -39,7 +40,10 @@ import {
   Person as PersonIcon,
   LocationOn as LocationIcon,
   Business as BusinessIcon,
-  RateReview as TestimonialIcon
+  RateReview as TestimonialIcon,
+  CloudUpload as UploadIcon,
+  Image as ImageIcon,
+  Close as CloseIcon
 } from '@mui/icons-material'
 import { testimonialsFallbackAPI, type Testimonial } from '../services/testimonialsFallbackAPI'
 
@@ -62,6 +66,12 @@ export default function TestimonialsManagement() {
     status: 'active' as 'active' | 'inactive',
     photo_url: '' // Optional photo URL
   })
+
+  // Image upload states
+  const [selectedImage, setSelectedImage] = useState<File | null>(null)
+  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     fetchTestimonials()
@@ -109,8 +119,17 @@ export default function TestimonialsManagement() {
       state: testimonial.state,
       testimony: testimonial.testimony,
       service: testimonial.service,
-      status: testimonial.status
+      status: testimonial.status,
+      photo_url: testimonial.photo_url || ''
     })
+    
+    // Reset image upload states when editing
+    setSelectedImage(null)
+    setImagePreview(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+    
     setOpenDialog(true)
   }
 
@@ -118,10 +137,26 @@ export default function TestimonialsManagement() {
     try {
       console.log('🔍 Saving testimonial with data:', formData)
       
+      // Prepare testimonial data
+      let testimonialData = { ...formData }
+      
+      // Handle image upload if image is selected
+      if (selectedImage) {
+        console.log('📸 Uploading image...')
+        const imageUrl = await uploadImageToSupabase(selectedImage)
+        if (imageUrl) {
+          testimonialData.photo_url = imageUrl
+          console.log('✅ Image uploaded successfully:', imageUrl)
+        } else {
+          setSnackbar({ open: true, message: 'Failed to upload image', severity: 'error' })
+          return
+        }
+      }
+      
       if (editingTestimonial) {
         // Update existing testimonial
         console.log('📝 Updating testimonial ID:', editingTestimonial.id)
-        const response = await testimonialsFallbackAPI.updateTestimonial(editingTestimonial.id, formData)
+        const response = await testimonialsFallbackAPI.updateTestimonial(editingTestimonial.id, testimonialData)
 
         if (!response.success) {
           console.error('❌ Error updating testimonial:', response.error)
@@ -133,7 +168,7 @@ export default function TestimonialsManagement() {
       } else {
         // Create new testimonial
         console.log('➕ Creating new testimonial')
-        const response = await testimonialsFallbackAPI.createTestimonial(formData)
+        const response = await testimonialsFallbackAPI.createTestimonial(testimonialData)
 
         if (!response.success) {
           console.error('❌ Error creating testimonial:', response.error)
@@ -145,8 +180,23 @@ export default function TestimonialsManagement() {
         setSnackbar({ open: true, message: 'Testimonial created successfully', severity: 'success' })
       }
 
+      // Reset form and close dialog
+      setFormData({
+        name: '',
+        state: '',
+        testimony: '',
+        service: '',
+        status: 'active',
+        photo_url: ''
+      })
+      setSelectedImage(null)
+      setImagePreview(null)
+      setEditingTestimonial(null)
       setOpenDialog(false)
-      fetchTestimonials()
+      
+      // Refresh testimonials list
+      await fetchTestimonials()
+      
     } catch (error) {
       console.error('❌ Unexpected error:', error)
       setSnackbar({ open: true, message: `Failed to save testimonial: ${error}`, severity: 'error' })
@@ -246,6 +296,85 @@ export default function TestimonialsManagement() {
       .join('')
       .toUpperCase()
       .slice(0, 2)
+  }
+
+  // Image upload functions
+  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        setSnackbar({
+          open: true,
+          message: 'Please select a valid image file',
+          severity: 'error'
+        })
+        return
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        setSnackbar({
+          open: true,
+          message: 'Image size must be less than 5MB',
+          severity: 'error'
+        })
+        return
+      }
+
+      setSelectedImage(file)
+      
+      // Create preview
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const uploadImageToSupabase = async (file: File): Promise<string | null> => {
+    try {
+      setUploadingImage(true)
+      
+      // Create a unique filename
+      const timestamp = Date.now()
+      const fileName = `testimonial-${timestamp}-${file.name}`
+      
+      // Upload to Supabase Storage
+      const { supabase } = await import('../lib/supabase')
+      const { data, error } = await supabase.storage
+        .from('testimonials')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        })
+
+      if (error) {
+        console.error('Upload error:', error)
+        return null
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('testimonials')
+        .getPublicUrl(fileName)
+
+      return publicUrl
+    } catch (error) {
+      console.error('Upload error:', error)
+      return null
+    } finally {
+      setUploadingImage(false)
+    }
+  }
+
+  const removeSelectedImage = () => {
+    setSelectedImage(null)
+    setImagePreview(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
   }
 
   if (loading) {
@@ -521,14 +650,83 @@ export default function TestimonialsManagement() {
               fullWidth
               required
             />
-            <TextField
-              label="Photo URL (Optional)"
-              value={formData.photo_url}
-              onChange={(e) => setFormData({ ...formData, photo_url: e.target.value })}
-              fullWidth
-              placeholder="https://example.com/client-photo.jpg"
-              helperText="Leave empty to use initials avatar"
-            />
+            {/* Image Upload Section */}
+            <Box sx={{ mb: 2 }}>
+              <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, color: '#1E377C' }}>
+                Client Photo (Optional)
+              </Typography>
+              
+              {/* Image Preview */}
+              {imagePreview && (
+                <Box sx={{ mb: 2, textAlign: 'center' }}>
+                  <Box sx={{ position: 'relative', display: 'inline-block' }}>
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      style={{
+                        width: 120,
+                        height: 120,
+                        objectFit: 'cover',
+                        borderRadius: '50%',
+                        border: '2px solid #e0e0e0'
+                      }}
+                    />
+                    <IconButton
+                      size="small"
+                      onClick={removeSelectedImage}
+                      sx={{
+                        position: 'absolute',
+                        top: -8,
+                        right: -8,
+                        bgcolor: 'error.main',
+                        color: 'white',
+                        '&:hover': { bgcolor: 'error.dark' }
+                      }}
+                    >
+                      <CloseIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                </Box>
+              )}
+
+              {/* Upload Button */}
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageSelect}
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                />
+                <Button
+                  variant="outlined"
+                  startIcon={uploadingImage ? <CircularProgress size={20} /> : <UploadIcon />}
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingImage}
+                  sx={{
+                    borderColor: '#417F73',
+                    color: '#417F73',
+                    '&:hover': {
+                      borderColor: '#1E377C',
+                      color: '#1E377C',
+                      bgcolor: 'rgba(30, 55, 124, 0.05)'
+                    }
+                  }}
+                >
+                  {uploadingImage ? 'Uploading...' : 'Upload Photo'}
+                </Button>
+                
+                {selectedImage && (
+                  <Typography variant="caption" color="text.secondary">
+                    {selectedImage.name}
+                  </Typography>
+                )}
+              </Box>
+              
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+                Supported formats: JPG, PNG, GIF. Max size: 5MB. Leave empty to use initials avatar.
+              </Typography>
+            </Box>
             <FormControl fullWidth>
               <InputLabel>State/Province</InputLabel>
               <Select

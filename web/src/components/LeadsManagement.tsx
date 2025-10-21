@@ -199,6 +199,8 @@ export default function LeadsManagement() {
   const [editLeadId, setEditLeadId] = useState<string | null>(null)
   const [editStatus, setEditStatus] = useState<'new' | 'contacted' | 'converted'>('new')
   const [editNotes, setEditNotes] = useState('')
+  const [editDateOption, setEditDateOption] = useState<'today' | 'yesterday' | 'custom'>('today')
+  const [editCustomDate, setEditCustomDate] = useState<string>('')
   
   // Delete modal states
   const [deleteLeadId, setDeleteLeadId] = useState<string | null>(null)
@@ -342,14 +344,14 @@ export default function LeadsManagement() {
       filtered = filtered.filter(lead => lead.status === statusFilter)
     }
 
-    // Filter by date range
-    const dateRange = getDateRange()
-    if (dateRange.start && dateRange.end) {
-      filtered = filtered.filter(lead => {
-        const leadDate = new Date(lead.created_at)
-        return leadDate >= dateRange.start! && leadDate <= dateRange.end!
-      })
-    }
+    // Filter by date range - DISABLED to show all leads
+    // const dateRange = getDateRange()
+    // if (dateRange.start && dateRange.end) {
+    //   filtered = filtered.filter(lead => {
+    //     const leadDate = new Date(lead.created_at)
+    //     return leadDate >= dateRange.start! && leadDate <= dateRange.end!
+    //   })
+    // }
 
     return filtered
   }
@@ -868,8 +870,8 @@ export default function LeadsManagement() {
                 </FormControl>
               )}
 
-              {/* Date Range Filter */}
-              <FormControl size="small" sx={{ minWidth: 140 }}>
+              {/* Date Range Filter - HIDDEN as requested */}
+              {/* <FormControl size="small" sx={{ minWidth: 140 }}>
                 <InputLabel>Date Range</InputLabel>
                 <Select
                   value={dateRangeType}
@@ -881,46 +883,38 @@ export default function LeadsManagement() {
                 </Select>
               </FormControl>
 
-              {/* Preset Date Range Options */}
-              {dateRangeType === 'preset' && (
-                <FormControl size="small" sx={{ minWidth: 120 }}>
-                  <InputLabel>Period</InputLabel>
-                  <Select
-                    value={presetDateRange}
-                    label="Period"
-                    onChange={(e) => setPresetDateRange(e.target.value)}
-                  >
-                    <MenuItem value="today">Today</MenuItem>
-                    <MenuItem value="yesterday">Yesterday</MenuItem>
-                    <MenuItem value="thisWeek">This Week</MenuItem>
-                    <MenuItem value="thisMonth">This Month</MenuItem>
-                  </Select>
-                </FormControl>
-              )}
+              <FormControl size="small" sx={{ minWidth: 120 }}>
+                <InputLabel>Period</InputLabel>
+                <Select
+                  value={presetDateRange}
+                  label="Period"
+                  onChange={(e) => setPresetDateRange(e.target.value)}
+                >
+                  <MenuItem value="today">Today</MenuItem>
+                  <MenuItem value="yesterday">Yesterday</MenuItem>
+                  <MenuItem value="thisWeek">This Week</MenuItem>
+                  <MenuItem value="thisMonth">This Month</MenuItem>
+                </Select>
+              </FormControl>
 
-              {/* Custom Date Range Inputs */}
-              {dateRangeType === 'custom' && (
-                <>
-                  <TextField
-                    size="small"
-                    type="date"
-                    label="Start Date"
-                    value={customStartDate}
-                    onChange={(e) => setCustomStartDate(e.target.value)}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ minWidth: 140 }}
-                  />
-                  <TextField
-                    size="small"
-                    type="date"
-                    label="End Date"
-                    value={customEndDate}
-                    onChange={(e) => setCustomEndDate(e.target.value)}
-                    InputLabelProps={{ shrink: true }}
-                    sx={{ minWidth: 140 }}
-                  />
-                </>
-              )}
+              <TextField
+                size="small"
+                type="date"
+                label="Start Date"
+                value={customStartDate}
+                onChange={(e) => setCustomStartDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                sx={{ minWidth: 140 }}
+              />
+              <TextField
+                size="small"
+                type="date"
+                label="End Date"
+                value={customEndDate}
+                onChange={(e) => setCustomEndDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                sx={{ minWidth: 140 }}
+              /> */}
             </Box>
           </Box>
         </Box>
@@ -1268,6 +1262,33 @@ export default function LeadsManagement() {
                 <MenuItem value="converted">Converted</MenuItem>
               </Select>
             </FormControl>
+
+            {/* Date Selection for Status Change */}
+            <FormControl fullWidth sx={{ mb: 3 }}>
+              <InputLabel>Date</InputLabel>
+              <Select
+                value={editDateOption}
+                label="Date"
+                onChange={(e) => setEditDateOption(e.target.value)}
+              >
+                <MenuItem value="today">Today</MenuItem>
+                <MenuItem value="yesterday">Yesterday</MenuItem>
+                <MenuItem value="custom">Custom Date</MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* Custom Date Input */}
+            {editDateOption === 'custom' && (
+              <TextField
+                fullWidth
+                type="date"
+                label="Select Date"
+                value={editCustomDate}
+                onChange={(e) => setEditCustomDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                sx={{ mb: 3 }}
+              />
+            )}
             
             <TextField
               fullWidth
