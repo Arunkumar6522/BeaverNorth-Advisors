@@ -19,19 +19,48 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { to, serviceSid } = JSON.parse(event.body);
+    const { to } = JSON.parse(event.body);
     
     console.log('📱 Sending OTP to:', to);
     
-    // Demo mode - return success without actually sending
-    console.log('🔧 Demo mode: Simulating OTP send to', to);
+    const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
+    const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
+    const twilioServiceSid = process.env.TWILIO_SERVICE_SID;
+    
+    // Check if Twilio credentials are properly configured
+    if (!twilioAccountSid || !twilioAuthToken || !twilioServiceSid || 
+        !twilioAccountSid.startsWith('AC') || !twilioServiceSid.startsWith('VA')) {
+      console.log('🔧 Demo mode: Twilio credentials not properly configured');
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify({
+          success: true,
+          message: 'OTP sent successfully (Demo Mode)',
+          verificationSid: 'demo_verification_sid',
+          to: to
+        })
+      };
+    }
+    
+    // Initialize Twilio client with real credentials
+    const client = twilio(twilioAccountSid, twilioAuthToken);
+    
+    // Send verification SMS
+    const verification = await client.verify.v2
+      .services(twilioServiceSid)
+      .verifications
+      .create({ to: to, channel: 'sms' });
+    
+    console.log('✅ Twilio verification sent:', verification.sid);
+    
     return {
       statusCode: 200,
       headers,
       body: JSON.stringify({
         success: true,
-        message: 'OTP sent successfully (Demo Mode)',
-        verificationSid: 'demo_verification_sid',
+        message: 'OTP sent successfully',
+        verificationSid: verification.sid,
         to: to
       })
     };
