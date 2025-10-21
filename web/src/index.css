@@ -120,18 +120,28 @@ button:focus-visible {
 }
 
 /* Tablet styles */
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 1199px) {
   body {
     font-size: 16px;
+    overflow-x: hidden;
   }
   
-  /* Show desktop nav, hide mobile */
-  .desktop-nav {
-    display: flex !important;
+  /* Prevent horizontal overflow on tablets */
+  * {
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
-  .mobile-nav {
-    display: none !important;
+  /* Tablet container adjustments */
+  .MuiContainer-root {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+  
+  /* Ensure navigation doesn't overflow */
+  .MuiBox-root {
+    max-width: 100%;
+    overflow-x: hidden;
   }
 }
 

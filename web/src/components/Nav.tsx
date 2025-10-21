@@ -43,7 +43,6 @@ export default function Nav() {
   const navItems = [
     { label: t('nav_home'), path: '/' },
     { label: t('nav_about'), path: '/about' },
-    { label: t('nav_services'), path: '/services' },
     { label: 'Blog', path: '/blog' },
     { label: 'Testimonial', path: '/testimonial' },
     { label: t('nav_contact'), path: '/contact' }
@@ -98,7 +97,7 @@ export default function Nav() {
               { xs: 1.5, md: 0.5 } : 
               { xs: 1.5, md: 2.5 },
             transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            px: { xs: 1.5, sm: 2, md: 3, lg: 4, xl: 6 },
+            px: { xs: 1.5, sm: 2, md: 4, lg: 6 },
             maxWidth: '1400px',
             mx: 'auto'
           }}>
@@ -109,13 +108,13 @@ export default function Nav() {
                 fontWeight: 800,
                 color: '#1E377C',
                 fontSize: scrollDirection === 'down' && isScrolled ? 
-                  { xs: '1.2rem', sm: '1.3rem', md: '0.8rem', lg: '0.9rem' } : 
-                  { xs: '1.2rem', sm: '1.3rem', md: '1.2rem', lg: '1.5rem' },
+                  { xs: '1.2rem', sm: '1.3rem', md: '0.9rem' } : 
+                  { xs: '1.2rem', sm: '1.3rem', md: '1.5rem' },
                 lineHeight: 1.2,
                 letterSpacing: '-0.02em',
                 transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                 transform: scrollDirection === 'down' && isScrolled ? 
-                  { xs: 'scale(1)', md: 'scale(0.8)', lg: 'scale(0.85)' } : 
+                  { xs: 'scale(1)', md: 'scale(0.85)' } : 
                   'scale(1)'
               }}>
                 BeaverNorth Advisors
@@ -124,9 +123,9 @@ export default function Nav() {
 
             {/* Desktop Navigation - Clean & Simple */}
             <Box sx={{ 
-              display: { xs: 'none', md: 'flex' },
+              display: { xs: 'none', lg: 'flex' },
               alignItems: 'center',
-              gap: { md: 0.5, lg: 0.5, xl: 1 },
+              gap: { lg: 0.5, xl: 1 },
               flex: 1,
               justifyContent: 'center',
               minWidth: 0
@@ -137,9 +136,9 @@ export default function Nav() {
                   to={item.path}
                   style={({ isActive }) => ({
                     textDecoration: 'none',
-                    padding: scrollDirection === 'down' && isScrolled ? '6px 8px' : '8px 12px',
+                    padding: scrollDirection === 'down' && isScrolled ? '8px 12px' : '10px 16px',
                     borderRadius: 8,
-                    fontSize: scrollDirection === 'down' && isScrolled ? '13px' : '14px',
+                    fontSize: scrollDirection === 'down' && isScrolled ? '14px' : '15px',
                     fontWeight: 600,
                     color: isActive ? '#1E377C' : '#417F73',
                     transition: 'all 0.2s ease',
@@ -165,9 +164,9 @@ export default function Nav() {
 
             {/* Language Switcher - Right Side */}
             <Box sx={{
-              display: { xs: 'none', md: 'flex' },
+              display: { xs: 'none', lg: 'flex' },
               alignItems: 'center',
-              gap: { md: 0.5, lg: 0.5, xl: 0.5 },
+              gap: { lg: 0.5, xl: 0.5 },
               flexShrink: 0
             }}>
                 <Language sx={{ fontSize: 18, color: '#6B7280' }} />
@@ -194,7 +193,7 @@ export default function Nav() {
 
             {/* Mobile Menu Button */}
             <Box sx={{ 
-              display: { xs: 'flex', md: 'none' }, 
+              display: { xs: 'flex', lg: 'none' }, 
               alignItems: 'center', 
               gap: { xs: 1, sm: 1.5 }
             }}>
