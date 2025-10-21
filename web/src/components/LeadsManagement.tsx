@@ -640,6 +640,37 @@ export default function LeadsManagement() {
           'new'
         )
         
+        // Send email notification
+        try {
+          const emailResponse = await fetch('/api/send-lead-notification', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              leadData: {
+                name: leadData.name,
+                email: addLeadForm.email,
+                phone: addLeadForm.phone,
+                dob: addLeadForm.dob,
+                province: addLeadForm.province,
+                smokingStatus: addLeadForm.smokingStatus,
+                insuranceProduct: addLeadForm.insuranceProduct,
+                notes: addLeadForm.notes
+              }
+            })
+          })
+          
+          if (emailResponse.ok) {
+            const emailResult = await emailResponse.json()
+            console.log('✅ Lead notification email sent:', emailResult.message)
+          } else {
+            console.log('⚠️ Failed to send lead notification email')
+          }
+        } catch (emailError) {
+          console.error('❌ Email notification error:', emailError)
+        }
+        
         // Reset form and close modal
         setAddLeadForm({
           firstName: '',

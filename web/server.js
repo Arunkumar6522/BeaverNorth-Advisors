@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import twilio from 'twilio';
+import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -61,12 +62,35 @@ const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID || 'YOUR_TWILIO_ACCOUNT_
 const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN || 'YOUR_TWILIO_AUTH_TOKEN';
 const twilioServiceSid = process.env.TWILIO_SERVICE_SID || 'YOUR_TWILIO_SERVICE_SID';
 
+// Email configuration
+const emailUser = process.env.EMAIL_USER || 'YOUR_EMAIL_USER';
+const emailPass = process.env.EMAIL_PASS || 'YOUR_EMAIL_PASS';
+const emailHost = process.env.EMAIL_HOST || 'smtp.gmail.com';
+const emailPort = process.env.EMAIL_PORT || 587;
+
 // Initialize Twilio client (with demo mode support)
 let client = null;
 if (twilioAccountSid && twilioAccountSid.startsWith('AC') && twilioAuthToken && twilioAuthToken !== 'demo_auth_token') {
   client = twilio(twilioAccountSid, twilioAuthToken);
 } else {
   console.log('🔧 Running in demo mode - Twilio client not initialized');
+}
+
+// Initialize Email transporter (with demo mode support)
+let emailTransporter = null;
+if (emailUser && emailUser !== 'YOUR_EMAIL_USER' && emailPass && emailPass !== 'YOUR_EMAIL_PASS') {
+  emailTransporter = nodemailer.createTransporter({
+    host: emailHost,
+    port: emailPort,
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: emailUser,
+      pass: emailPass
+    }
+  });
+  console.log('📧 Email transporter initialized');
+} else {
+  console.log('🔧 Running in demo mode - Email transporter not initialized');
 }
 
 // API Routes
@@ -179,6 +203,109 @@ app.post('/api/verify-otp', otpRateLimit, async (req, res) => {
   }
 });
 
+// Email notification endpoint for new leads
+app.post('/api/send-lead-notification', async (req, res) => {
+  try {
+    const { leadData } = req.body;
+    
+    console.log('📧 Sending lead notification email for:', leadData.name);
+    
+    // Demo mode - return success without actually sending
+    if (!emailTransporter) {
+      console.log('🔧 Demo mode: Simulating lead notification email');
+      res.json({
+        success: true,
+        message: 'Lead notification email sent successfully (Demo Mode)',
+        leadName: leadData.name
+      });
+      return;
+    }
+    
+    // Create email template
+    const emailTemplate = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>New Lead Notification</title>
+        <style>
+          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: #1E377C; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; }
+          .content { background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px; }
+          .lead-info { background: white; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #417F73; }
+          .label { font-weight: bold; color: #1E377C; }
+          .value { margin-left: 10px; }
+          .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h2>🎯 New Lead Notification</h2>
+            <p>BeaverNorth Advisors</p>
+          </div>
+          <div class="content">
+            <p><strong>Hello Team,</strong></p>
+            <p>A new lead has been submitted through the website. Here are the details:</p>
+            
+            <div class="lead-info">
+              <div><span class="label">Name:</span><span class="value">${leadData.name || 'Not provided'}</span></div>
+              <div><span class="label">Email:</span><span class="value">${leadData.email || 'Not provided'}</span></div>
+              <div><span class="label">Phone:</span><span class="value">${leadData.phone || 'Not provided'}</span></div>
+              <div><span class="label">Date of Birth:</span><span class="value">${leadData.dob || 'Not provided'}</span></div>
+              <div><span class="label">Province:</span><span class="value">${leadData.province || 'Not provided'}</span></div>
+              <div><span class="label">Smoking Status:</span><span class="value">${leadData.smokingStatus || 'Not provided'}</span></div>
+              <div><span class="label">Insurance Product:</span><span class="value">${leadData.insuranceProduct || 'Not provided'}</span></div>
+              ${leadData.notes ? `<div><span class="label">Notes:</span><span class="value">${leadData.notes}</span></div>` : ''}
+            </div>
+            
+            <p><strong>Next Steps:</strong></p>
+            <ul>
+              <li>Review the lead details in the admin dashboard</li>
+              <li>Contact the lead within 24 hours</li>
+              <li>Update the lead status as you progress</li>
+            </ul>
+            
+            <div class="footer">
+              <p>This email was automatically generated by the BeaverNorth Advisors lead management system.</p>
+              <p>Timestamp: ${new Date().toLocaleString()}</p>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+    
+    // Send email
+    const mailOptions = {
+      from: emailUser,
+      to: 'beavernorthadvisors@gmail.com',
+      subject: `🎯 New Lead: ${leadData.name || 'Unknown'} - ${leadData.insuranceProduct || 'Insurance Inquiry'}`,
+      html: emailTemplate
+    };
+    
+    const info = await emailTransporter.sendMail(mailOptions);
+    console.log('✅ Lead notification email sent:', info.messageId);
+    
+    res.json({
+      success: true,
+      message: 'Lead notification email sent successfully',
+      messageId: info.messageId,
+      leadName: leadData.name
+    });
+    
+  } catch (error) {
+    console.error('❌ Email notification error:', error);
+    
+    res.status(500).json({
+      success: false,
+      message: `Failed to send lead notification email: ${error.message}`,
+      error: error.message
+    });
+  }
+});
+
 // Blog RSS feed proxy endpoint
 app.get('/api/blog-posts', async (req, res) => {
   try {
@@ -279,5 +406,6 @@ app.listen(port, () => {
   console.log(`🚀 Twilio API Server running on port ${port}`);
   console.log(`📡 Twilio Account SID: ${twilioAccountSid}`);
   console.log(`🔒 Twilio configured: ${!!twilioAuthToken && twilioAuthToken !== '[AuthToken]'}`);
+  console.log(`📧 Email configured: ${!!emailTransporter}`);
   console.log(`📁 Serving React app on http://localhost:${port}`);
 });

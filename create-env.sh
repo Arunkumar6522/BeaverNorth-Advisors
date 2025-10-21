@@ -14,6 +14,12 @@ VITE_TWILIO_AUTH_TOKEN=demo_auth_token
 VITE_TWILIO_SERVICE_SID=demo_service_sid
 VITE_TWILIO_PHONE_NUMBER=demo_phone_number
 VITE_TWILIO_IS_DEMO_MODE=true
+
+# Email Configuration (Demo Mode)
+EMAIL_USER=demo_email_user
+EMAIL_PASS=demo_email_password
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
 EOF
 
 echo "✅ .env file created successfully!"
