@@ -44,7 +44,7 @@ const generalRateLimit = rateLimit({
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
     ? ['https://beavernorth.netlify.app', 'https://www.beavernorth.netlify.app'] // Production domains
-    : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000', 'http://localhost:3001'], // Development domains
+    : ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:3000', 'http://localhost:3001'], // Development domains
   credentials: true,
   optionsSuccessStatus: 200
 };
