@@ -1,5 +1,3 @@
-const { JSDOM } = require('jsdom');
-
 exports.handler = async (event, context) => {
   // Enable CORS
   const headers = {
@@ -31,60 +29,65 @@ exports.handler = async (event, context) => {
     const xmlText = await response.text()
     console.log('📊 RSS feed fetched, length:', xmlText.length)
     
-    // Parse XML to extract blog posts
-    const dom = new JSDOM(xmlText, { contentType: 'text/xml' })
-    const xmlDoc = dom.window.document
-    const items = xmlDoc.querySelectorAll('item')
+    // Simple XML parsing without external dependencies
+    const blogPosts = []
     
-    console.log('📊 Found', items.length, 'blog posts')
+    // Extract items using regex since we can't use JSDOM
+    const itemRegex = /<item>([\s\S]*?)<\/item>/g
+    let match
     
-    const blogPosts = Array.from(items).map((item) => {
-      const title = item.querySelector('title')?.textContent || 'Untitled'
-      const description = item.querySelector('description')?.textContent || ''
-      const link = item.querySelector('link')?.textContent || ''
-      const pubDate = item.querySelector('pubDate')?.textContent || ''
-      const author = item.querySelector('author')?.textContent || 'BeaverNorth Advisors'
+    while ((match = itemRegex.exec(xmlText)) !== null) {
+      const itemContent = match[1]
       
-      // Extract thumbnail image - try media:thumbnail first, then img from content
+      // Extract title
+      const titleMatch = itemContent.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>|<title>(.*?)<\/title>/)
+      const title = titleMatch ? (titleMatch[1] || titleMatch[2]) : 'Untitled'
+      
+      // Extract description
+      const descMatch = itemContent.match(/<description><!\[CDATA\[([\s\S]*?)\]\]><\/description>|<description>([\s\S]*?)<\/description>/)
+      const description = descMatch ? (descMatch[1] || descMatch[2]) : ''
+      
+      // Extract link
+      const linkMatch = itemContent.match(/<link>(.*?)<\/link>/)
+      const link = linkMatch ? linkMatch[1] : ''
+      
+      // Extract pubDate
+      const pubDateMatch = itemContent.match(/<pubDate>(.*?)<\/pubDate>/)
+      const pubDate = pubDateMatch ? pubDateMatch[1] : ''
+      
+      // Extract author
+      const authorMatch = itemContent.match(/<author>(.*?)<\/author>/)
+      const author = authorMatch ? authorMatch[1] : 'BeaverNorth Advisors'
+      
+      // Extract thumbnail from description
       let thumbnail = null
-      
-      // Try media:thumbnail first
-      const mediaThumbnail = item.querySelector('media\\:thumbnail')
-      if (mediaThumbnail) {
-        thumbnail = mediaThumbnail.getAttribute('url')
-      }
-      
-      // If no media thumbnail, try to extract from description
-      if (!thumbnail && description) {
+      if (description) {
         const imgMatch = description.match(/<img[^>]+src="([^"]+)"/i)
         if (imgMatch) {
           thumbnail = imgMatch[1]
         }
       }
       
-      // Extract categories from RSS feed
+      // Extract categories
       const categories = []
-      const categoryElements = item.querySelectorAll('category')
-      categoryElements.forEach(cat => {
-        const categoryText = cat.textContent?.trim()
-        if (categoryText) {
-          categories.push(categoryText)
-        }
-      })
+      const categoryRegex = /<category>(.*?)<\/category>/g
+      let categoryMatch
+      while ((categoryMatch = categoryRegex.exec(itemContent)) !== null) {
+        categories.push(categoryMatch[1])
+      }
       
-      // If no categories found, use default
       const finalCategories = categories.length > 0 ? categories : ['Blog Post']
       
-      return {
-        title,
-        content: description,
-        link,
-        pubDate,
-        author,
+      blogPosts.push({
+        title: title.trim(),
+        content: description.trim(),
+        link: link.trim(),
+        pubDate: pubDate.trim(),
+        author: author.trim(),
         thumbnail,
         categories: finalCategories
-      }
-    })
+      })
+    }
     
     console.log('✅ Returning', blogPosts.length, 'blog posts')
     
