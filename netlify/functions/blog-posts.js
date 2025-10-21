@@ -19,8 +19,7 @@ exports.handler = async (event, context) => {
   try {
     console.log('🔍 Fetching blog posts from RSS feed...')
     
-    // Use node-fetch or native fetch
-    const fetch = (await import('node-fetch')).default;
+    // Use native fetch (available in Node.js 18+)
     const rssUrl = 'https://beavernorth.blogspot.com/feeds/posts/default?alt=rss'
     const response = await fetch(rssUrl)
     
