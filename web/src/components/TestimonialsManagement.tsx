@@ -341,8 +341,15 @@ export default function TestimonialsManagement() {
       const timestamp = Date.now()
       const fileName = `testimonial-${timestamp}-${file.name}`
       
+      console.log('📸 Uploading file:', fileName, 'Size:', file.size, 'Type:', file.type)
+      
       // Upload to Supabase Storage
       const { supabase } = await import('../lib/supabase')
+      
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser()
+      console.log('👤 Current user:', user ? 'Authenticated' : 'Not authenticated')
+      
       const { data, error } = await supabase.storage
         .from('testimonials')
         .upload(fileName, file, {
@@ -351,22 +358,42 @@ export default function TestimonialsManagement() {
         })
 
       if (error) {
-        console.error('Upload error:', error)
-        return null
+        console.error('❌ Upload error details:', error)
+        console.error('❌ Error message:', error.message)
+        console.error('❌ Error status:', error.statusCode)
+        
+        // Fallback: Convert to base64 for temporary storage
+        console.log('🔄 Falling back to base64 storage...')
+        return await convertToBase64(file)
       }
+
+      console.log('✅ Upload successful:', data)
 
       // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('testimonials')
         .getPublicUrl(fileName)
 
+      console.log('🔗 Public URL:', publicUrl)
       return publicUrl
     } catch (error) {
-      console.error('Upload error:', error)
-      return null
+      console.error('❌ Upload error:', error)
+      
+      // Fallback: Convert to base64 for temporary storage
+      console.log('🔄 Falling back to base64 storage...')
+      return await convertToBase64(file)
     } finally {
       setUploadingImage(false)
     }
+  }
+
+  const convertToBase64 = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
   }
 
   const removeSelectedImage = () => {

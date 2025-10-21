@@ -43,5 +43,18 @@ FOR DELETE USING (
   AND auth.role() = 'authenticated'
 );
 
+-- Alternative: Create a more permissive policy for testing (remove this in production)
+-- This allows any authenticated user to upload to testimonials bucket
+CREATE POLICY "Allow authenticated uploads to testimonials" ON storage.objects
+FOR ALL USING (
+  bucket_id = 'testimonials' 
+  AND auth.role() = 'authenticated'
+);
+
 -- Verify the bucket was created
 SELECT * FROM storage.buckets WHERE id = 'testimonials';
+
+-- Check existing policies
+SELECT schemaname, tablename, policyname, permissive, roles, cmd, qual 
+FROM pg_policies 
+WHERE tablename = 'objects' AND policyname LIKE '%testimonials%';
