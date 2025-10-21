@@ -7,6 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { JSDOM } from 'jsdom';
 import rateLimit from 'express-rate-limit';
+import { createClient } from '@supabase/supabase-js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -74,6 +75,17 @@ if (twilioAccountSid && twilioAccountSid.startsWith('AC') && twilioAuthToken && 
   client = twilio(twilioAccountSid, twilioAuthToken);
 } else {
   console.log('🔧 Running in demo mode - Twilio client not initialized');
+}
+
+// Initialize Supabase client
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+let supabase = null;
+if (supabaseUrl && supabaseKey) {
+  supabase = createClient(supabaseUrl, supabaseKey);
+  console.log('🗄️ Supabase client initialized');
+} else {
+  console.log('🔧 Supabase not configured');
 }
 
 // Initialize Email transporter (with demo mode support)
@@ -277,23 +289,45 @@ app.post('/api/send-lead-notification', async (req, res) => {
       </html>
     `;
     
-    // Send email
+    // Get email recipients from database
+    let emailRecipients = ['beavernorthadvisors@gmail.com']; // Default fallback
+    try {
+      if (supabase) {
+        const { data: emailSettings, error } = await supabase
+          .from('notification_settings')
+          .select('value')
+          .eq('type', 'email')
+          .eq('is_active', true);
+        
+        if (!error && emailSettings && emailSettings.length > 0) {
+          emailRecipients = emailSettings.map(setting => setting.value);
+          console.log('📧 Sending email to configured recipients:', emailRecipients);
+        } else {
+          console.log('⚠️ No active email addresses found in database, using default');
+        }
+      }
+    } catch (dbError) {
+      console.log('⚠️ Could not fetch email recipients from database:', dbError.message);
+    }
+    
+    // Send email to all recipients
     const mailOptions = {
       from: emailUser,
-      to: 'beavernorthadvisors@gmail.com',
+      to: emailRecipients.join(', '),
       subject: `🎯 New Lead: ${leadData.name || 'Unknown'} - ${leadData.insuranceProduct || 'Insurance Inquiry'}`,
       html: emailTemplate
     };
     
     try {
       const info = await emailTransporter.sendMail(mailOptions);
-      console.log('✅ Lead notification email sent:', info.messageId);
+      console.log('✅ Lead notification email sent to:', emailRecipients);
       
       res.json({
         success: true,
-        message: 'Lead notification email sent successfully',
+        message: `Lead notification email sent successfully to ${emailRecipients.length} recipients`,
         messageId: info.messageId,
-        leadName: leadData.name
+        leadName: leadData.name,
+        recipients: emailRecipients
       });
     } catch (emailError) {
       console.error('❌ Email sending failed, running in demo mode:', emailError.message);
@@ -301,8 +335,9 @@ app.post('/api/send-lead-notification', async (req, res) => {
       // If email fails due to credentials, return demo mode response
       res.json({
         success: true,
-        message: 'Lead notification email sent successfully (Demo Mode - Invalid Credentials)',
+        message: `Lead notification email sent successfully (Demo Mode - Invalid Credentials) to ${emailRecipients.length} recipients`,
         leadName: leadData.name,
+        recipients: emailRecipients,
         demoMode: true
       });
     }
@@ -348,15 +383,46 @@ Province: ${leadData.province || 'Not provided'}
 Please check the dashboard for full details.
 Time: ${new Date().toLocaleString()}`;
     
-    // For demo purposes, we'll simulate sending to configured numbers
-    // In production, this would fetch phone numbers from the database
-    console.log('📱 SMS message prepared:', smsMessage);
+    // Get phone numbers from database
+    let phoneNumbers = [];
+    try {
+      if (supabase) {
+        const { data: phoneSettings, error } = await supabase
+          .from('notification_settings')
+          .select('value')
+          .eq('type', 'phone')
+          .eq('is_active', true);
+        
+        if (!error && phoneSettings && phoneSettings.length > 0) {
+          phoneNumbers = phoneSettings.map(setting => setting.value);
+          console.log('📱 Sending SMS to configured numbers:', phoneNumbers);
+        } else {
+          console.log('⚠️ No active phone numbers found in database');
+          return res.json({
+            success: true,
+            message: 'No active phone numbers configured for SMS notifications',
+            leadName: leadData.name
+          });
+        }
+      }
+    } catch (dbError) {
+      console.log('⚠️ Could not fetch phone numbers from database:', dbError.message);
+      return res.json({
+        success: true,
+        message: 'Could not fetch phone numbers for SMS notifications',
+        leadName: leadData.name
+      });
+    }
     
-    // Simulate successful SMS sending
+    console.log('📱 SMS message prepared:', smsMessage);
+    console.log('📱 Will send to phone numbers:', phoneNumbers);
+    
+    // Simulate successful SMS sending (in demo mode)
     res.json({
       success: true,
-      message: 'Lead notification SMS sent successfully (Demo Mode)',
+      message: `Lead notification SMS sent successfully (Demo Mode) to ${phoneNumbers.length} numbers`,
       leadName: leadData.name,
+      recipients: phoneNumbers,
       smsMessage: smsMessage
     });
     
