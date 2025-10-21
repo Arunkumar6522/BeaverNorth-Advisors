@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
 import { Box, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material'
@@ -9,6 +9,37 @@ export default function Nav() {
   const location = useLocation()
   const { locale, setLocale, t } = useI18n()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [scrollDirection, setScrollDirection] = useState<'up' | 'down'>('up')
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  // Scroll detection
+  useEffect(() => {
+    let lastScrollY = window.scrollY
+    let ticking = false
+
+    const updateScrollDirection = () => {
+      const scrollY = window.scrollY
+      const direction = scrollY > lastScrollY ? 'down' : 'up'
+      
+      if (direction !== scrollDirection && Math.abs(scrollY - lastScrollY) > 10) {
+        setScrollDirection(direction)
+      }
+      
+      setIsScrolled(scrollY > 50)
+      lastScrollY = scrollY > 0 ? scrollY : 0
+      ticking = false
+    }
+
+    const onScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(updateScrollDirection)
+        ticking = true
+      }
+    }
+
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [scrollDirection])
 
   const navItems = [
     { label: t('nav_home'), path: '/' },
@@ -26,13 +57,33 @@ export default function Nav() {
         position: 'sticky',
         top: 0,
         zIndex: 1000,
-        bgcolor: 'rgba(255,255,255,0.98)',
-        backdropFilter: 'blur(10px)',
-        borderBottom: '1px solid rgba(105,131,204,0.1)',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
-        width: '100%',
-        left: 0,
-        right: 0
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        // Scroll Up: Full width, normal styling
+        ...(scrollDirection === 'up' && {
+          width: '100%',
+          left: 0,
+          right: 0,
+          bgcolor: 'rgba(255,255,255,0.98)',
+          backdropFilter: 'blur(10px)',
+          borderBottom: '1px solid rgba(105,131,204,0.1)',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.02)',
+          borderRadius: 0
+        }),
+        // Scroll Down: Rounded rectangle, centered
+        ...(scrollDirection === 'down' && isScrolled && {
+          width: 'auto',
+          maxWidth: '90%',
+          left: '50%',
+          right: 'auto',
+          transform: 'translateX(-50%)',
+          bgcolor: 'rgba(255,255,255,0.95)',
+          backdropFilter: 'blur(15px)',
+          borderBottom: 'none',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+          borderRadius: '24px',
+          border: '1px solid rgba(255,255,255,0.2)',
+          marginTop: '16px'
+        })
       }}>
         <Box sx={{
           display: 'flex',
@@ -41,7 +92,8 @@ export default function Nav() {
           maxWidth: '1400px',
           mx: 'auto',
           px: { xs: 3, md: 6 },
-          py: 2.5
+          py: scrollDirection === 'down' && isScrolled ? 1.5 : 2.5,
+          transition: 'all 0.3s ease'
         }}>
           
           {/* Logo - Bigger with Company Name */}
@@ -50,8 +102,9 @@ export default function Nav() {
               src={bnaLogo} 
               alt="BeaverNorth Advisors" 
               style={{ 
-                height: '70px',
-                width: 'auto'
+                height: scrollDirection === 'down' && isScrolled ? '50px' : '70px',
+                width: 'auto',
+                transition: 'height 0.3s ease'
               }} 
               onError={(e) => {
                 console.error('Logo failed to load:', e.currentTarget.src)

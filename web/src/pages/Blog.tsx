@@ -77,8 +77,8 @@ export default function Blog() {
           
           if (data.success && data.posts && data.posts.length > 0) {
             console.log('✅ Success with server endpoint:', data.posts.length, 'posts')
-            console.log('📊 Posts with thumbnails:', data.posts.filter(p => p.thumbnail).length)
-            console.log('🖼️ Thumbnail URLs:', data.posts.map(p => ({ title: p.title, thumbnail: p.thumbnail })))
+            console.log('📊 Posts with thumbnails:', data.posts.filter((p: BlogPost) => p.thumbnail).length)
+            console.log('🖼️ Thumbnail URLs:', data.posts.map((p: BlogPost) => ({ title: p.title, thumbnail: p.thumbnail })))
             setPosts(data.posts)
           } else {
             console.log('❌ No posts found in server response')

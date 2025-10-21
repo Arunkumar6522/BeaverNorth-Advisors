@@ -17,8 +17,7 @@ import {
 import { 
   CalendarToday, 
   Person, 
-  ArrowBack, 
-  OpenInNew,
+  ArrowBack,
   Home
 } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
