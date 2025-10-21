@@ -281,16 +281,19 @@ export default function App() {
                       }}>
                         <CardContent sx={{ p: 4 }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-                            <Avatar sx={{ 
-                              bgcolor: '#417F73', 
-                              color: 'white',
-                              width: 48,
-                              height: 48,
-                              mr: 2,
-                              fontSize: '1.1rem',
-                              fontWeight: 600
-                            }}>
-                              {getInitials(testimonial.name)}
+                            <Avatar 
+                              src={testimonial.photo_url || undefined}
+                              sx={{ 
+                                bgcolor: testimonial.photo_url ? 'transparent' : '#417F73', 
+                                color: testimonial.photo_url ? 'inherit' : 'white',
+                                width: 48,
+                                height: 48,
+                                mr: 2,
+                                fontSize: '1.1rem',
+                                fontWeight: 600
+                              }}
+                            >
+                              {!testimonial.photo_url && getInitials(testimonial.name)}
                             </Avatar>
                             <Box>
                               <Typography variant="h6" sx={{ fontWeight: 600, color: '#1E377C', mb: 0.5 }}>

@@ -183,15 +183,16 @@ export default function Testimonials() {
                           gap: 2
                         }}>
                           <Avatar 
+                            src={testimonial.photo_url || undefined}
                             sx={{ 
-                              bgcolor: 'rgb(255, 203, 5)', 
-                              color: '#1E377C',
+                              bgcolor: testimonial.photo_url ? 'transparent' : 'rgb(255, 203, 5)', 
+                              color: testimonial.photo_url ? 'inherit' : '#1E377C',
                               fontWeight: 600,
                               width: 56,
                               height: 56
                             }}
                           >
-                            {getInitials(testimonial.name)}
+                            {!testimonial.photo_url && getInitials(testimonial.name)}
                           </Avatar>
                           <Box sx={{ textAlign: 'center' }}>
                             <Typography 

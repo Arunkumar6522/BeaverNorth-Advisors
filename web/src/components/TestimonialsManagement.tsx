@@ -59,7 +59,8 @@ export default function TestimonialsManagement() {
     state: '',
     testimony: '',
     service: '',
-    status: 'active' as 'active' | 'inactive'
+    status: 'active' as 'active' | 'inactive',
+    photo_url: '' // Optional photo URL
   })
 
   useEffect(() => {
@@ -399,8 +400,16 @@ export default function TestimonialsManagement() {
               <TableRow key={testimonial.id} hover>
                 <TableCell>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Avatar sx={{ bgcolor: 'rgb(255, 203, 5)', color: '#1E377C', width: 40, height: 40 }}>
-                      {getInitials(testimonial.name)}
+                    <Avatar 
+                      src={testimonial.photo_url || undefined}
+                      sx={{ 
+                        bgcolor: testimonial.photo_url ? 'transparent' : 'rgb(255, 203, 5)', 
+                        color: testimonial.photo_url ? 'inherit' : '#1E377C', 
+                        width: 40, 
+                        height: 40 
+                      }}
+                    >
+                      {!testimonial.photo_url && getInitials(testimonial.name)}
                     </Avatar>
                     <Box>
                       <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1E377C' }}>
@@ -511,6 +520,14 @@ export default function TestimonialsManagement() {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               fullWidth
               required
+            />
+            <TextField
+              label="Photo URL (Optional)"
+              value={formData.photo_url}
+              onChange={(e) => setFormData({ ...formData, photo_url: e.target.value })}
+              fullWidth
+              placeholder="https://example.com/client-photo.jpg"
+              helperText="Leave empty to use initials avatar"
             />
             <FormControl fullWidth>
               <InputLabel>State/Province</InputLabel>

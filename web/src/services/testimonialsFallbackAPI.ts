@@ -10,6 +10,7 @@ export interface Testimonial {
   testimony: string
   service: string
   status: 'active' | 'inactive'
+  photo_url?: string // Optional photo URL
   created_at: string
   updated_at: string
   created_by: string
