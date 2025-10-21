@@ -111,7 +111,7 @@ Time: ${new Date().toLocaleString()}`;
         // Use Twilio's messaging API (not verification service)
         const message = await client.messages.create({
           body: smsMessage,
-          from: process.env.TWILIO_PHONE_NUMBER || '+15551234567', // Use your Twilio phone number
+          from: process.env.VITE_TWILIO_FROM_NUMBER || '+15551234567', // Use your Twilio phone number
           to: phoneNumber
         });
         
