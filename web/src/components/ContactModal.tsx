@@ -317,6 +317,44 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         console.error('❌ Error logging activity:', logError)
       }
       
+      // Send email notification
+      try {
+        console.log('📧 Sending lead notification email...')
+        
+        // Use Netlify function in production, local server in development
+        const apiUrl = window.location.hostname === 'localhost' 
+          ? 'http://localhost:3001/api/send-lead-notification'
+          : '/.netlify/functions/send-lead-notification'
+        
+        const emailResponse = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            leadData: {
+              name: leadData.name,
+              email: leadData.email,
+              phone: leadData.phone,
+              dob: leadData.dob,
+              province: leadData.province,
+              smokingStatus: leadData.smoking_status,
+              insuranceProduct: leadData.insurance_product,
+              notes: ''
+            }
+          })
+        })
+        
+        if (emailResponse.ok) {
+          const emailResult = await emailResponse.json()
+          console.log('✅ Lead notification email sent:', emailResult.message)
+        } else {
+          console.log('⚠️ Failed to send lead notification email')
+        }
+      } catch (emailError) {
+        console.error('❌ Email notification error:', emailError)
+      }
+      
     } catch (error: any) {
       console.error('🔴 Error saving lead - Full details:', error)
       throw error
