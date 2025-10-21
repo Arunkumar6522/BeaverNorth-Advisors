@@ -45,6 +45,12 @@ export default function Blog() {
       : cleanContent
   }
 
+  // Helper function to extract first image from content
+  const getFirstImage = (content: string) => {
+    const imgMatch = content.match(/<img[^>]+src="([^"]+)"/i)
+    return imgMatch ? imgMatch[1] : null
+  }
+
   // Helper function to extract post ID from Blogger URL
   const getPostId = (link: string) => {
     // Extract post ID from Blogger URL
@@ -234,10 +240,10 @@ export default function Blog() {
                       onClick={() => handlePostClick(post)}
                     >
                       {/* Thumbnail Image */}
-                      {post.thumbnail ? (
+                      {(post.thumbnail || getFirstImage(post.content)) ? (
                         <Box
                           component="img"
-                          src={post.thumbnail}
+                          src={post.thumbnail || getFirstImage(post.content)}
                           alt={post.title}
                           sx={{
                             width: '100%',
@@ -246,11 +252,11 @@ export default function Blog() {
                             borderRadius: '8px 8px 0 0'
                           }}
                           onError={(e) => {
-                            console.log('❌ Image failed to load:', post.thumbnail)
+                            console.log('❌ Image failed to load:', post.thumbnail || getFirstImage(post.content))
                             e.currentTarget.style.display = 'none'
                           }}
                           onLoad={() => {
-                            console.log('✅ Image loaded successfully:', post.thumbnail)
+                            console.log('✅ Image loaded successfully:', post.thumbnail || getFirstImage(post.content))
                           }}
                         />
                       ) : (
