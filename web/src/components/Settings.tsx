@@ -132,23 +132,41 @@ export default function Settings() {
   const handleEditSetting = (setting: NotificationSetting) => {
     setEditingSetting(setting);
     
+    console.log('🔍 Editing setting:', setting);
+    
     // Parse phone number if it's a phone setting
     if (setting.type === 'phone' && setting.value.startsWith('+')) {
-      const match = setting.value.match(/^(\+\d{1,4})(\d+)$/);
-      if (match) {
-        setFormData({
-          type: setting.type,
-          value: setting.value,
-          countryCode: match[1],
-          phoneNumber: match[2],
-          is_active: setting.is_active
-        });
-      } else {
+      // Try different regex patterns to match country codes
+      const patterns = [
+        /^(\+\d{1,4})(\d+)$/,  // Standard pattern
+        /^(\+\d{1,3})(\d+)$/,  // Shorter country codes
+        /^(\+\d{2})(\d+)$/     // 2-digit country codes
+      ];
+      
+      let parsed = false;
+      for (const pattern of patterns) {
+        const match = setting.value.match(pattern);
+        if (match) {
+          console.log('📱 Parsed phone:', { countryCode: match[1], phoneNumber: match[2] });
+          setFormData({
+            type: setting.type,
+            value: setting.value,
+            countryCode: match[1],
+            phoneNumber: match[2],
+            is_active: setting.is_active
+          });
+          parsed = true;
+          break;
+        }
+      }
+      
+      if (!parsed) {
+        console.log('⚠️ Could not parse phone number, using default');
         setFormData({
           type: setting.type,
           value: setting.value,
           countryCode: '+1',
-          phoneNumber: setting.value,
+          phoneNumber: setting.value.replace(/^\+/, ''),
           is_active: setting.is_active
         });
       }
@@ -167,6 +185,8 @@ export default function Settings() {
   // Handle save setting
   const handleSaveSetting = async () => {
     try {
+      console.log('💾 Saving setting with formData:', formData);
+      
       // Prepare the final value based on type
       let finalValue = '';
       
@@ -204,6 +224,7 @@ export default function Settings() {
         
         // Combine country code and phone number
         finalValue = `${formData.countryCode}${formData.phoneNumber.replace(/\D/g, '')}`;
+        console.log('📱 Final phone value:', finalValue);
         
         // Validate phone format
         const phoneRegex = /^\+[1-9]\d{1,14}$/;
@@ -216,6 +237,8 @@ export default function Settings() {
           return;
         }
       }
+
+      console.log('✅ Final value to save:', finalValue);
 
       if (editingSetting) {
         // Update existing setting
