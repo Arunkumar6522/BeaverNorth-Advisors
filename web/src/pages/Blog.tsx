@@ -46,9 +46,9 @@ export default function Blog() {
   }
 
   // Helper function to extract first image from content
-  const getFirstImage = (content: string) => {
+  const getFirstImage = (content: string): string | undefined => {
     const imgMatch = content.match(/<img[^>]+src="([^"]+)"/i)
-    return imgMatch ? imgMatch[1] : null
+    return imgMatch ? imgMatch[1] : undefined
   }
 
   // Helper function to extract post ID from Blogger URL
@@ -243,7 +243,7 @@ export default function Blog() {
                       {(post.thumbnail || getFirstImage(post.content)) ? (
                         <Box
                           component="img"
-                          src={post.thumbnail || getFirstImage(post.content)}
+                          src={post.thumbnail || getFirstImage(post.content) || ''}
                           alt={post.title}
                           sx={{
                             width: '100%',
