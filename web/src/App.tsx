@@ -43,7 +43,7 @@ export default function App() {
   useEffect(() => {
     const fetchRecentBlogs = async () => {
       try {
-        const apiUrl = import.meta.env.DEV ? 'http://localhost:3001/api/blog-posts' : '/.netlify/functions/blog-posts'
+        const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001/api/blog-posts' : '/.netlify/functions/blog-posts'
         const response = await fetch(apiUrl)
         if (response.ok) {
           const data = await response.json()

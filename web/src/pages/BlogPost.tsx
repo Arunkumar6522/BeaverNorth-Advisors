@@ -55,7 +55,7 @@ export default function BlogPost() {
         console.log('🔍 Fetching blog post...')
         
         // Use Netlify function for production, local server for development
-        const apiUrl = import.meta.env.DEV ? 'http://localhost:3001/api/blog-posts' : '/.netlify/functions/blog-posts'
+        const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001/api/blog-posts' : '/.netlify/functions/blog-posts'
         const response = await fetch(apiUrl)
         console.log('📡 Response status:', response.status)
         
