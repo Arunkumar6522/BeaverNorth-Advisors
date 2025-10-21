@@ -19,7 +19,8 @@ import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
   Logout as LogoutIcon,
-  RateReview as TestimonialsIcon
+  RateReview as TestimonialsIcon,
+  Settings as SettingsIcon
 } from '@mui/icons-material'
 
 interface MuiSidebarProps {
@@ -48,6 +49,7 @@ export default function MuiSidebar({
     { id: 'dashboard', name: 'Dashboard', icon: DashboardIcon, tooltip: 'Dashboard Overview' },
     { id: 'leads', name: 'Leads Management', icon: PeopleIcon, tooltip: 'Manage Leads' },
     { id: 'testimonials', name: 'Testimonials', icon: TestimonialsIcon, tooltip: 'Manage Testimonials' },
+    { id: 'settings', name: 'Settings', icon: SettingsIcon, tooltip: 'Notification Settings' },
     { id: 'deleted', name: 'Deleted Leads', icon: DeletedLeadsIcon, tooltip: 'View Deleted Leads' }
   ]
 

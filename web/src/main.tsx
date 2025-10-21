@@ -61,6 +61,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: '/settings',
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '/deleted',
     element: (
       <ProtectedRoute>

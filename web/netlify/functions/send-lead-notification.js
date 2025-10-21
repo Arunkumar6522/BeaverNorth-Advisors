@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const { createClient } = require('@supabase/supabase-js');
 
 exports.handler = async (event, context) => {
   // Enable CORS
@@ -113,10 +114,34 @@ exports.handler = async (event, context) => {
     // Send email
     const mailOptions = {
       from: emailUser,
-      to: 'beavernorthadvisors@gmail.com',
+      to: 'beavernorthadvisors@gmail.com', // Default fallback
       subject: `🎯 New Lead: ${leadData.name || 'Unknown'} - ${leadData.insuranceProduct || 'Insurance Inquiry'}`,
       html: emailTemplate
     };
+    
+    // Try to get additional email recipients from database
+    try {
+      const supabaseUrl = process.env.VITE_SUPABASE_URL;
+      const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY;
+      
+      if (supabaseUrl && supabaseKey) {
+        const supabase = createClient(supabaseUrl, supabaseKey);
+        
+        const { data: emailSettings, error } = await supabase
+          .from('notification_settings')
+          .select('value')
+          .eq('type', 'email')
+          .eq('is_active', true);
+        
+        if (!error && emailSettings && emailSettings.length > 0) {
+          const emailRecipients = emailSettings.map(setting => setting.value);
+          mailOptions.to = emailRecipients.join(', ');
+          console.log('📧 Sending to multiple recipients:', emailRecipients);
+        }
+      }
+    } catch (dbError) {
+      console.log('⚠️ Could not fetch additional email recipients, using default:', dbError.message);
+    }
     
     const info = await transporter.sendMail(mailOptions);
     console.log('✅ Lead notification email sent:', info.messageId);

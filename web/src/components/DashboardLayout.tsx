@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Box, Drawer, CssBaseline, AppBar, Toolbar, Typography, List, ListItem, ListItemButton, ListItemIcon, ListItemText, IconButton, useMediaQuery, useTheme, Avatar, Divider, Button } from '@mui/material'
-import { Dashboard as DashboardIcon, People as LeadsIcon, Delete as DeletedIcon, Menu as MenuIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Logout as LogoutIcon, History as LogsIcon, RateReview as TestimonialsIcon } from '@mui/icons-material'
+import { Dashboard as DashboardIcon, People as LeadsIcon, Delete as DeletedIcon, Menu as MenuIcon, ChevronLeft as ChevronLeftIcon, ChevronRight as ChevronRightIcon, Logout as LogoutIcon, History as LogsIcon, RateReview as TestimonialsIcon, Settings as SettingsIcon } from '@mui/icons-material'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { customAuth } from '../lib/custom-auth'
 import { useSessionRefresh } from '../hooks/useSessionRefresh'
@@ -8,6 +8,7 @@ import bnaLogo from '../assets/bna logo.png'
 import DashboardOverview from './Dashboard'
 import LeadsManagement from './LeadsManagement'
 import TestimonialsManagement from './TestimonialsManagement'
+import Settings from './Settings'
 import DeletedLeads from './DeletedLeads'
 import Logs from './Logs'
 import NotificationDropdown from './NotificationDropdown'
@@ -25,6 +26,7 @@ const modules: Module[] = [
   { id: 'dashboard', name: 'Dashboard', icon: <DashboardIcon /> },
   { id: 'leads', name: 'Leads Management', icon: <LeadsIcon /> },
   { id: 'testimonials', name: 'Testimonials', icon: <TestimonialsIcon /> },
+  { id: 'settings', name: 'Settings', icon: <SettingsIcon /> },
   { id: 'deleted', name: 'Deleted Leads', icon: <DeletedIcon /> },
   { id: 'logs', name: 'Logs', icon: <LogsIcon /> }
 ]
@@ -49,6 +51,8 @@ export default function DashboardLayout() {
       setSelectedModule('leads')
     } else if (path === '/testimonials') {
       setSelectedModule('testimonials')
+    } else if (path === '/settings') {
+      setSelectedModule('settings')
     } else if (path === '/deleted') {
       setSelectedModule('deleted')
     } else if (path === '/logs') {
@@ -66,6 +70,8 @@ export default function DashboardLayout() {
       navigate('/leads')
     } else if (moduleId === 'testimonials') {
       navigate('/testimonials')
+    } else if (moduleId === 'settings') {
+      navigate('/settings')
     } else if (moduleId === 'deleted') {
       navigate('/deleted')
     } else if (moduleId === 'logs') {
@@ -108,6 +114,8 @@ export default function DashboardLayout() {
         return <LeadsManagement />
       case 'testimonials':
         return <TestimonialsManagement />
+      case 'settings':
+        return <Settings />
       case 'deleted':
         return <DeletedLeads />
       case 'logs':
