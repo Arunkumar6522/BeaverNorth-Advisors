@@ -306,6 +306,59 @@ app.post('/api/send-lead-notification', async (req, res) => {
   }
 });
 
+// SMS notification endpoint for new leads
+app.post('/api/send-lead-sms', async (req, res) => {
+  try {
+    const { leadData } = req.body;
+    
+    console.log('📱 Sending lead notification SMS for:', leadData.name);
+    
+    // Demo mode - return success without actually sending
+    if (!twilioClient) {
+      console.log('🔧 Demo mode: Simulating lead notification SMS');
+      res.json({
+        success: true,
+        message: 'Lead notification SMS sent successfully (Demo Mode)',
+        leadName: leadData.name
+      });
+      return;
+    }
+    
+    // Create SMS message
+    const smsMessage = `🎯 NEW LEAD ALERT - BeaverNorth Advisors
+
+Name: ${leadData.name || 'Not provided'}
+Email: ${leadData.email || 'Not provided'}
+Phone: ${leadData.phone || 'Not provided'}
+Insurance: ${leadData.insuranceProduct || 'Not provided'}
+Province: ${leadData.province || 'Not provided'}
+
+Please check the dashboard for full details.
+Time: ${new Date().toLocaleString()}`;
+    
+    // For demo purposes, we'll simulate sending to configured numbers
+    // In production, this would fetch phone numbers from the database
+    console.log('📱 SMS message prepared:', smsMessage);
+    
+    // Simulate successful SMS sending
+    res.json({
+      success: true,
+      message: 'Lead notification SMS sent successfully (Demo Mode)',
+      leadName: leadData.name,
+      smsMessage: smsMessage
+    });
+    
+  } catch (error) {
+    console.error('❌ SMS notification error:', error);
+    
+    res.status(500).json({
+      success: false,
+      message: `Failed to send lead notification SMS: ${error.message}`,
+      error: error.message
+    });
+  }
+});
+
 // Blog RSS feed proxy endpoint
 app.get('/api/blog-posts', async (req, res) => {
   try {

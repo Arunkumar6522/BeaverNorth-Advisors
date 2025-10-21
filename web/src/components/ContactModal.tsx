@@ -322,11 +322,11 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         console.log('📧 Sending lead notification email...')
         
         // Use Netlify function in production, local server in development
-        const apiUrl = window.location.hostname === 'localhost' 
+        const emailApiUrl = window.location.hostname === 'localhost' 
           ? 'http://localhost:3001/api/send-lead-notification'
           : '/.netlify/functions/send-lead-notification'
         
-        const emailResponse = await fetch(apiUrl, {
+        const emailResponse = await fetch(emailApiUrl, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -353,6 +353,44 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         }
       } catch (emailError) {
         console.error('❌ Email notification error:', emailError)
+      }
+
+      // Send SMS notification
+      try {
+        console.log('📱 Sending lead notification SMS...')
+        
+        // Use Netlify function in production, local server in development
+        const smsApiUrl = window.location.hostname === 'localhost' 
+          ? 'http://localhost:3001/api/send-lead-sms'
+          : '/.netlify/functions/send-lead-sms'
+        
+        const smsResponse = await fetch(smsApiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            leadData: {
+              name: leadData.name,
+              email: leadData.email,
+              phone: leadData.phone,
+              dob: leadData.dob,
+              province: leadData.province,
+              smokingStatus: leadData.smoking_status,
+              insuranceProduct: leadData.insurance_product,
+              notes: ''
+            }
+          })
+        })
+        
+        if (smsResponse.ok) {
+          const smsResult = await smsResponse.json()
+          console.log('✅ Lead notification SMS sent:', smsResult.message)
+        } else {
+          console.log('⚠️ Failed to send lead notification SMS')
+        }
+      } catch (smsError) {
+        console.error('❌ SMS notification error:', smsError)
       }
       
     } catch (error: any) {
