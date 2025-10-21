@@ -53,7 +53,12 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
       console.log('📱 Sending OTP to:', phoneNumber)
       
-      const response = await fetch('http://localhost:3001/api/send-otp', {
+      // Use Netlify function in production, local server in development
+      const apiUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3001/api/send-otp'
+        : '/.netlify/functions/send-otp'
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +124,12 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       
       console.log('🔐 Verifying OTP before submission...')
       
-      const verifyResponse = await fetch('http://localhost:3001/api/verify-otp', {
+      // Use Netlify function in production, local server in development
+      const apiUrl = window.location.hostname === 'localhost' 
+        ? 'http://localhost:3001/api/verify-otp'
+        : '/.netlify/functions/verify-otp'
+      
+      const verifyResponse = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
