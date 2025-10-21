@@ -136,27 +136,60 @@ export default function Settings() {
     
     // Parse phone number if it's a phone setting
     if (setting.type === 'phone' && setting.value.startsWith('+')) {
-      // Try different regex patterns to match country codes
-      const patterns = [
-        /^(\+\d{1,4})(\d+)$/,  // Standard pattern
-        /^(\+\d{1,3})(\d+)$/,  // Shorter country codes
-        /^(\+\d{2})(\d+)$/     // 2-digit country codes
+      // Known country codes with their lengths
+      const countryCodes = [
+        { code: '+1', length: 2 },    // US/Canada
+        { code: '+91', length: 3 },  // India
+        { code: '+44', length: 3 },  // UK
+        { code: '+33', length: 3 },  // France
+        { code: '+49', length: 3 },  // Germany
+        { code: '+81', length: 3 },  // Japan
+        { code: '+86', length: 3 },  // China
+        { code: '+61', length: 3 },  // Australia
+        { code: '+55', length: 3 },  // Brazil
+        { code: '+52', length: 3 }, // Mexico
       ];
       
       let parsed = false;
-      for (const pattern of patterns) {
-        const match = setting.value.match(pattern);
-        if (match) {
-          console.log('📱 Parsed phone:', { countryCode: match[1], phoneNumber: match[2] });
+      
+      // Try to match known country codes first
+      for (const country of countryCodes) {
+        if (setting.value.startsWith(country.code)) {
+          const phoneNumber = setting.value.substring(country.code.length);
+          console.log('📱 Parsed phone:', { countryCode: country.code, phoneNumber });
           setFormData({
             type: setting.type,
             value: setting.value,
-            countryCode: match[1],
-            phoneNumber: match[2],
+            countryCode: country.code,
+            phoneNumber: phoneNumber,
             is_active: setting.is_active
           });
           parsed = true;
           break;
+        }
+      }
+      
+      // If no known country code matches, try generic parsing
+      if (!parsed) {
+        const patterns = [
+          /^(\+\d{1,3})(\d+)$/,  // 1-3 digit country codes
+          /^(\+\d{2})(\d+)$/      // 2-digit country codes
+        ];
+        
+        for (const pattern of patterns) {
+          const match = setting.value.match(pattern);
+          if (match) {
+            console.log('📱 Generic parsed phone:', { countryCode: match[1], phoneNumber: match[2] });
+            setFormData({
+              type: setting.type,
+              value: setting.value,
+              countryCode: match[1],
+              phoneNumber: match[2],
+              is_active: setting.is_active
+            });
+            parsed = true;
+            break;
+          }
         }
       }
       
