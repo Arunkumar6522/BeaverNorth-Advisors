@@ -79,7 +79,7 @@ if (twilioAccountSid && twilioAccountSid.startsWith('AC') && twilioAuthToken && 
 // Initialize Email transporter (with demo mode support)
 let emailTransporter = null;
 if (emailUser && emailUser !== 'YOUR_EMAIL_USER' && emailPass && emailPass !== 'YOUR_EMAIL_PASS') {
-  emailTransporter = nodemailer.createTransporter({
+  emailTransporter = nodemailer.createTransport({
     host: emailHost,
     port: emailPort,
     secure: false, // true for 465, false for other ports
