@@ -642,7 +642,12 @@ export default function LeadsManagement() {
         
         // Send email notification
         try {
-          const emailResponse = await fetch('/api/send-lead-notification', {
+          // Use Netlify function in production, local server in development
+          const apiUrl = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3001/api/send-lead-notification'
+            : '/.netlify/functions/send-lead-notification'
+          
+          const emailResponse = await fetch(apiUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

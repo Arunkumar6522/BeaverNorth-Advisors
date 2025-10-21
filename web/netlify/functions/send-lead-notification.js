@@ -44,7 +44,7 @@ exports.handler = async (event, context) => {
     }
     
     // Initialize email transporter
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       host: emailHost,
       port: emailPort,
       secure: false, // true for 465, false for other ports
