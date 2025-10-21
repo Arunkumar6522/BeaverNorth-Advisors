@@ -149,7 +149,7 @@ export default function BlogPost() {
     <PublicLayout>
       <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
         {/* Breadcrumbs */}
-        <Container maxWidth="lg" sx={{ pt: 4 }}>
+        <Container maxWidth="lg" sx={{ pt: 4, px: { xs: 2, sm: 3, md: 4 } }}>
           <Breadcrumbs sx={{ mb: 2 }}>
             <MuiLink
               component="button"
@@ -174,7 +174,7 @@ export default function BlogPost() {
         </Container>
 
         {/* Blog Post Content */}
-        <Container maxWidth="md" sx={{ py: 4 }}>
+        <Container maxWidth="md" sx={{ py: { xs: 2, sm: 3, md: 4 }, px: { xs: 1, sm: 2, md: 3 } }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

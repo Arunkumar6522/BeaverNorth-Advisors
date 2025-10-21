@@ -121,7 +121,7 @@ export default function Blog() {
           py: 8,
           borderBottom: '1px solid rgba(105,131,204,0.1)'
         }}>
-          <Container maxWidth="lg">
+          <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -156,7 +156,7 @@ export default function Blog() {
         </Box>
 
         {/* Blog Posts Section */}
-        <Container maxWidth="lg" sx={{ py: 6 }}>
+        <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4, md: 6 }, px: { xs: 1, sm: 2, md: 3 } }}>
           {loading && (
             <Box sx={{ textAlign: 'center', py: 8 }}>
               <Typography variant="h6" color="text.secondary">
