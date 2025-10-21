@@ -100,17 +100,38 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    console.log('🚀 Form submission started!')
+    console.log('📋 Form data:', formData)
+    console.log('🔢 OTP sent status:', otpSent)
+    console.log('🔢 OTP code in form:', formData.otp)
+    console.log('📧 Email:', formData.email)
+    console.log('📱 Phone:', formData.phone)
+    console.log('❌ Validation errors:', validationErrors)
+    
+    // Check submit button conditions
+    const isDisabled = loading || !formData.email || !formData.phone || !otpSent || !formData.otp || !!validationErrors.email
+    console.log('🚫 Submit button disabled?', isDisabled)
+    console.log('   - loading:', loading)
+    console.log('   - !email:', !formData.email)
+    console.log('   - !phone:', !formData.phone)
+    console.log('   - !otpSent:', !otpSent)
+    console.log('   - !otp:', !formData.otp)
+    console.log('   - email error:', !!validationErrors.email)
+    
     setLoading(true)
     
     try {
       // First verify OTP before saving to database
+      console.log('🔄 About to call verifyOTPAndSubmit...')
       await verifyOTPAndSubmit()
       
       // Redirect to success page
+      console.log('✅ OTP verification successful, redirecting...')
       onClose()
       navigate('/success')
     } catch (error: any) {
       const errorMessage = error?.message || 'Unknown error occurred'
+      console.error('❌ Form submission failed:', error)
       alert(`❌ Submission Failed\n\nError: ${errorMessage}\n\nPlease check the console for more details or try again.`)
       console.error('🔴 Submission error details:', error)
       setLoading(false)
