@@ -58,8 +58,6 @@ export default function About() {
   ]
 
   const stats = [
-    { number: '500+', label: 'Families Helped', icon: <People sx={{ fontSize: 32, color: 'rgb(255, 203, 5)' }} /> },
-    { number: '15+', label: 'Years Experience', icon: <Star sx={{ fontSize: 32, color: 'rgb(255, 203, 5)' }} /> },
     { number: '100%', label: 'Free Consultation', icon: <CheckCircle sx={{ fontSize: 32, color: 'rgb(255, 203, 5)' }} /> },
     { number: 'LLQP', label: 'Licensed Professional', icon: <Security sx={{ fontSize: 32, color: 'rgb(255, 203, 5)' }} /> }
   ]
@@ -130,9 +128,9 @@ export default function About() {
           borderBottom: '1px solid rgba(0,0,0,0.05)'
         }}>
           <Container maxWidth="lg">
-            <Grid container spacing={4}>
+            <Grid container spacing={4} justifyContent="center">
               {stats.map((stat, index) => (
-                <Grid size={{ xs: 6, md: 3 }} key={index}>
+                <Grid size={{ xs: 6, md: 4 }} key={index}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

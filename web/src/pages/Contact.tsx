@@ -1,22 +1,10 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
-import { Box, Container, Typography, Button, TextField, FormControl, InputLabel, Select, MenuItem, Card } from '@mui/material'
+import { Box, Container, Typography, Card, Button } from '@mui/material'
 import { Phone, Email, LocationOn, Schedule } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
 import ContactModal from '../components/ContactModal'
 
 export default function Contact() {
-  const [submitted, setSubmitted] = useState(false)
-  const [openModal, setOpenModal] = useState(false)
-
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    const form = new FormData(e.currentTarget)
-    console.log('Contact enquiry', Object.fromEntries(form.entries()))
-    setSubmitted(true)
-    e.currentTarget.reset()
-  }
-
   return (
     <PublicLayout>
       <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
@@ -61,230 +49,94 @@ export default function Contact() {
         </Box>
 
         <Container maxWidth="lg" sx={{ py: 8 }}>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {/* Contact Information */}
-            <Box sx={{ flex: '1 1 300px', minWidth: '300px' }}>
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6 }}
-              >
-                <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1E377C', mb: 4 }}>
-                  Get In Touch
-                </Typography>
-                
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  <Card sx={{ p: 3, borderRadius: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Box sx={{ bgcolor: 'rgba(255, 203, 5, 0.1)', p: 1.5, borderRadius: '50%', display: 'flex', color: 'rgb(255, 203, 5)' }}>
-                        <Phone />
-                      </Box>
-                      <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C' }}>Phone</Typography>
-                        <Typography variant="body2" color="text.secondary">+1 (555) 123-4567</Typography>
-                        <Typography variant="body2" color="text.secondary">+91 98765 43210</Typography>
-                      </Box>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: 'repeat(2, 1fr)' }, gap: 4 }}>
+                <Card sx={{ p: 4, borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.05)' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
+                    <Box sx={{ bgcolor: 'rgba(255, 203, 5, 0.1)', p: 2, borderRadius: '50%', display: 'flex', color: 'rgb(255, 203, 5)' }}>
+                      <Phone sx={{ fontSize: 32 }} />
                     </Box>
-                  </Card>
-
-                  <Card sx={{ p: 3, borderRadius: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Box sx={{ bgcolor: 'rgba(255, 203, 5, 0.1)', p: 1.5, borderRadius: '50%', display: 'flex', color: 'rgb(255, 203, 5)' }}>
-                        <Email />
-                      </Box>
-                      <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C' }}>Email</Typography>
-                        <Typography variant="body2" color="text.secondary">info@beavernorth.com</Typography>
-                        <Typography variant="body2" color="text.secondary">support@beavernorth.com</Typography>
-                      </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C', mb: 1 }}>Phone</Typography>
+                      <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+                        (438) 763-5120
+                      </Typography>
                     </Box>
-                  </Card>
+                  </Box>
+                </Card>
 
-                  <Card sx={{ p: 3, borderRadius: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Box sx={{ bgcolor: 'rgba(255, 203, 5, 0.1)', p: 1.5, borderRadius: '50%', display: 'flex', color: 'rgb(255, 203, 5)' }}>
-                        <LocationOn />
-                      </Box>
-                      <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C' }}>Office</Typography>
-                        <Typography variant="body2" color="text.secondary">123 Financial District</Typography>
-                        <Typography variant="body2" color="text.secondary">Toronto, ON M5H 2N2</Typography>
-                      </Box>
+                <Card sx={{ p: 4, borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.05)' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
+                    <Box sx={{ bgcolor: 'rgba(255, 203, 5, 0.1)', p: 2, borderRadius: '50%', display: 'flex', color: 'rgb(255, 203, 5)' }}>
+                      <Email sx={{ fontSize: 32 }} />
                     </Box>
-                  </Card>
-
-                  <Card sx={{ p: 3, borderRadius: 2, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Box sx={{ bgcolor: 'rgba(255, 203, 5, 0.1)', p: 1.5, borderRadius: '50%', display: 'flex', color: 'rgb(255, 203, 5)' }}>
-                        <Schedule />
-                      </Box>
-                      <Box>
-                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C' }}>Hours</Typography>
-                        <Typography variant="body2" color="text.secondary">Mon-Fri: 9:00 AM - 6:00 PM</Typography>
-                        <Typography variant="body2" color="text.secondary">Sat: 10:00 AM - 4:00 PM</Typography>
-                      </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C', mb: 1 }}>Email</Typography>
+                      <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
+                        info@beavernorth.ca
+                      </Typography>
                     </Box>
-                  </Card>
-                </Box>
-              </motion.div>
-            </Box>
+                  </Box>
+                </Card>
 
-            {/* Contact Form */}
-            <Box sx={{ flex: '2 1 400px', minWidth: '400px' }}>
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-              >
-                <Card sx={{ p: 4, borderRadius: 2, boxShadow: '0 8px 24px rgba(0,0,0,0.1)' }}>
-                  <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#1E377C', mb: 3 }}>
-                    Send Us a Message
-                  </Typography>
-                  
-                  {submitted ? (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      style={{
-                        background: 'rgba(76, 175, 80, 0.1)',
-                        padding: 24,
-                        borderRadius: 12,
-                        border: '1px solid rgba(76, 175, 80, 0.3)',
-                        textAlign: 'center'
-                      }}
-                    >
-                      <Typography variant="h6" sx={{ color: '#4CAF50', fontWeight: 'bold', mb: 1 }}>
-                        Thank You!
+                <Card sx={{ p: 4, borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.05)' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
+                    <Box sx={{ bgcolor: 'rgba(255, 203, 5, 0.1)', p: 2, borderRadius: '50%', display: 'flex', color: 'rgb(255, 203, 5)' }}>
+                      <LocationOn sx={{ fontSize: 32 }} />
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C', mb: 1 }}>Location</Typography>
+                      <Typography variant="body1" color="text.secondary" sx={{ mb: 0.5 }}>
+                        Montreal, Canada
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Card>
+
+                <Card sx={{ p: 4, borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.05)' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 3 }}>
+                    <Box sx={{ bgcolor: 'rgba(255, 203, 5, 0.1)', p: 2, borderRadius: '50%', display: 'flex', color: 'rgb(255, 203, 5)' }}>
+                      <Schedule sx={{ fontSize: 32 }} />
+                    </Box>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C', mb: 1 }}>Business Hours</Typography>
+                      <Typography variant="body1" color="text.secondary" sx={{ mb: 0.5 }}>
+                        Mon-Fri: 9:00 AM - 6:00 PM EST
                       </Typography>
                       <Typography variant="body1" color="text.secondary">
-                        Your enquiry was received. We'll get back to you within one business day.
+                        Sat: 10:00 AM - 4:00 PM EST
                       </Typography>
-                    </motion.div>
-                  ) : (
-                    <Box component="form" onSubmit={onSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                      <TextField
-                        name="name"
-                        label="Full Name"
-                        required
-                        placeholder="Jane Doe"
-                        fullWidth
-                        variant="outlined"
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            borderRadius: 2
-                          }
-                        }}
-                      />
-                      
-                      <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-                        <TextField
-                          name="email"
-                          type="email"
-                          label="Email"
-                          required
-                          placeholder="you@example.com"
-                          variant="outlined"
-                          sx={{ 
-                            flex: '1 1 200px', 
-                            minWidth: '200px',
-                            '& .MuiOutlinedInput-root': {
-                              borderRadius: 2
-                            }
-                          }}
-                        />
-                        <TextField
-                          name="phone"
-                          label="Phone"
-                          placeholder="(555) 123-4567"
-                          variant="outlined"
-                          sx={{ 
-                            flex: '1 1 200px', 
-                            minWidth: '200px',
-                            '& .MuiOutlinedInput-root': {
-                              borderRadius: 2
-                            }
-                          }}
-                        />
-                      </Box>
-
-                      <FormControl fullWidth>
-                        <InputLabel>Coverage Interest</InputLabel>
-                        <Select
-                          name="coverage"
-                          label="Coverage Interest"
-                          sx={{
-                            borderRadius: 2
-                          }}
-                        >
-                          <MenuItem value="Life">Life Insurance</MenuItem>
-                          <MenuItem value="Health">Health Insurance</MenuItem>
-                          <MenuItem value="Home">Home Insurance</MenuItem>
-                          <MenuItem value="Auto">Auto Insurance</MenuItem>
-                          <MenuItem value="Business">Business Insurance</MenuItem>
-                          <MenuItem value="Investment">Investment Planning</MenuItem>
-                          <MenuItem value="Retirement">Retirement Planning</MenuItem>
-                          <MenuItem value="Financial">Financial Planning</MenuItem>
-                        </Select>
-                      </FormControl>
-
-                      <TextField
-                        name="message"
-                        label="Message"
-                        multiline
-                        rows={5}
-                        placeholder="Tell us briefly about your needs"
-                        fullWidth
-                        variant="outlined"
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            borderRadius: 2
-                          }
-                        }}
-                      />
-
-                      <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          sx={{
-                            bgcolor: 'rgb(255, 203, 5)',
-                            color: '#1E377C',
-                            fontWeight: 'bold',
-                            px: 4,
-                            py: 1.5,
-                            borderRadius: 2,
-                            '&:hover': {
-                              bgcolor: 'rgb(255, 193, 0)',
-                            }
-                          }}
-                        >
-                          Send Message
-                        </Button>
-                        
-                        <Button
-                          variant="outlined"
-                          onClick={() => setOpenModal(true)}
-                          sx={{
-                            borderColor: 'rgb(255, 203, 5)',
-                            color: '#1E377C',
-                            fontWeight: 'bold',
-                            px: 4,
-                            py: 1.5,
-                            borderRadius: 2,
-                            '&:hover': {
-                              borderColor: 'rgb(255, 193, 0)',
-                              bgcolor: 'rgba(255, 203, 5, 0.1)'
-                            }
-                          }}
-                        >
-                          Get Quote
-                        </Button>
-                      </Box>
                     </Box>
-                  )}
+                  </Box>
                 </Card>
-              </motion.div>
-            </Box>
+              </Box>
+            </motion.div>
+
+            {/* Map Embed */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+            >
+              <Card sx={{ borderRadius: 3, boxShadow: '0 8px 32px rgba(0,0,0,0.08)', border: '1px solid rgba(0,0,0,0.05)', overflow: 'hidden' }}>
+                <Box sx={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
+                  <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2795.305629668466!2d-73.5707!3d45.5017!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDXCsDMwJzA2LjEiTiA3M8KwMzQnMTQuNyJX!5e0!3m2!1sen!2sca!4v1234567890&hl=en&q=Montreal+Canada"
+                    width="100%"
+                    height="100%"
+                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </Box>
+              </Card>
+            </motion.div>
           </Box>
         </Container>
 
@@ -305,7 +157,8 @@ export default function Contact() {
                 sx={{
                   fontWeight: 700,
                   color: 'white',
-                  mb: 3
+                  mb: 3,
+                  fontSize: { xs: '2rem', md: '2.5rem' }
                 }}
               >
                 Ready to Secure Your Future?
@@ -326,33 +179,29 @@ export default function Contact() {
               >
                 <Button
                   variant="contained"
-                  onClick={() => setOpenModal(true)}
+                  href="tel:+14387635120"
                   sx={{
                     bgcolor: 'rgb(255, 203, 5)',
                     color: '#1E377C',
                     px: 4,
                     py: 2,
-                    borderRadius: 2,
-                    fontWeight: 600,
+                    borderRadius: 3,
+                    fontWeight: 700,
                     fontSize: '1.1rem',
+                    textTransform: 'none',
                     '&:hover': {
                       bgcolor: 'rgb(255, 193, 0)',
                       boxShadow: '0 8px 24px rgba(255, 203, 5, 0.3)'
                     }
                   }}
                 >
-                  Get Free Quote
+                  Call (438) 763-5120
                 </Button>
               </motion.div>
             </motion.div>
           </Container>
         </Box>
       </Box>
-
-      {/* Contact Modal */}
-      <ContactModal isOpen={openModal} onClose={() => setOpenModal(false)} />
     </PublicLayout>
   )
 }
-
-
