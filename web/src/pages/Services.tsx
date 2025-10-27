@@ -5,7 +5,6 @@ import {
   Accessibility,
   LocalHospital,
   Flight,
-  ContactSupport,
   AccountBalance,
   TrendingUp,
   School,

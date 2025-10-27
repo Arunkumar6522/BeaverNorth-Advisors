@@ -2,7 +2,6 @@ import { motion } from 'framer-motion'
 import { Box, Container, Typography, Card, Button } from '@mui/material'
 import { Phone, Email, LocationOn, Schedule } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
-import ContactModal from '../components/ContactModal'
 
 export default function Contact() {
   return (

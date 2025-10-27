@@ -8,8 +8,6 @@ import {
   School,
   CheckCircle,
   Schedule,
-  Star,
-  People,
   Phone,
   Email,
   LocationOn
