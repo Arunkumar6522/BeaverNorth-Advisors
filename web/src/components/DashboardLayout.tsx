@@ -26,9 +26,9 @@ const modules: Module[] = [
   { id: 'dashboard', name: 'Dashboard', icon: <DashboardIcon /> },
   { id: 'leads', name: 'Leads Management', icon: <LeadsIcon /> },
   { id: 'testimonials', name: 'Testimonials', icon: <TestimonialsIcon /> },
-  { id: 'settings', name: 'Settings', icon: <SettingsIcon /> },
   { id: 'deleted', name: 'Deleted Leads', icon: <DeletedIcon /> },
-  { id: 'logs', name: 'Logs', icon: <LogsIcon /> }
+  { id: 'logs', name: 'Logs', icon: <LogsIcon /> },
+  { id: 'settings', name: 'Settings', icon: <SettingsIcon /> }
 ]
 
 export default function DashboardLayout() {

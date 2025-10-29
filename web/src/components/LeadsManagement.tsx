@@ -28,7 +28,7 @@ import {
   DialogContent,
   DialogActions,
   DialogContentText,
-  TablePagination
+  Pagination
 } from '@mui/material'
 import {
   Search as SearchIcon,
@@ -222,7 +222,7 @@ export default function LeadsManagement() {
   
   // Pagination
   const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [rowsPerPage] = useState(10)
   
   // Sorting
   const [sortField, setSortField] = useState<'created_at' | 'last_contact_date'>('created_at')
@@ -1228,18 +1228,16 @@ export default function LeadsManagement() {
           </TableContainer>
           
           {/* Pagination */}
-          <TablePagination
-            rowsPerPageOptions={[5, 10, 25]}
-            component="div"
-            count={filteredLeads.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={(_event, newPage) => setPage(newPage)}
-            onRowsPerPageChange={(event) => {
-              setRowsPerPage(parseInt(event.target.value, 10))
-              setPage(0)
-            }}
-          />
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+            <Pagination
+              count={Math.max(1, Math.ceil(filteredLeads.length / rowsPerPage))}
+              page={page + 1}
+              onChange={(_e, value) => setPage(value - 1)}
+              showFirstButton
+              showLastButton
+              color="primary"
+            />
+          </Box>
         </Card>
       </Box>
 
