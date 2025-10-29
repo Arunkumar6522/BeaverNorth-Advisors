@@ -527,7 +527,7 @@ export default function About() {
                       Email Us
                     </Typography>
                     <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                      info@beavernorth.ca
+                      beavernorthadvisors@gmail.com
                     </Typography>
                   </Box>
                 </Grid>

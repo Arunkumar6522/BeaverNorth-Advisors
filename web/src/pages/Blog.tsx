@@ -4,6 +4,7 @@ import { Box, Typography, Card, CardContent, Chip, Button, Container, Grid } fro
 import { CalendarToday, Person, ArrowForward, OpenInNew } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
 import { useNavigate } from 'react-router-dom'
+import { useI18n } from '../i18n'
 
 interface BlogPost {
   title: string
@@ -20,6 +21,7 @@ export default function Blog() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
+  const { t } = useI18n()
 
   // Helper function to strip HTML tags
   const stripHtml = (html: string) => {
@@ -90,7 +92,7 @@ export default function Blog() {
               setPosts(data.posts)
             } else {
               console.log('❌ No posts found in server response')
-              setError('No blog posts found')
+              setError(t('blog_error_no_posts'))
             }
           } else {
             console.log('❌ Server returned non-JSON response')
@@ -98,12 +100,12 @@ export default function Blog() {
           }
         } else {
           console.log('❌ Server request failed:', response.status)
-          setError('Failed to fetch blog posts from server')
+          setError(t('blog_error_fetch'))
         }
         
       } catch (err) {
         console.error('❌ Blog fetch error:', err)
-        setError('Failed to load blog posts')
+        setError(t('blog_error_load'))
       } finally {
         setLoading(false)
       }
@@ -137,7 +139,7 @@ export default function Blog() {
                   textAlign: 'center'
                 }}
               >
-                Our Blog
+                {t('blog_title')}
               </Typography>
               <Typography 
                 variant="h6" 
@@ -160,7 +162,7 @@ export default function Blog() {
           {loading && (
             <Box sx={{ textAlign: 'center', py: 8 }}>
               <Typography variant="h6" color="text.secondary">
-                Loading blog posts...
+                {t('blog_loading')}
               </Typography>
             </Box>
           )}
@@ -179,7 +181,7 @@ export default function Blog() {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Visit our blog directly
+                  {t('blog_visit_direct')}
                 </Button>
               </CardContent>
             </Card>
@@ -189,7 +191,7 @@ export default function Blog() {
             <Card sx={{ textAlign: 'center', py: 6 }}>
               <CardContent>
                 <Typography variant="h5" sx={{ mb: 2, color: '#6B7280' }}>
-                  No Blog Posts Yet
+                  {t('blog_no_posts')}
                 </Typography>
                 <Typography variant="body1" sx={{ mb: 3, color: '#6B7280' }}>
                   We're working on creating valuable content for you. Check back soon!
@@ -210,7 +212,7 @@ export default function Blog() {
                     }
                   }}
                 >
-                  Visit Our Blogger Site
+                  {t('blog_visit_site')}
                 </Button>
               </CardContent>
             </Card>
@@ -407,7 +409,7 @@ export default function Blog() {
                   }
                 }}
               >
-                Visit Full Blog
+                {t('blog_visit_full')}
               </Button>
             </Box>
           </motion.div>

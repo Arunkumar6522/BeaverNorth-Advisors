@@ -43,8 +43,8 @@ export default function Nav() {
   const navItems = [
     { label: t('nav_home'), path: '/' },
     { label: t('nav_about'), path: '/about' },
-    { label: 'Blog', path: '/blog' },
-    { label: 'Testimonial', path: '/testimonial' },
+    { label: t('nav_blog'), path: '/blog' },
+    { label: t('nav_testimonials'), path: '/testimonial' },
     { label: t('nav_contact'), path: '/contact' }
   ]
 

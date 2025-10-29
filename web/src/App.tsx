@@ -21,6 +21,11 @@ export default function App() {
   const { t } = useI18n()
   const navigate = useNavigate()
 
+  // Open contact modal on page load
+  useEffect(() => {
+    setIsContactModalOpen(true)
+  }, [])
+
   // Fetch testimonials
   useEffect(() => {
     const fetchTestimonials = async () => {

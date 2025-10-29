@@ -9,6 +9,7 @@ const en: Dict = {
   nav_about: 'About Us',
   nav_services: 'Services',
   nav_blog: 'Blog',
+  nav_testimonials: 'Testimonials',
   nav_contact: 'Contact Us',
   top_email: 'beavernorthadvisors@gmail.com',
   top_contact: 'Contact',
@@ -37,7 +38,18 @@ const en: Dict = {
   footer_services: 'Services',
   footer_contact: 'Contact',
   footer_rights: 'All rights reserved.',
-  footer_description: 'Your trusted partner for Canadian insurance solutions.'
+  footer_description: 'Your trusted partner for Canadian insurance solutions.',
+  blog_title: 'Our Blog',
+  blog_loading: 'Loading blog posts...',
+  blog_no_posts: 'No Blog Posts Yet',
+  blog_visit_direct: 'Visit our blog directly',
+  blog_visit_site: 'Visit Our Blogger Site',
+  blog_visit_full: 'Visit Full Blog',
+  blog_error_load: 'Failed to load blog posts',
+  blog_error_fetch: 'Failed to fetch blog posts from server',
+  blog_error_no_posts: 'No blog posts found',
+  testimonials_title: 'Client Testimonials',
+  testimonials_loading: 'Loading testimonials...'
 }
 
 const fr: Dict = {
@@ -45,6 +57,7 @@ const fr: Dict = {
   nav_about: 'À propos',
   nav_services: 'Services',
   nav_blog: 'Blog',
+  nav_testimonials: 'Témoignages',
   nav_contact: 'Nous contacter',
   top_email: 'beavernorthadvisors@gmail.com',
   top_contact: 'Contact',
@@ -73,7 +86,18 @@ const fr: Dict = {
   footer_services: 'Services',
   footer_contact: 'Contact',
   footer_rights: 'Tous droits réservés.',
-  footer_description: 'Votre partenaire de confiance pour les solutions d\'assurance canadiennes.'
+  footer_description: 'Votre partenaire de confiance pour les solutions d\'assurance canadiennes.',
+  blog_title: 'Notre Blog',
+  blog_loading: 'Chargement des articles de blog...',
+  blog_no_posts: 'Aucun article de blog pour le moment',
+  blog_visit_direct: 'Visitez notre blog directement',
+  blog_visit_site: 'Visitez notre site Blogger',
+  blog_visit_full: 'Visiter le blog complet',
+  blog_error_load: 'Échec du chargement des articles de blog',
+  blog_error_fetch: 'Échec de la récupération des articles de blog depuis le serveur',
+  blog_error_no_posts: 'Aucun article de blog trouvé',
+  testimonials_title: 'Témoignages Clients',
+  testimonials_loading: 'Chargement des témoignages...'
 }
 
 const dictionaries: Record<Locale, Dict> = { en, fr }

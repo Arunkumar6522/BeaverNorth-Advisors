@@ -1,7 +1,6 @@
 import { useI18n } from '../i18n'
 import { Box, Typography, Container } from '@mui/material'
 import { Phone, Email, LocationOn } from '@mui/icons-material'
-import bnaLogo from '../assets/bna logo.png'
 import { useState } from 'react'
 import PrivacyPolicyModal from './PrivacyPolicyModal'
 
@@ -25,17 +24,6 @@ export default function Footer() {
           }}>
             {/* Logo and Copyright */}
             <Box>
-              <Box sx={{ mb: 2 }}>
-                <img 
-                  src={bnaLogo} 
-                  alt="BeaverNorth Advisors" 
-                  style={{ 
-                    height: '45px',
-                    width: 'auto',
-                    marginBottom: '16px'
-                  }} 
-                />
-              </Box>
               <Typography variant="body2" sx={{ color: '#417F73', mb: 1 }}>
                 Professional insurance guidance for Canadian families.
               </Typography>

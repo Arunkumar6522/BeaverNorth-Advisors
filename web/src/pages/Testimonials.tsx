@@ -3,11 +3,13 @@ import { Box, Typography, Container, Card, CardContent, Avatar, Rating, Circular
 import { motion } from 'framer-motion'
 import PublicLayout from '../components/PublicLayout'
 import { testimonialsFallbackAPI, type Testimonial } from '../services/testimonialsFallbackAPI'
+import { useI18n } from '../i18n'
 
 export default function Testimonials() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const { t } = useI18n()
 
   useEffect(() => {
     fetchTestimonials()
@@ -53,7 +55,7 @@ export default function Testimonials() {
         <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Box sx={{ textAlign: 'center' }}>
             <CircularProgress sx={{ color: 'rgb(255, 203, 5)', mb: 2 }} />
-            <Typography variant="h6" color="text.secondary">Loading testimonials...</Typography>
+            <Typography variant="h6" color="text.secondary">{t('testimonials_loading')}</Typography>
           </Box>
         </Box>
       </PublicLayout>
@@ -97,7 +99,7 @@ export default function Testimonials() {
                   fontSize: { xs: '2.5rem', md: '3.5rem' }
                 }}
               >
-                Client Testimonials
+                {t('testimonials_title')}
               </Typography>
               <Typography 
                 variant="h5" 
