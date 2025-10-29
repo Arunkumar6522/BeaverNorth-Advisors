@@ -55,7 +55,7 @@ export default function TestimonialsManagement() {
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all')
   const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [rowsPerPage] = useState(10)
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' as 'success' | 'error' })
 
   const [formData, setFormData] = useState({
