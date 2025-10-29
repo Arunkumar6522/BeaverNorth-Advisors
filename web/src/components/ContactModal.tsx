@@ -97,7 +97,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     try {
       await verifyOTPAndSubmit()
       onClose()
-      navigate('/success')
+      navigate('/success', { state: { submitted: true } })
     } catch (error: any) {
       const errorMessage = error?.message || 'Unknown error occurred'
       // If OTP failed, only show inline OTP error, not global submit error

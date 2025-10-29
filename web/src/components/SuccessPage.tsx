@@ -1,10 +1,17 @@
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { CheckCircle } from '@mui/icons-material'
+import NotFound from '../pages/NotFound'
 
 export default function SuccessPage() {
   const navigate = useNavigate()
+  const location = useLocation() as { state?: { submitted?: boolean } }
+
+  // Guard: only show when reached after submit
+  if (!location.state || !location.state.submitted) {
+    return <NotFound />
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -41,45 +48,29 @@ export default function SuccessPage() {
         }}
       >
         <CheckCircle sx={{ fontSize: 120, mb: 3 }} />
-        
         <motion.h1
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          style={{
-            fontSize: '2.5rem',
-            fontWeight: 'bold',
-            marginBottom: '1rem',
-            margin: 0
-          }}
+          style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem', margin: 0 }}
         >
           Success!
         </motion.h1>
-        
         <motion.p
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          style={{
-            fontSize: '1.2rem',
-            marginBottom: '2rem',
-            margin: '0 0 2rem 0',
-            opacity: 0.9
-          }}
+          style={{ fontSize: '1.2rem', marginBottom: '2rem', margin: '0 0 2rem 0', opacity: 0.9 }}
         >
           Your insurance quote request has been submitted successfully.
           <br />
           Our licensed advisors will contact you within 24 hours.
         </motion.p>
-        
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.8 }}
-          style={{
-            fontSize: '1rem',
-            opacity: 0.8
-          }}
+          style={{ fontSize: '1rem', opacity: 0.8 }}
         >
           Redirecting to homepage in 5 seconds...
         </motion.div>
