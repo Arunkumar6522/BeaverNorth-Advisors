@@ -18,7 +18,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     firstName: '',
     lastName: '',
     gender: '' as 'male' | 'female' | 'prefer-not-to-say',
-    dob: '1920-01-01',
+    dob: '',
     smokingStatus: '',
     province: '',
     insuranceProduct: '',
@@ -411,6 +411,38 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     return emailRegex.test(email)
   }
 
+  // Helpers for DOB
+  const formatDobInput = (raw: string) => {
+    const digits = raw.replace(/\D/g, '').slice(0, 8)
+    const mm = digits.slice(0, 2)
+    const dd = digits.slice(2, 4)
+    const yyyy = digits.slice(4, 8)
+    if (digits.length <= 2) return mm
+    if (digits.length <= 4) return `${mm}/${dd}`
+    return `${mm}/${dd}/${yyyy}`
+  }
+
+  const maxDobDate = () => {
+    const d = new Date()
+    d.setFullYear(d.getFullYear() - 25)
+    d.setHours(0, 0, 0, 0)
+    return d
+  }
+
+  const parseDobToISO = (mmddyyyy: string): string | null => {
+    const m = mmddyyyy.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+    if (!m) return null
+    const month = Number(m[1])
+    const day = Number(m[2])
+    const year = Number(m[3])
+    if (month < 1 || month > 12) return null
+    if (day < 1 || day > 31) return null
+    const dt = new Date(year, month - 1, day)
+    if (isNaN(dt.getTime()) || dt.getMonth() !== month - 1 || dt.getDate() !== day || dt.getFullYear() !== year) return null
+    if (dt > maxDobDate()) return null
+    return `${year.toString().padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     
@@ -432,6 +464,19 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           ...prev, 
           [name]: `${name === 'firstName' ? 'First name' : 'Last name'} can only contain letters, spaces, hyphens, and apostrophes` 
         }))
+      }
+      return
+    }
+
+    // DOB typed input with MM/DD/YYYY and min age 25
+    if (name === 'dob') {
+      const formatted = formatDobInput(value)
+      const iso = parseDobToISO(formatted)
+      setFormData(prev => ({ ...prev, dob: iso ?? formatted }))
+      if (!iso && formatted.length === 10) {
+        setValidationErrors(prev => ({ ...prev, dob: 'Enter a valid date (MM/DD/YYYY), age 25+.' }))
+      } else if (iso) {
+        setValidationErrors(prev => ({ ...prev, dob: '' }))
       }
       return
     }
@@ -462,7 +507,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       return
     }
     
-    // Default case for all other fields (gender, dob, province, insuranceProduct, phone, countryCode, otp)
+    // Default case for all other fields (gender, province, insuranceProduct, phone, countryCode, otp)
     setFormData({
       ...formData,
       [name]: value
@@ -777,37 +822,44 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     When were you born? <span style={{ color: '#EF4444' }}>*</span>
                   </label>
                   <input
-                    type="date"
+                    type="text"
                     name="dob"
+                    placeholder="MM/DD/YYYY"
+                    value={formData.dob.length === 10 && formData.dob.includes('-') ? (() => { const [y,m,d]=formData.dob.split('-'); return `${m}/${d}/${y}` })() : formData.dob}
                     onChange={handleChange}
+                    maxLength={10}
                     style={{
                       width: '100%',
                       padding: '14px 16px',
-                      border: '2px solid var(--line)',
+                      border: `2px solid ${validationErrors.dob ? '#EF4444' : 'var(--line)'}`,
                       borderRadius: '12px',
                       fontSize: '16px',
                       background: 'var(--surface-1)',
                       color: 'var(--text-primary)',
                       outline: 'none'
                     }}
-                    onKeyDown={(e) => e.preventDefault()}
                   />
+                  {validationErrors.dob && (
+                    <p style={{ color: '#EF4444', fontSize: '12px', margin: '4px 0 0 0', fontWeight: 500 }}>
+                      {validationErrors.dob}
+                    </p>
+                  )}
                 </div>
 
                 <button
                   type="button"
                   onClick={nextStep}
-                  disabled={!formData.firstName || !formData.gender || !formData.dob || !!validationErrors.firstName}
+                  disabled={!formData.firstName || !formData.gender || !formData.dob || !!validationErrors.firstName || !!validationErrors.dob}
                   style={{
                     width: '100%',
-                    background: (!formData.firstName || !formData.gender || !formData.dob || validationErrors.firstName) ? 'var(--line)' : 'rgb(255, 203, 5)',
+                    background: (!formData.firstName || !formData.gender || !formData.dob || validationErrors.firstName || validationErrors.dob) ? 'var(--line)' : 'rgb(255, 203, 5)',
                     color: '#1E377C',
                     padding: '16px',
                     borderRadius: '12px',
                     border: 'none',
                     fontSize: '16px',
                     fontWeight: '600',
-                    cursor: (!formData.firstName || !formData.gender || !formData.dob || validationErrors.firstName) ? 'not-allowed' : 'pointer',
+                    cursor: (!formData.firstName || !formData.gender || !formData.dob || validationErrors.firstName || validationErrors.dob) ? 'not-allowed' : 'pointer',
                     marginTop: '12px'
                   }}
                 >
