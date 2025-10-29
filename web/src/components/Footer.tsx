@@ -106,7 +106,7 @@ export default function Footer() {
                     transition: 'color 0.2s'
                   }}
                 >
-                  {t('footer_about')}
+                  {t('nav_about')}
                 </Typography>
                 <Typography 
                   component="a" 
@@ -119,7 +119,7 @@ export default function Footer() {
                     transition: 'color 0.2s'
                   }}
                 >
-                  {t('footer_services')}
+                  {t('nav_services')}
                 </Typography>
                 <Typography 
                   component="a" 
@@ -132,7 +132,7 @@ export default function Footer() {
                     transition: 'color 0.2s'
                   }}
                 >
-                  {t('footer_contact')}
+                  {t('nav_contact')}
                 </Typography>
               </Box>
             </Box>
