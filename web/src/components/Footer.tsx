@@ -28,7 +28,7 @@ export default function Footer() {
                 BeaverNorth Advisors
               </Typography>
               <Typography variant="body2" sx={{ color: '#417F73', mb: 1 }}>
-                Professional insurance guidance for Canadian families.
+                {t('footer_description')}
               </Typography>
               <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.85rem' }}>
                 © {new Date().getFullYear()} BeaverNorth Advisors
@@ -43,7 +43,7 @@ export default function Footer() {
                 mb: 2,
                 fontSize: '1rem'
               }}>
-                Contact Us
+                {t('contact_title')}
               </Typography>
               
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
@@ -78,7 +78,7 @@ export default function Footer() {
                 mb: 2,
                 fontSize: '1rem'
               }}>
-                Quick Links
+                {t('footer_quick_links')}
               </Typography>
               
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
@@ -93,7 +93,7 @@ export default function Footer() {
                     transition: 'color 0.2s'
                   }}
                 >
-                  Home
+                  {t('nav_home')}
                 </Typography>
                 <Typography 
                   component="a" 
@@ -106,7 +106,7 @@ export default function Footer() {
                     transition: 'color 0.2s'
                   }}
                 >
-                  About Us
+                  {t('footer_about')}
                 </Typography>
                 <Typography 
                   component="a" 
@@ -119,7 +119,7 @@ export default function Footer() {
                     transition: 'color 0.2s'
                   }}
                 >
-                  Services
+                  {t('footer_services')}
                 </Typography>
                 <Typography 
                   component="a" 
@@ -132,7 +132,7 @@ export default function Footer() {
                     transition: 'color 0.2s'
                   }}
                 >
-                  Contact
+                  {t('footer_contact')}
                 </Typography>
               </Box>
             </Box>
@@ -162,7 +162,7 @@ export default function Footer() {
                 transition: 'color 0.2s'
               }}
             >
-              Privacy Policy
+              {t('privacy_policy')}
             </Typography>
           </Box>
         </Container>
