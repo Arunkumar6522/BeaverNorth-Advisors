@@ -674,18 +674,16 @@ export default function TestimonialsManagement() {
             ))}
           </TableBody>
         </Table>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={filteredTestimonials.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={(_, newPage) => setPage(newPage)}
-          onRowsPerPageChange={(event) => {
-            setRowsPerPage(parseInt(event.target.value, 10))
-            setPage(0)
-          }}
-        />
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+          <Pagination
+            count={Math.max(1, Math.ceil(testimonials.length / rowsPerPage))}
+            page={page + 1}
+            onChange={(_e, value) => setPage(value - 1)}
+            showFirstButton
+            showLastButton
+            color="primary"
+          />
+        </Box>
       </TableContainer>
 
       {/* Add/Edit Dialog */}

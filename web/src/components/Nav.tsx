@@ -58,7 +58,7 @@ export default function Nav() {
         })
       }
     }
-    document.addEventListener('click', onClick)
+    document.addEventListener('click', onClick, { passive: true })
     return () => document.removeEventListener('click', onClick)
   }, [])
 
@@ -128,7 +128,7 @@ export default function Nav() {
           }}>
             
             {/* Company Name Only */}
-            <Link to="/" style={{ textDecoration: 'none' }}>
+            <Link to="/" style={{ textDecoration: 'none' }} aria-label="BeaverNorth Advisors Home">
               <Box sx={{ 
                 fontWeight: 800,
                 color: '#1E377C',
@@ -194,8 +194,9 @@ export default function Nav() {
               gap: { lg: 0.5, xl: 0.5 },
               flexShrink: 0
             }}>
-                <Language sx={{ fontSize: 18, color: '#6B7280' }} />
+                <Language sx={{ fontSize: 18, color: '#6B7280' }} aria-hidden />
                 <select
+                  aria-label="Language selector"
                   value={locale}
                   onChange={(e) => {
                     console.log('Language changed to:', e.target.value)
@@ -224,8 +225,9 @@ export default function Nav() {
             }}>
               {/* Mobile Language Switcher */}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <Language sx={{ fontSize: { xs: 14, sm: 16 }, color: '#6B7280' }} />
+                <Language sx={{ fontSize: { xs: 14, sm: 16 }, color: '#6B7280' }} aria-hidden />
                 <select
+                  aria-label="Language selector"
                   value={locale}
                   onChange={(e) => {
                     console.log('Mobile language changed to:', e.target.value)
@@ -247,6 +249,7 @@ export default function Nav() {
               </Box>
 
               <IconButton
+                aria-label="Open menu"
                 onClick={toggleMenu}
                 sx={{
                   color: '#6B7280',
@@ -267,74 +270,69 @@ export default function Nav() {
         anchor="right"
         open={isMenuOpen}
         onClose={toggleMenu}
-        sx={{
-          '& .MuiDrawer-paper': {
-            width: { xs: '100vw', sm: '320px' },
-            maxWidth: '320px',
-            bgcolor: 'white'
-          }
-        }}
+        ModalProps={{ keepMounted: true }}
+        sx={{ '& .MuiDrawer-paper': { width: '80vw', maxWidth: 340 } }}
       >
         {/* Drawer Header */}
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          p: 3,
-          borderBottom: '1px solid rgba(105,131,204,0.1)'
-        }}>
-              <Box sx={{
-                fontWeight: 800,
-                color: '#1E377C',
-                fontSize: '1.2rem',
-                lineHeight: 1.2,
-                letterSpacing: '-0.02em'
-              }}>
-                BeaverNorth Advisors
-              </Box>
-          <IconButton
-            onClick={toggleMenu}
-            sx={{
-              color: '#6B7280',
-              '&:hover': {
-                backgroundColor: 'rgba(105,131,204,0.08)'
-              }
-            }}
-          >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: '1px solid rgba(105,131,204,0.1)' }}>
+          <Box sx={{ fontWeight: 800, color: '#1E377C', fontSize: '1.2rem' }}>BeaverNorth Advisors</Box>
+          <IconButton aria-label="Close menu" onClick={toggleMenu} sx={{ color: '#6B7280' }}>
             <CloseIcon />
           </IconButton>
         </Box>
 
-        {/* Navigation Items */}
-        <List sx={{ flexGrow: 1, p: 2 }}>
+        {/* Drawer Items */}
+        <List sx={{ flexGrow: 1, p: 1 }}>
           {navItems.map((item) => (
-            <ListItem key={item.path} disablePadding sx={{ mb: 1 }}>
+            <ListItem key={item.path} disablePadding>
               <NavLink
                 to={item.path}
                 onClick={toggleMenu}
-                style={({ isActive }) => ({
+                style={() => ({
                   textDecoration: 'none',
-                  width: '100%',
-                  padding: '14px 16px',
-                  borderRadius: 8,
-                  backgroundColor: isActive ? 'rgba(105,131,204,0.1)' : 'transparent',
-                  transition: 'all 0.2s ease',
-                  color: isActive ? '#1E377C' : '#417F73',
-                  fontWeight: isActive ? 700 : 600,
-                  fontSize: '15px',
-                  display: 'block'
+                  width: '100%'
                 })}
               >
-                <ListItemText 
+                <ListItemText
                   primary={item.label}
                   primaryTypographyProps={{
-                    style: { margin: 0, fontWeight: 'inherit' }
+                    sx: {
+                      p: 1.5,
+                      borderRadius: 1,
+                      fontWeight: 600,
+                      color: '#417F73',
+                      '&:hover': { backgroundColor: 'rgba(105,131,204,0.08)', color: '#1E377C' }
+                    }
                   }}
                 />
               </NavLink>
             </ListItem>
           ))}
         </List>
+
+        {/* Drawer Language Switcher */}
+        <Box sx={{ p: 2, borderTop: '1px solid rgba(105,131,204,0.1)', display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Language sx={{ fontSize: 18, color: '#6B7280' }} aria-hidden />
+          <select
+            aria-label="Language selector"
+            value={locale}
+            onChange={(e) => setLocale(e.target.value as 'en' | 'fr')}
+            style={{
+              border: '1px solid #E5E7EB',
+              background: 'white',
+              fontSize: '14px',
+              fontWeight: 600,
+              color: '#417F73',
+              cursor: 'pointer',
+              outline: 'none',
+              borderRadius: 6,
+              padding: '6px 8px'
+            }}
+          >
+            <option value="en">EN</option>
+            <option value="fr">FR</option>
+          </select>
+        </Box>
       </Drawer>
     </>
   )

@@ -13,7 +13,8 @@ import {
   IconButton,
   Avatar,
   Button,
-  Modal
+  Modal,
+  Pagination
 } from '@mui/material'
 import {
   Refresh as RestoreIcon,
@@ -48,6 +49,8 @@ export default function DeletedLeads() {
   const [deletedLeads, setDeletedLeads] = useState<DeletedLead[]>([])
   const [viewModalOpen, setViewModalOpen] = useState(false)
   const [selectedLead, setSelectedLead] = useState<DeletedLead | null>(null)
+  const [page, setPage] = useState(0)
+  const [rowsPerPage] = useState(10)
 
   // Clickable contact functions
   const handleEmailClick = async (email: string) => {
@@ -271,7 +274,7 @@ export default function DeletedLeads() {
                   </TableRow>
               </TableHead>
               <TableBody>
-                {deletedLeads.map((lead, _index) => (
+                {deletedLeads.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((lead, _index) => (
                   <TableRow key={lead.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                     <TableCell>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -409,6 +412,16 @@ export default function DeletedLeads() {
               </TableBody>
             </Table>
           </TableContainer>
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+            <Pagination
+              count={Math.max(1, Math.ceil(deletedLeads.length / rowsPerPage))}
+              page={page + 1}
+              onChange={(_e, value) => setPage(value - 1)}
+              showFirstButton
+              showLastButton
+              color="primary"
+            />
+          </Box>
           </Card>
         )}
       </Box>
