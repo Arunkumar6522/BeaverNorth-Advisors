@@ -9,6 +9,7 @@ import {
   IconButton
 } from '@mui/material'
 import { Close as CloseIcon } from '@mui/icons-material'
+import { useI18n } from '../i18n'
 
 interface PrivacyPolicyModalProps {
   open: boolean
@@ -16,6 +17,7 @@ interface PrivacyPolicyModalProps {
 }
 
 export default function PrivacyPolicyModal({ open, onClose }: PrivacyPolicyModalProps) {
+  const { t } = useI18n()
   return (
     <Dialog 
       open={open} 
@@ -37,7 +39,7 @@ export default function PrivacyPolicyModal({ open, onClose }: PrivacyPolicyModal
         borderBottom: '1px solid #e0e0e0'
       }}>
         <Typography variant="h5" sx={{ fontWeight: 600, color: '#1E377C' }}>
-          Privacy Policy
+          {t('privacy_title')}
         </Typography>
         <IconButton onClick={onClose} size="small">
           <CloseIcon />
@@ -47,7 +49,7 @@ export default function PrivacyPolicyModal({ open, onClose }: PrivacyPolicyModal
       <DialogContent sx={{ pt: 3 }}>
         <Box sx={{ maxHeight: '60vh', overflow: 'auto' }}>
           <Typography variant="body2" sx={{ color: '#666', mb: 3, fontStyle: 'italic' }}>
-            Last updated: {new Date().toLocaleDateString()}
+            {t('privacy_last_updated')}: {new Date().toLocaleDateString()}
           </Typography>
 
           <Box sx={{ mb: 3 }}>
@@ -234,7 +236,7 @@ export default function PrivacyPolicyModal({ open, onClose }: PrivacyPolicyModal
             '&:hover': { backgroundColor: '#417F73' }
           }}
         >
-          Close
+          {t('privacy_close')}
         </Button>
       </DialogActions>
     </Dialog>

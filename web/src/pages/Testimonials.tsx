@@ -256,7 +256,7 @@ export default function Testimonials() {
                   mb: 3
                 }}
               >
-                Ready to Join Our Success Stories?
+                {t('testimonials_cta_title')}
               </Typography>
               <Typography 
                 variant="h6" 
@@ -266,7 +266,7 @@ export default function Testimonials() {
                   lineHeight: 1.6
                 }}
               >
-                Let us help you achieve your financial goals with personalized advice and expert guidance
+                {t('testimonials_cta_sub')}
               </Typography>
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -292,7 +292,7 @@ export default function Testimonials() {
                     }
                   }}
                 >
-                  Get Started Today
+                  {t('testimonials_cta_button')}
                 </Box>
               </motion.div>
             </motion.div>

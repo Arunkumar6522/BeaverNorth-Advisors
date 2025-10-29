@@ -60,7 +60,18 @@ const en: Dict = {
   blogs_loading_home: 'Loading blog posts...',
   blogs_empty_home: 'No blog posts available at the moment.',
   blogs_subtitle_home: 'Stay informed with our latest articles on financial planning, insurance, and wealth building',
-  blogs_cta_home: 'View All Blog Posts'
+  blogs_cta_home: 'View All Blog Posts',
+  // Page CTAs
+  testimonials_cta_title: 'Ready to Join Our Success Stories?',
+  testimonials_cta_sub: 'Let us help you achieve your financial goals with personalized advice and expert guidance',
+  testimonials_cta_button: 'Get Started Today',
+  contact_cta_title: 'Ready to Secure Your Future?',
+  contact_cta_sub: 'Our expert advisors are here to help you make informed financial decisions',
+  contact_cta_button: 'Call (438) 763-5120',
+  // Privacy modal
+  privacy_title: 'Privacy Policy',
+  privacy_last_updated: 'Last updated',
+  privacy_close: 'Close'
 }
 
 const fr: Dict = {
@@ -119,7 +130,18 @@ const fr: Dict = {
   blogs_loading_home: 'Chargement des articles de blog...',
   blogs_empty_home: "Aucun article de blog disponible pour le moment.",
   blogs_subtitle_home: 'Restez informé grâce à nos derniers articles sur la planification financière, l’assurance et la constitution de patrimoine',
-  blogs_cta_home: 'Voir tous les articles du blog'
+  blogs_cta_home: 'Voir tous les articles du blog',
+  // Page CTAs
+  testimonials_cta_title: 'Prêt à rejoindre nos histoires de réussite ?',
+  testimonials_cta_sub: 'Laissez‑nous vous aider à atteindre vos objectifs financiers avec des conseils personnalisés et une expertise reconnue',
+  testimonials_cta_button: "Commencer aujourd'hui",
+  contact_cta_title: 'Prêt à sécuriser votre avenir ?',
+  contact_cta_sub: 'Nos conseillers experts sont là pour vous aider à prendre des décisions éclairées',
+  contact_cta_button: 'Appeler (438) 763‑5120',
+  // Privacy modal
+  privacy_title: 'Politique de confidentialité',
+  privacy_last_updated: 'Dernière mise à jour',
+  privacy_close: 'Fermer'
 }
 
 const dictionaries: Record<Locale, Dict> = { en, fr }

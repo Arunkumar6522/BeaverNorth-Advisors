@@ -2,8 +2,10 @@ import { motion } from 'framer-motion'
 import { Box, Container, Typography, Card, Button } from '@mui/material'
 import { Phone, Email, LocationOn, Schedule } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
+import { useTranslation } from 'react-i18next'
 
 export default function Contact() {
+  const { t } = useTranslation()
   return (
     <PublicLayout>
       <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
@@ -160,7 +162,7 @@ export default function Contact() {
                   fontSize: { xs: '2rem', md: '2.5rem' }
                 }}
               >
-                Ready to Secure Your Future?
+                {t('contact_cta_title')}
               </Typography>
               <Typography
                 variant="h6"
@@ -170,7 +172,7 @@ export default function Contact() {
                   lineHeight: 1.6
                 }}
               >
-                Our expert advisors are here to help you make informed financial decisions
+                {t('contact_cta_sub')}
               </Typography>
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -194,7 +196,7 @@ export default function Contact() {
                     }
                   }}
                 >
-                  Call (438) 763-5120
+                  {t('contact_cta_button')}
                 </Button>
               </motion.div>
             </motion.div>
