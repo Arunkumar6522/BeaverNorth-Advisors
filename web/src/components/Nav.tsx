@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
-import { Box, IconButton, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { Box, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material'
 import { Menu as MenuIcon, Close as CloseIcon, Language } from '@mui/icons-material'
 import { gtagEvent, gtagPageView } from '../lib/analytics'
 
