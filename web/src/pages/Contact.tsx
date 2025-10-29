@@ -2,10 +2,10 @@ import { motion } from 'framer-motion'
 import { Box, Container, Typography, Card, Button } from '@mui/material'
 import { Phone, Email, LocationOn, Schedule } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
-import { useTranslation } from 'react-i18next'
+import { useI18n } from '../i18n'
 
 export default function Contact() {
-  const { t } = useTranslation()
+  const { t } = useI18n()
   return (
     <PublicLayout>
       <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
