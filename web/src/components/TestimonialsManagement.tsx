@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Box,
   Typography,
@@ -26,7 +26,7 @@ import {
   Tooltip,
   Alert,
   Snackbar,
-  TablePagination,
+  Pagination,
   InputAdornment,
   Card,
   CardContent,
