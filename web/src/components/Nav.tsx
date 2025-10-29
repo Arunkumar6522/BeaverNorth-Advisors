@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
-import { Box, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material'
+import { Box, IconButton, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { Menu as MenuIcon, Close as CloseIcon, Language } from '@mui/icons-material'
+import { gtagEvent, gtagPageView } from '../lib/analytics'
 
 export default function Nav() {
   const location = useLocation()
@@ -39,6 +40,27 @@ export default function Nav() {
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [scrollDirection])
+
+  // Track SPA page views
+  useEffect(() => {
+    gtagPageView(location.pathname, document.title)
+  }, [location.pathname])
+
+  // Track outbound link clicks
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      const anchor = target.closest('a') as HTMLAnchorElement | null
+      if (anchor && anchor.href && anchor.host !== window.location.host) {
+        gtagEvent('click', {
+          link_url: anchor.href,
+          outbound: true
+        })
+      }
+    }
+    document.addEventListener('click', onClick)
+    return () => document.removeEventListener('click', onClick)
+  }, [])
 
   const navItems = [
     { label: t('nav_home'), path: '/' },

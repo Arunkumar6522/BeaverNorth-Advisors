@@ -11,6 +11,7 @@ import AsuransiSVG from './assets/Asuransi keluarga 1.svg'
 import { useI18n } from './i18n'
 import { testimonialsFallbackAPI, type Testimonial } from './services/testimonialsFallbackAPI'
 import { useNavigate } from 'react-router-dom'
+import { gtagEvent } from './lib/analytics'
 
 export default function App() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false)
@@ -24,6 +25,23 @@ export default function App() {
   // Open contact modal on page load
   useEffect(() => {
     setIsContactModalOpen(true)
+  }, [])
+
+  // Scroll depth (90%) event - fires once per mount
+  useEffect(() => {
+    let fired = false
+    const onScroll = () => {
+      if (fired) return
+      const scrolled = window.scrollY + window.innerHeight
+      const total = document.documentElement.scrollHeight
+      if (total > 0 && scrolled / total >= 0.9) {
+        gtagEvent('scroll_depth', { percent_scrolled: 90, page_path: window.location.pathname })
+        fired = true
+        window.removeEventListener('scroll', onScroll)
+      }
+    }
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   // Fetch testimonials

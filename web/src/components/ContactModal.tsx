@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import { useI18n } from '../i18n'
 import { useNavigate } from 'react-router-dom'
+import { gtagEvent } from '../lib/analytics'
 
 interface ContactModalProps {
   isOpen: boolean
@@ -52,6 +53,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     setSendingOtp(true)
     try {
       const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
+      gtagEvent('form_start', { form_id: 'enquiry', step: 'otp_send' })
       
       const apiUrl = window.location.hostname === 'localhost' 
         ? 'http://localhost:3001/api/send-otp'
@@ -68,6 +70,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         setOtpSent(true)
         setOtpResendTimer(30)
         setOtpStatus('Verification code sent successfully.')
+        gtagEvent('otp_sent', { form_id: 'enquiry' })
       } else {
         setOtpStatus(result.message || 'Failed to send verification code. Please try again.')
       }
@@ -97,6 +100,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     try {
       await verifyOTPAndSubmit()
       onClose()
+      gtagEvent('lead_submit_success', { form_id: 'enquiry' })
       navigate('/success', { state: { submitted: true } })
     } catch (error: any) {
       const errorMessage = error?.message || 'Unknown error occurred'
@@ -105,6 +109,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         setLoading(false)
         return
       }
+      gtagEvent('lead_submit_error', { form_id: 'enquiry', error: errorMessage })
       setSubmitError(errorMessage)
       setLoading(false)
     }
@@ -127,6 +132,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         // Throw special token so submit handler doesn't show global error
         throw new Error('__OTP__')
       }
+      gtagEvent('otp_verified', { form_id: 'enquiry' })
       await saveLeadToSupabase()
     } catch (error: any) {
       throw error
