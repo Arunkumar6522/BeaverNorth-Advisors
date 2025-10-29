@@ -242,7 +242,7 @@ export default function App() {
                   fontSize: { xs: '2rem', md: '2.5rem' }
                 }}
               >
-                What Our Clients Say
+                {t('testimonials_title_home')}
               </Typography>
               <Typography 
                 variant="h6" 
@@ -254,14 +254,15 @@ export default function App() {
                   fontSize: { xs: '1rem', md: '1.1rem' }
                 }}
               >
-                Real stories from families who have improved their financial well-being with our guidance
+                {/* keep existing descriptive sentence for now or localize later */}
+                {t('capabilities_title')}
               </Typography>
             </Box>
 
             {loadingTestimonials ? (
               <Box sx={{ textAlign: 'center', py: 4 }}>
                 <Typography variant="body1" color="text.secondary">
-                  Loading testimonials...
+                  {t('testimonials_loading_home')}
                 </Typography>
               </Box>
             ) : testimonials.length > 0 ? (
@@ -365,7 +366,7 @@ export default function App() {
             ) : (
               <Box sx={{ textAlign: 'center', py: 4 }}>
                 <Typography variant="body1" color="text.secondary">
-                  No testimonials available at the moment.
+                  {t('testimonials_empty_home')}
                 </Typography>
               </Box>
             )}
@@ -389,7 +390,7 @@ export default function App() {
                   }
                 }}
               >
-                View All Testimonials
+                {t('testimonials_cta_home')}
               </Button>
             </Box>
           </motion.div>
@@ -418,7 +419,7 @@ export default function App() {
                   fontSize: { xs: '2rem', md: '2.5rem' }
                 }}
               >
-                Latest Financial Insights
+                {t('blogs_title_home')}
               </Typography>
               <Typography 
                 variant="h6" 
@@ -430,14 +431,14 @@ export default function App() {
                   fontSize: { xs: '1rem', md: '1.1rem' }
                 }}
               >
-                Stay informed with our latest articles on financial planning, insurance, and wealth building
+                {t('blogs_subtitle_home')}
               </Typography>
             </Box>
 
             {loadingBlogs ? (
               <Box sx={{ textAlign: 'center', py: 4 }}>
                 <Typography variant="body1" color="text.secondary">
-                  Loading blog posts...
+                  {t('blogs_loading_home')}
                 </Typography>
               </Box>
             ) : recentBlogs.length > 0 ? (
@@ -522,7 +523,7 @@ export default function App() {
             ) : (
               <Box sx={{ textAlign: 'center', py: 4 }}>
                 <Typography variant="body1" color="text.secondary">
-                  No blog posts available at the moment.
+                  {t('blogs_empty_home')}
                 </Typography>
               </Box>
             )}
@@ -546,7 +547,7 @@ export default function App() {
                   }
                 }}
               >
-                View All Blog Posts
+                {t('blogs_cta_home')}
               </Button>
             </Box>
           </motion.div>

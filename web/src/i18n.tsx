@@ -49,7 +49,16 @@ const en: Dict = {
   blog_error_fetch: 'Failed to fetch blog posts from server',
   blog_error_no_posts: 'No blog posts found',
   testimonials_title: 'Client Testimonials',
-  testimonials_loading: 'Loading testimonials...'
+  testimonials_loading: 'Loading testimonials...',
+  testimonials_title_home: 'What Our Clients Say',
+  testimonials_loading_home: 'Loading testimonials...',
+  testimonials_empty_home: 'No testimonials available at the moment.',
+  testimonials_cta_home: 'View All Testimonials',
+  blogs_title_home: 'Latest Financial Insights',
+  blogs_loading_home: 'Loading blog posts...',
+  blogs_empty_home: 'No blog posts available at the moment.',
+  blogs_subtitle_home: 'Stay informed with our latest articles on financial planning, insurance, and wealth building',
+  blogs_cta_home: 'View All Blog Posts'
 }
 
 const fr: Dict = {
@@ -97,7 +106,16 @@ const fr: Dict = {
   blog_error_fetch: 'Échec de la récupération des articles de blog depuis le serveur',
   blog_error_no_posts: 'Aucun article de blog trouvé',
   testimonials_title: 'Témoignages Clients',
-  testimonials_loading: 'Chargement des témoignages...'
+  testimonials_loading: 'Chargement des témoignages...',
+  testimonials_title_home: 'Ce que disent nos clients',
+  testimonials_loading_home: 'Chargement des témoignages...',
+  testimonials_empty_home: "Aucun témoignage disponible pour le moment.",
+  testimonials_cta_home: 'Voir tous les témoignages',
+  blogs_title_home: 'Derniers éclairages financiers',
+  blogs_loading_home: 'Chargement des articles de blog...',
+  blogs_empty_home: "Aucun article de blog disponible pour le moment.",
+  blogs_subtitle_home: 'Restez informé grâce à nos derniers articles sur la planification financière, l’assurance et la constitution de patrimoine',
+  blogs_cta_home: 'Voir tous les articles du blog'
 }
 
 const dictionaries: Record<Locale, Dict> = { en, fr }
