@@ -1,9 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import { useI18n } from '../i18n'
 import { useNavigate } from 'react-router-dom'
-import bnaLogo from '../assets/bna logo.png'
 
 interface ContactModalProps {
   isOpen: boolean
@@ -33,6 +32,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [otpSent, setOtpSent] = useState(false)
   const [otpResendTimer, setOtpResendTimer] = useState(0)
   const [sendingOtp, setSendingOtp] = useState(false)
+  const [otpStatus, setOtpStatus] = useState<string>('')
+  const [submitError, setSubmitError] = useState<string>('')
 
   // OTP Timer Effect
   useEffect(() => {
@@ -47,39 +48,31 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
   const sendOTP = async () => {
     if (sendingOtp || otpResendTimer > 0) return
-    
+    setOtpStatus('')
     setSendingOtp(true)
     try {
       const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
-      console.log('📱 Sending OTP to:', phoneNumber)
       
-      // Use Netlify function in production, local server in development
       const apiUrl = window.location.hostname === 'localhost' 
         ? 'http://localhost:3001/api/send-otp'
         : '/.netlify/functions/send-otp'
       
       const response = await fetch(apiUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          to: phoneNumber
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: phoneNumber })
       })
-      
       const result = await response.json()
       
       if (result.success) {
         setOtpSent(true)
-        setOtpResendTimer(30) // 30 seconds timer
-        alert(`✅ OTP sent to ${phoneNumber}`)
+        setOtpResendTimer(30)
+        setOtpStatus('Verification code sent successfully.')
       } else {
-        alert(`❌ Failed to send OTP: ${result.message}`)
+        setOtpStatus(result.message || 'Failed to send verification code. Please try again.')
       }
     } catch (error) {
-      console.error('OTP send error:', error)
-      alert('❌ Failed to send OTP. Please try again.')
+      setOtpStatus('Failed to send verification code. Please try again.')
     } finally {
       setSendingOtp(false)
     }
@@ -99,88 +92,43 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    console.log('🚀 Form submission started!')
-    console.log('📋 Form data:', formData)
-    console.log('🔢 OTP sent status:', otpSent)
-    console.log('🔢 OTP code in form:', formData.otp)
-    console.log('📧 Email:', formData.email)
-    console.log('📱 Phone:', formData.phone)
-    console.log('❌ Validation errors:', validationErrors)
-    
-    // Check submit button conditions
-    const isDisabled = loading || !formData.email || !formData.phone || !otpSent || !formData.otp || !!validationErrors.email
-    console.log('🚫 Submit button disabled?', isDisabled)
-    console.log('   - loading:', loading)
-    console.log('   - !email:', !formData.email)
-    console.log('   - !phone:', !formData.phone)
-    console.log('   - !otpSent:', !otpSent)
-    console.log('   - !otp:', !formData.otp)
-    console.log('   - email error:', !!validationErrors.email)
-    
+    setSubmitError('')
     setLoading(true)
-    
     try {
-      // First verify OTP before saving to database
-      console.log('🔄 About to call verifyOTPAndSubmit...')
       await verifyOTPAndSubmit()
-      
-      // Redirect to success page
-      console.log('✅ OTP verification successful, redirecting...')
       onClose()
       navigate('/success')
     } catch (error: any) {
       const errorMessage = error?.message || 'Unknown error occurred'
-      console.error('❌ Form submission failed:', error)
-      alert(`❌ Submission Failed\n\nError: ${errorMessage}\n\nPlease check the console for more details or try again.`)
-      console.error('🔴 Submission error details:', error)
+      // If OTP failed, only show inline OTP error, not global submit error
+      if (errorMessage === '__OTP__') {
+        setLoading(false)
+        return
+      }
+      setSubmitError(errorMessage)
       setLoading(false)
     }
   }
 
   const verifyOTPAndSubmit = async () => {
     try {
-      // First verify the OTP
       const phoneNumber = `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`
-      
-      console.log('🔐 Verifying OTP before submission...')
-      console.log('📱 Phone number:', phoneNumber)
-      console.log('🔢 OTP code:', formData.otp)
-      
-      // Use Netlify function in production, local server in development
       const apiUrl = window.location.hostname === 'localhost' 
         ? 'http://localhost:3001/api/verify-otp'
         : '/.netlify/functions/verify-otp'
-      
-      console.log('🌐 API URL:', apiUrl)
-      
       const verifyResponse = await fetch(apiUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          to: phoneNumber,
-          code: formData.otp
-        })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ to: phoneNumber, code: formData.otp })
       })
-      
-      console.log('📡 Response status:', verifyResponse.status)
-      
       const verifyResult = await verifyResponse.json()
-      console.log('📋 Response data:', verifyResult)
-      
       if (!verifyResult.success) {
-        throw new Error(verifyResult.message || 'OTP verification failed')
+        setValidationErrors(prev => ({ ...prev, otp: verifyResult.message || 'OTP verification failed' }))
+        // Throw special token so submit handler doesn't show global error
+        throw new Error('__OTP__')
       }
-      
-      console.log('✅ OTP verified successfully, proceeding with submission...')
-      
-      // Only after successful OTP verification, save to database
       await saveLeadToSupabase()
-      
     } catch (error: any) {
-      console.error('❌ OTP verification error:', error)
       throw error
     }
   }
@@ -443,6 +391,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     return `${year.toString().padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
   }
 
+  const dobPickerRef = useRef<HTMLInputElement>(null)
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     
@@ -584,36 +534,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
           ×
         </button>
 
-        {/* Logo */}
-        <div style={{
-          position: 'absolute',
-          top: '20px',
-          left: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px'
-        }}>
-          <img 
-            src={bnaLogo} 
-            alt="BeaverNorth Advisors" 
-            style={{ 
-              height: '32px',
-              width: 'auto'
-            }} 
-            onError={(e) => {
-              console.error('Modal logo failed to load:', e.currentTarget.src)
-              e.currentTarget.style.display = 'none'
-            }}
-          />
-          <span style={{
-            fontSize: '14px',
-            fontWeight: 600,
-            color: '#1E377C'
-          }}>
-            BNA
-          </span>
-        </div>
-
+        {/* Header (no logo) */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
                   <h2 style={{ 
             margin: '0 0 8px 0', 
@@ -709,17 +630,19 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                               maxLength={25}
                               style={{
                                 width: '100%',
-                                padding: '16px',
-                                border: `1px solid ${validationErrors.firstName ? '#EF4444' : '#D1D5DB'}`,
-                                borderRadius: '8px',
+                                padding: '14px 16px',
+                                border: `2px solid ${validationErrors.firstName ? '#EF4444' : 'var(--line)'}`,
+                                borderRadius: '12px',
                                 fontSize: '16px',
                                 background: '#ffffff',
                                 color: '#111827',
                                 outline: 'none',
-                                transition: 'border-color 0.2s'
+                                transition: 'border-color 0.2s',
+                                height: '48px',
+                                boxSizing: 'border-box'
                               }}
                               onFocus={(e) => e.target.style.borderColor = validationErrors.firstName ? '#EF4444' : '#22C55E'}
-                              onBlur={(e) => e.target.style.borderColor = validationErrors.firstName ? '#EF4444' : '#D1D5DB'}
+                              onBlur={(e) => e.target.style.borderColor = validationErrors.firstName ? '#EF4444' : 'var(--line)'}
                             />
                             {validationErrors.firstName && (
                               <p style={{
@@ -752,17 +675,19 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                               maxLength={25}
                               style={{
                                 width: '100%',
-                                padding: '16px',
-                                border: `1px solid ${validationErrors.lastName ? '#EF4444' : '#D1D5DB'}`,
-                                borderRadius: '8px',
+                                padding: '14px 16px',
+                                border: `2px solid ${validationErrors.lastName ? '#EF4444' : 'var(--line)'}`,
+                                borderRadius: '12px',
                                 fontSize: '16px',
                                 background: '#ffffff',
                                 color: '#111827',
                                 outline: 'none',
-                                transition: 'border-color 0.2s'
+                                transition: 'border-color 0.2s',
+                                height: '48px',
+                                boxSizing: 'border-box'
                               }}
                               onFocus={(e) => e.target.style.borderColor = validationErrors.lastName ? '#EF4444' : '#22C55E'}
-                              onBlur={(e) => e.target.style.borderColor = validationErrors.lastName ? '#EF4444' : '#D1D5DB'}
+                              onBlur={(e) => e.target.style.borderColor = validationErrors.lastName ? '#EF4444' : 'var(--line)'}
                             />
                             {validationErrors.lastName && (
                               <p style={{
@@ -785,7 +710,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     color: '#374151',
                     marginBottom: '8px'
                   }}>
-                    Gender <span style={{ color: '#EF4444' }}>*</span>
+                    {locale === 'fr' ? 'Genre' : 'Gender'} <span style={{ color: '#EF4444' }}>*</span>
                   </label>
                   <select
                     name="gender"
@@ -794,14 +719,16 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     required
                     style={{
                       width: '100%',
-                      padding: '16px',
-                      border: '1px solid #D1D5DB',
-                      borderRadius: '8px',
+                      padding: '14px 16px',
+                      border: '2px solid var(--line)',
+                      borderRadius: '12px',
                       fontSize: '16px',
                       background: '#ffffff',
                       color: '#111827',
                       outline: 'none',
-                      transition: 'border-color 0.2s'
+                      height: '48px',
+                      lineHeight: '20px',
+                      boxSizing: 'border-box'
                     }}
                   >
                     <option value="">{locale === 'fr' ? 'Sélectionnez votre genre' : 'Select your gender'}</option>
@@ -819,26 +746,72 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     color: 'var(--text-primary)',
                     marginBottom: '8px'
                   }}>
-                    When were you born? <span style={{ color: '#EF4444' }}>*</span>
+                    {locale === 'fr' ? 'Quand êtes‑vous né(e) ?' : 'When were you born?'} <span style={{ color: '#EF4444' }}>*</span>
                   </label>
-                  <input
-                    type="text"
-                    name="dob"
-                    placeholder="MM/DD/YYYY"
-                    value={formData.dob.length === 10 && formData.dob.includes('-') ? (() => { const [y,m,d]=formData.dob.split('-'); return `${m}/${d}/${y}` })() : formData.dob}
-                    onChange={handleChange}
-                    maxLength={10}
-                    style={{
-                      width: '100%',
-                      padding: '14px 16px',
-                      border: `2px solid ${validationErrors.dob ? '#EF4444' : 'var(--line)'}`,
-                      borderRadius: '12px',
-                      fontSize: '16px',
-                      background: 'var(--surface-1)',
-                      color: 'var(--text-primary)',
-                      outline: 'none'
-                    }}
-                  />
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <div style={{ position: 'relative', width: '100%' }}>
+                      <input
+                        type="text"
+                        name="dob"
+                        placeholder="MM/DD/YYYY"
+                        value={formData.dob.length === 10 && formData.dob.includes('-') ? (() => { const [y,m,d]=formData.dob.split('-'); return `${m}/${d}/${y}` })() : formData.dob}
+                        onChange={handleChange}
+                        maxLength={10}
+                        style={{
+                          width: '100%',
+                          padding: '14px 44px 14px 16px',
+                          border: `2px solid ${validationErrors.dob ? '#EF4444' : 'var(--line)'}`,
+                          borderRadius: '12px',
+                          fontSize: '16px',
+                          background: 'var(--surface-1)',
+                          color: 'var(--text-primary)',
+                          outline: 'none',
+                          height: '48px',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => dobPickerRef.current?.showPicker?.() || dobPickerRef.current?.click()}
+                        aria-label="Pick date"
+                        style={{
+                          position: 'absolute',
+                          right: '10px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          border: 'none',
+                          background: 'transparent',
+                          cursor: 'pointer',
+                          color: '#6B7280',
+                          fontSize: '18px',
+                          padding: 0
+                        }}
+                      >
+                        📅
+                      </button>
+                    </div>
+                    <input
+                      ref={dobPickerRef}
+                      type="date"
+                      aria-hidden="true"
+                      tabIndex={-1}
+                      style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', width: 0, height: 0 }}
+                      max={(function(){ const d=new Date(); d.setFullYear(d.getFullYear()-25); const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`})()}
+                      onChange={(e) => {
+                        const iso = e.target.value // already YYYY-MM-DD
+                        if (iso) {
+                          const picked = new Date(iso)
+                          if (picked > maxDobDate()) {
+                            setValidationErrors(prev => ({ ...prev, dob: 'Must be at least 25 years old.' }))
+                            setFormData(prev => ({ ...prev, dob: '' }))
+                          } else {
+                            setValidationErrors(prev => ({ ...prev, dob: '' }))
+                            setFormData(prev => ({ ...prev, dob: iso }))
+                          }
+                        }
+                      }}
+                    />
+                  </div>
                   {validationErrors.dob && (
                     <p style={{ color: '#EF4444', fontSize: '12px', margin: '4px 0 0 0', fontWeight: 500 }}>
                       {validationErrors.dob}
@@ -863,7 +836,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     marginTop: '12px'
                   }}
                 >
-                  Next Step
+                  {locale === 'fr' ? 'Étape suivante' : 'Next Step'}
                 </button>
               </motion.div>
             )}
@@ -884,7 +857,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     color: 'var(--text-primary)',
                     marginBottom: '12px'
                   }}>
-                    Are you a smoker or non-smoker? *
+                    {locale === 'fr' ? 'Êtes‑vous non‑fumeur ou fumeur ? *' : 'Are you a smoker or non-smoker? *'}
                   </label>
                   <div style={{ display: 'flex', gap: '12px' }}>
                     <label style={{ 
@@ -910,7 +883,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         required
                         style={{ display: 'none' }}
                       />
-                      <span style={{ fontSize: '14px', fontWeight: 500 }}>Non-Smoker</span>
+                      <span style={{ fontSize: '14px', fontWeight: 500 }}>{locale === 'fr' ? 'Non‑fumeur' : 'Non-Smoker'}</span>
                     </label>
                     <label style={{ 
                       display: 'flex', 
@@ -935,7 +908,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         required
                         style={{ display: 'none' }}
                       />
-                      <span style={{ fontSize: '14px', fontWeight: 500 }}>Smoker</span>
+                      <span style={{ fontSize: '14px', fontWeight: 500 }}>{locale === 'fr' ? 'Fumeur' : 'Smoker'}</span>
                     </label>
                   </div>
                 </div>
@@ -948,7 +921,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     color: 'var(--text-primary)',
                     marginBottom: '8px'
                   }}>
-                    What type of insurance are you looking for? *
+                    {locale === 'fr' ? "Quel type d'assurance recherchez‑vous ? *" : 'What type of insurance are you looking for? *'}
                   </label>
                   <select
                     name="insuranceProduct"
@@ -967,13 +940,13 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       cursor: 'pointer'
                     }}
                   >
-                    <option value="">Select insurance type</option>
-                    <option value="term-life">Term Life Insurance</option>
-                    <option value="whole-life">Whole Life Insurance</option>
-                    <option value="non-medical">Non-Medical Life Insurance</option>
-                    <option value="mortgage-life">Mortgage Life Insurance</option>
-                    <option value="senior-life">Senior Life Insurance</option>
-                    <option value="travel">Travel Insurance</option>
+                    <option value="">{locale === 'fr' ? "Choisissez un type d'assurance" : 'Select insurance type'}</option>
+                    <option value="term-life">{locale === 'fr' ? 'Assurance vie temporaire' : 'Term Life Insurance'}</option>
+                    <option value="whole-life">{locale === 'fr' ? 'Assurance vie entière' : 'Whole Life Insurance'}</option>
+                    <option value="non-medical">{locale === 'fr' ? 'Assurance vie sans examen médical' : 'Non-Medical Life Insurance'}</option>
+                    <option value="mortgage-life">{locale === 'fr' ? 'Assurance vie hypothécaire' : 'Mortgage Life Insurance'}</option>
+                    <option value="senior-life">{locale === 'fr' ? 'Assurance vie pour aînés' : 'Senior Life Insurance'}</option>
+                    <option value="travel">{locale === 'fr' ? 'Assurance voyage' : 'Travel Insurance'}</option>
                   </select>
                 </div>
 
@@ -985,7 +958,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     color: 'var(--text-primary)',
                     marginBottom: '8px'
                   }}>
-                    Which province are you in? *
+                    {locale === 'fr' ? 'Dans quelle province êtes‑vous ? *' : 'Which province are you in? *'}
                   </label>
                   <select
                     name="province"
@@ -1004,7 +977,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       cursor: 'pointer'
                     }}
                   >
-                    <option value="">Select your province</option>
+                    <option value="">{locale === 'fr' ? 'Sélectionnez votre province' : 'Select your province'}</option>
                     <option value="Alberta">Alberta</option>
                     <option value="British Columbia">British Columbia</option>
                     <option value="Manitoba">Manitoba</option>
@@ -1055,7 +1028,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       cursor: !formData.smokingStatus || !formData.insuranceProduct || !formData.province ? 'not-allowed' : 'pointer'
                     }}
                   >
-                    Next Step
+                    {locale === 'fr' ? 'Étape suivante' : 'Next Step'}
                   </button>
                 </div>
               </motion.div>
@@ -1119,14 +1092,14 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     color: 'var(--text-primary)',
                     marginBottom: '8px'
                   }}>
-                    Phone Number *
+                    {locale === 'fr' ? 'Numéro de téléphone *' : 'Phone Number *'}
                   </label>
                   <p style={{ 
                     fontSize: '12px',
                     color: 'var(--text-secondary)',
                     marginBottom: '12px'
                   }}>
-                    📱 We'll contact you at this number
+                    {locale === 'fr' ? '📱 Nous vous contacterons à ce numéro' : "📱 We'll contact you at this number"}
                   </p>
                   <div style={{ display: 'flex', gap: '0' }}>
                     <select
@@ -1185,14 +1158,14 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     color: 'var(--text-primary)',
                     marginBottom: '8px'
                   }}>
-                    Phone Verification *
+                    {locale === 'fr' ? 'Vérification du téléphone *' : 'Phone Verification *'}
                   </label>
                   <p style={{ 
                     fontSize: '12px',
                     color: 'var(--text-secondary)',
                     marginBottom: '16px'
                   }}>
-                    🔐 We'll send a verification code to your phone
+                    {locale === 'fr' ? '🔐 Nous enverrons un code de vérification sur votre téléphone' : "🔐 We'll send a verification code to your phone"}
                   </p>
                   
                   {/* Send OTP Button */}
@@ -1214,10 +1187,13 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         transition: 'all 0.2s ease'
                       }}
                     >
-                      {sendingOtp ? 'Sending...' : 
-                       otpResendTimer > 0 ? `Resend in ${otpResendTimer}s` : 
-                       'Send Verification Code'}
+                      {sendingOtp ? (locale === 'fr' ? 'Envoi…' : 'Sending...') : 
+                       otpResendTimer > 0 ? (locale === 'fr' ? `Renvoyer dans ${otpResendTimer}s` : `Resend in ${otpResendTimer}s`) : 
+                       (locale === 'fr' ? 'Envoyer le code de vérification' : 'Send Verification Code')}
                     </button>
+                    {otpStatus && (
+                      <p style={{ marginTop: 8, fontSize: 12, color: '#6B7280' }}>{otpStatus}</p>
+                    )}
                   </div>
 
                   {/* OTP Input - Only show after OTP is sent */}
@@ -1230,26 +1206,31 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         color: 'var(--text-primary)',
                         marginBottom: '8px'
                       }}>
-                        Enter Verification Code *
+                        {locale === 'fr' ? 'Entrez le code de vérification *' : 'Enter Verification Code *'}
                       </label>
                       <p style={{ 
                         fontSize: '12px',
                         color: 'var(--text-secondary)',
                         marginBottom: '12px'
                       }}>
-                        📱 Enter the 6-digit code sent to {formData.countryCode}{formData.phone}
+                        {locale === 'fr' ? '📱 Entrez le code à 6 chiffres envoyé à ' : '📱 Enter the 6-digit code sent to '}{formData.countryCode}{formData.phone}
                       </p>
                       <input
                         type="text"
                         name="otp"
                         placeholder="123456"
                         value={formData.otp}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          // clear OTP-specific and global submit errors while user edits
+                          if (submitError) setSubmitError('')
+                          if (validationErrors.otp) setValidationErrors(prev => ({ ...prev, otp: '' }))
+                          handleChange(e as any)
+                        }}
                         maxLength={6}
                         style={{
                           width: '100%',
-                          padding: '16px',
-                          border: '2px solid var(--line)',
+                          padding: '14px 16px',
+                          border: `2px solid ${validationErrors.otp ? '#EF4444' : 'var(--line)'}`,
                           borderRadius: '12px',
                           fontSize: '18px',
                           background: 'var(--surface-1)',
@@ -1260,6 +1241,9 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                           fontFamily: 'monospace'
                         }}
                       />
+                      {validationErrors.otp && (
+                        <p style={{ color: '#EF4444', fontSize: 12, marginTop: 6 }}>{validationErrors.otp}</p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1285,25 +1269,28 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     </button>
                     <button
                       type="submit"
-                      disabled={loading || !formData.email || !formData.phone || !otpSent || !formData.otp || !!validationErrors.email}
+                      disabled={loading || !formData.phone || !otpSent || !formData.otp || !!validationErrors.email || !!validationErrors.dob}
                       style={{
                         flex: 2,
-                        background: (loading || !formData.email || !formData.phone || !otpSent || !formData.otp || validationErrors.email) ? 'var(--line)' : 'rgb(255, 203, 5)',
+                        background: (loading || !formData.phone || !otpSent || !formData.otp || validationErrors.email || validationErrors.dob) ? 'var(--line)' : 'rgb(255, 203, 5)',
                         color: '#1E377C',
                         padding: '16px',
                         borderRadius: '12px',
                         border: 'none',
                         fontSize: '16px',
                         fontWeight: '600',
-                        cursor: (loading || !formData.email || !formData.phone || !otpSent || !formData.otp || validationErrors.email) ? 'not-allowed' : 'pointer'
+                        cursor: (loading || !formData.phone || !otpSent || !formData.otp || validationErrors.email || validationErrors.dob) ? 'not-allowed' : 'pointer'
                       }}
                     >
-                      {loading ? 'Submitting...' : 
-                       !otpSent ? 'Send OTP First' : 
-                       !formData.otp ? 'Enter OTP Code' : 
-                       'Submit Quote Request'}
+                      {loading ? (locale === 'fr' ? 'Envoi…' : 'Submitting...') : 
+                       !otpSent ? (locale === 'fr' ? 'Envoyez d’abord le code' : 'Send OTP First') : 
+                       !formData.otp ? (locale === 'fr' ? 'Entrez le code OTP' : 'Enter OTP Code') : 
+                       (locale === 'fr' ? 'Envoyer la demande de devis' : 'Submit Quote Request')}
                     </button>
                   </div>
+                  {submitError && (
+                    <p style={{ color: '#EF4444', fontSize: 12, marginTop: 6, textAlign: 'center' }}>{submitError}</p>
+                  )}
                 </form>
 
                 <p style={{ 
@@ -1313,13 +1300,37 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                   margin: '0',
                   lineHeight: 1.5
                 }}>
-                  Your information is secure and confidential.<br/>
-                  Licensed Canadian insurance advisors respond within 24 hours.
+                  {locale === 'fr' ? 'Vos informations sont sécurisées et confidentielles.' : 'Your information is secure and confidential.'}<br/>
+                  {locale === 'fr' ? 'Des conseillers d’assurance canadiens agréés vous répondent sous 24 heures.' : 'Licensed Canadian insurance advisors respond within 24 hours.'}
                 </p>
               </motion.div>
             )}
         </div>
       </motion.div>
+      {loading && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: 'rgba(255,255,255,0.6)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1100
+        }}>
+          <div style={{
+            width: 40,
+            height: 40,
+            border: '4px solid rgba(30,55,124,0.2)',
+            borderTopColor: '#1E377C',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite'
+          }} />
+          <style>{'@keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }'}</style>
+        </div>
+      )}
     </div>
   )
 }

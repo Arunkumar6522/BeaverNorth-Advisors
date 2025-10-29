@@ -114,27 +114,7 @@ export default function NotFound() {
             </Box>
 
             {/* Additional Help */}
-            <Box sx={{ mt: 6, p: 3, bgcolor: 'rgba(255, 203, 5, 0.1)', borderRadius: 2 }}>
-              <Typography variant="body1" sx={{ color: '#1E377C', fontWeight: 500, mb: 1 }}>
-                Need help?
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                If you're looking for admin access, please{' '}
-                <Button
-                  variant="text"
-                  onClick={() => navigate('/login')}
-                  sx={{
-                    color: '#1E377C',
-                    fontWeight: 600,
-                    textDecoration: 'underline',
-                    p: 0,
-                    minWidth: 'auto'
-                  }}
-                >
-                  login here
-                </Button>
-              </Typography>
-            </Box>
+            {/* Removed login link per request */}
           </motion.div>
         </Container>
       </Box>
