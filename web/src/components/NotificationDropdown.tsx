@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { 
   Box, 
@@ -94,6 +94,14 @@ export default function NotificationDropdown({ isAuthenticated = false, color = 
     
     setLoading(false)
   }
+
+  // Fetch on mount and poll periodically so badge shows without opening
+  useEffect(() => {
+    if (!isAuthenticated) return
+    fetchRecentActivity()
+    const id = setInterval(fetchRecentActivity, 60000)
+    return () => clearInterval(id)
+  }, [isAuthenticated])
 
   const getActivityIcon = (activityType: string) => {
     switch (activityType) {

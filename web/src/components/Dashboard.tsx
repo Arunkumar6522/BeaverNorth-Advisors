@@ -150,21 +150,38 @@ export default function Dashboard() {
 
   const stats = getStatsForPeriod(timePeriod)
 
+  const periodLeads = React.useMemo(() => {
+    const now = new Date()
+    let startDate: Date
+    switch (timePeriod) {
+      case 'today':
+        startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+        break
+      case 'week':
+        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+        break
+      case 'month':
+      default:
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1)
+    }
+    return leadsData.filter(lead => new Date(lead.created_at) >= startDate)
+  }, [leadsData, timePeriod])
+
   const smokingData = React.useMemo(() => {
-    const smokers = leadsData.filter(lead => lead.smoking_status === 'smoker').length
-    const nonSmokers = leadsData.filter(lead => lead.smoking_status === 'non-smoker').length
+    const smokers = periodLeads.filter(lead => lead.smoking_status === 'smoker').length
+    const nonSmokers = periodLeads.filter(lead => lead.smoking_status === 'non-smoker').length
     
     return [
       { name: 'Smokers', value: smokers, color: '#EF4444' },
       { name: 'Non-Smokers', value: nonSmokers, color: 'rgb(255, 203, 5)' }
     ]
-  }, [leadsData])
+  }, [periodLeads])
 
   const genderData = React.useMemo(() => {
-    const male = leadsData.filter(lead => lead.gender === 'male').length
-    const female = leadsData.filter(lead => lead.gender === 'female').length
-    const others = leadsData.filter(lead => lead.gender === 'others').length
-    const preferNotToSay = leadsData.filter(lead => lead.gender === 'prefer-not-to-say').length
+    const male = periodLeads.filter(lead => lead.gender === 'male').length
+    const female = periodLeads.filter(lead => lead.gender === 'female').length
+    const others = periodLeads.filter(lead => lead.gender === 'others').length
+    const preferNotToSay = periodLeads.filter(lead => lead.gender === 'prefer-not-to-say').length
     
     return [
       { name: 'Male', value: male, color: '#3B82F6' },
@@ -172,7 +189,7 @@ export default function Dashboard() {
       { name: 'Others', value: others, color: '#9C27B0' },
       { name: 'Prefer not to say', value: preferNotToSay, color: '#607D8B' }
     ]
-  }, [leadsData])
+  }, [periodLeads])
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {

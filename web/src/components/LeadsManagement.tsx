@@ -215,8 +215,8 @@ export default function LeadsManagement() {
     phone: '',
     dob: '',
     province: '',
-    smokingStatus: 'non-smoker' as 'smoker' | 'non-smoker',
-    insuranceProduct: 'term-life' as 'term-life' | 'whole-life' | 'non-medical' | 'mortgage-life' | 'senior-life' | 'travel',
+    smokingStatus: '' as '' | 'smoker' | 'non-smoker',
+    insuranceProduct: '' as '' | 'term-life' | 'whole-life' | 'non-medical' | 'mortgage-life' | 'senior-life' | 'travel',
     notes: ''
   })
   
@@ -720,8 +720,8 @@ export default function LeadsManagement() {
           phone: '',
           dob: '',
           province: '',
-          smokingStatus: 'non-smoker',
-          insuranceProduct: 'term-life',
+          smokingStatus: '',
+          insuranceProduct: '',
           notes: ''
         })
         setAddLeadModalOpen(false)
@@ -1559,8 +1559,12 @@ export default function LeadsManagement() {
                 <Select
                   value={addLeadForm.smokingStatus}
                   label="Smoking Status"
-                  onChange={(e) => setAddLeadForm({...addLeadForm, smokingStatus: e.target.value as 'smoker' | 'non-smoker'})}
+                  onChange={(e) => setAddLeadForm({...addLeadForm, smokingStatus: e.target.value as 'smoker' | 'non-smoker' | ''})}
+                  displayEmpty
                 >
+                  <MenuItem value="">
+                    <em>Select smoking status</em>
+                  </MenuItem>
                   <MenuItem value="non-smoker">Non-smoker</MenuItem>
                   <MenuItem value="smoker">Smoker</MenuItem>
                 </Select>
@@ -1572,7 +1576,11 @@ export default function LeadsManagement() {
                   value={addLeadForm.insuranceProduct}
                   label="Insurance Product"
                   onChange={(e) => setAddLeadForm({...addLeadForm, insuranceProduct: e.target.value as any})}
+                  displayEmpty
                 >
+                  <MenuItem value="">
+                    <em>Select insurance product</em>
+                  </MenuItem>
                   <MenuItem value="term-life">Term Life Insurance</MenuItem>
                   <MenuItem value="whole-life">Whole Life Insurance</MenuItem>
                   <MenuItem value="non-medical">Non-Medical Insurance</MenuItem>
