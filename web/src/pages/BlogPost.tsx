@@ -8,7 +8,6 @@ import {
   CardContent, 
   Button, 
   Container, 
-  Chip,
   Breadcrumbs,
   Link as MuiLink,
   CircularProgress,
