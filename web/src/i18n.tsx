@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useContext, useMemo, useState, type ReactNode, useEffect } from 'react'
 
 type Locale = 'en' | 'fr'
 
@@ -155,7 +155,19 @@ type I18nContextType = {
 const I18nContext = createContext<I18nContextType | undefined>(undefined)
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocale] = useState<Locale>('fr')
+  // Initialize from localStorage if available, else default to English
+  const [locale, setLocale] = useState<Locale>(() => {
+    const saved = typeof window !== 'undefined' ? window.localStorage.getItem('locale') as Locale | null : null
+    return saved === 'en' || saved === 'fr' ? saved : 'en'
+  })
+
+  // Persist locale on change
+  useEffect(() => {
+    try {
+      window.localStorage.setItem('locale', locale)
+    } catch {}
+  }, [locale])
+
   const t = useMemo(() => (key: string) => dictionaries[locale][key] ?? key, [locale])
   const value = useMemo(() => ({ locale, setLocale, t }), [locale, t])
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
