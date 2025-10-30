@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useI18n } from '../i18n'
 import { Box, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material'
@@ -62,13 +62,13 @@ export default function Nav() {
     return () => document.removeEventListener('click', onClick)
   }, [])
 
-  const navItems = [
+  const navItems = useMemo(() => ([
     { label: t('nav_home'), path: '/' },
     { label: t('nav_about'), path: '/about' },
     { label: t('nav_blog'), path: '/blog' },
     { label: t('nav_testimonials'), path: '/testimonial' },
     { label: t('nav_contact'), path: '/contact' }
-  ]
+  ]), [locale, t])
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen)
 
