@@ -737,7 +737,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       padding: '14px 16px',
                       border: '2px solid var(--line)',
                       borderRadius: '12px',
-                      fontSize: '16px',
+                      fontSize: '14px',
                       background: '#ffffff',
                       color: '#111827',
                       outline: 'none',
