@@ -563,7 +563,7 @@ export default function About() {
             transition={{ duration: 0.8 }}
           >
             <Box sx={{ 
-              background: 'linear-gradient(135deg, #1E377C 0%, #417F73 100%)',
+              bgcolor: '#1E377C',
               color: 'white',
               p: { xs: 4, md: 6 }, 
               borderRadius: 4,
