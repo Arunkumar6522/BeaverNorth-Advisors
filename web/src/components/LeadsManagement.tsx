@@ -43,6 +43,7 @@ import {
 import { useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { customAuth } from '../lib/custom-auth'
+import { trackPhoneClick, trackEmailClick, trackPagination, trackFilterApplied, trackModuleView } from '../lib/analytics'
 
 interface Lead {
   id: string
@@ -237,6 +238,7 @@ export default function LeadsManagement() {
     if (nextTab === 'closed') {
       setFilter('all')
     }
+    trackModuleView(`leads_${nextTab}`)
   }
 
   // Handle URL parameters
@@ -324,6 +326,7 @@ export default function LeadsManagement() {
 
     console.log('🚀 LeadsManagement component mounted, fetching leads...')
     fetchLeads()
+    trackModuleView('leads_active')
   }, [])
 
   // Filter leads based on active/closed status
@@ -825,6 +828,7 @@ export default function LeadsManagement() {
     try {
       // Copy email to clipboard
       await navigator.clipboard.writeText(email)
+      trackEmailClick(email, 'leads_table')
       alert(`📧 Email copied to clipboard: ${email}`)
       
       // Also try to open default email client
@@ -841,6 +845,7 @@ export default function LeadsManagement() {
     try {
       // Copy phone to clipboard
       await navigator.clipboard.writeText(phone)
+      trackPhoneClick(phone, 'leads_table')
       alert(`📱 Phone copied to clipboard: ${phone}`)
       
       // Also try to open phone dialer
@@ -947,7 +952,10 @@ export default function LeadsManagement() {
                   <Select
                     value={statusFilter}
                     label="Status"
-                    onChange={(e) => setFilter(e.target.value)}
+                    onChange={(e) => {
+                      setFilter(e.target.value)
+                      trackFilterApplied('leads_active', 'status', String(e.target.value))
+                    }}
                   >
                     <MenuItem value="all">All</MenuItem>
                     <MenuItem value="new">New</MenuItem>
@@ -1222,7 +1230,10 @@ export default function LeadsManagement() {
             <Pagination
               count={Math.max(1, Math.ceil(filteredLeads.length / rowsPerPage))}
               page={page + 1}
-              onChange={(_e, value) => setPage(value - 1)}
+              onChange={(_e, value) => {
+                setPage(value - 1)
+                trackPagination(currentTab === 'active' ? 'leads_active' : 'leads_closed', value)
+              }}
               showFirstButton
               showLastButton
               color="primary"

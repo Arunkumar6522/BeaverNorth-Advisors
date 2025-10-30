@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Box, Typography, Card, CardContent, Container, Grid, Button } from '@mui/material'
 import { CalendarToday, OpenInNew } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
+import { trackArticleClick } from '../lib/analytics'
 import { useNavigate } from 'react-router-dom'
 import { useI18n } from '../i18n'
 
@@ -239,7 +240,7 @@ export default function Blog() {
                           boxShadow: '0 12px 24px rgba(0,0,0,0.15)'
                         }
                       }}
-                      onClick={() => handlePostClick(post)}
+                      onClick={() => { trackArticleClick(post.title); handlePostClick(post) }}
                     >
                       {/* Thumbnail Image */}
                       {(post.thumbnail || getFirstImage(post.content)) ? (

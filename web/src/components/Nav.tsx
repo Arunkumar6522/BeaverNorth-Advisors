@@ -4,6 +4,7 @@ import { useI18n } from '../i18n'
 import { Box, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material'
 import { Menu as MenuIcon, Close as CloseIcon, Language } from '@mui/icons-material'
 import { gtagEvent, gtagPageView } from '../lib/analytics'
+import { trackLanguageChange, trackPhoneClick, trackEmailClick } from '../lib/analytics'
 
 export default function Nav() {
   const location = useLocation()
@@ -43,7 +44,7 @@ export default function Nav() {
 
   // Track SPA page views
   useEffect(() => {
-    gtagPageView(location.pathname, document.title)
+    gtagPageView(location.pathname)
   }, [location.pathname])
 
   // Track outbound link clicks
@@ -56,6 +57,14 @@ export default function Nav() {
           link_url: anchor.href,
           outbound: true
         })
+      }
+      if (anchor && anchor.href) {
+        if (anchor.href.startsWith('tel:')) {
+          trackPhoneClick(anchor.href.replace('tel:', ''), 'global')
+        }
+        if (anchor.href.startsWith('mailto:')) {
+          trackEmailClick(anchor.href.replace('mailto:', ''), 'global')
+        }
       }
     }
     document.addEventListener('click', onClick, { passive: true })
@@ -201,6 +210,7 @@ export default function Nav() {
                   onChange={(e) => {
                     console.log('Language changed to:', e.target.value)
                     setLocale(e.target.value as 'en' | 'fr')
+                    trackLanguageChange(e.target.value)
                   }}
                   style={{
                     border: 'none',
@@ -232,6 +242,7 @@ export default function Nav() {
                   onChange={(e) => {
                     console.log('Mobile language changed to:', e.target.value)
                     setLocale(e.target.value as 'en' | 'fr')
+                    trackLanguageChange(e.target.value)
                   }}
                   style={{
                     border: 'none',

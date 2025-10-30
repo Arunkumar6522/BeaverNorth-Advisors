@@ -16,11 +16,11 @@ import {
 } from '@mui/material'
 import { 
   CalendarToday, 
-  Person, 
   ArrowBack,
   Home
 } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
+import { trackArticleRead } from '../lib/analytics'
 
 interface BlogPost {
   title: string
@@ -145,6 +145,35 @@ export default function BlogPost() {
     )
   }
 
+  // Track article_read when user spends 30s and reaches 60% scroll
+  useEffect(() => {
+    if (!post) return
+    let timeOk = false
+    let scrollOk = false
+    let fired = false
+
+    const tryFire = () => {
+      if (!fired && timeOk && scrollOk) {
+        fired = true
+        trackArticleRead(post.title)
+      }
+    }
+
+    const timer = setTimeout(() => { timeOk = true; tryFire() }, 30000)
+    const onScroll = () => {
+      const scrolled = window.scrollY + window.innerHeight
+      const total = document.documentElement.scrollHeight
+      const pct = scrolled / total
+      if (pct >= 0.6) {
+        scrollOk = true
+        tryFire()
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => { window.removeEventListener('scroll', onScroll); clearTimeout(timer) }
+  }, [post])
+
   return (
     <PublicLayout>
       <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
@@ -197,19 +226,12 @@ export default function BlogPost() {
                   display: 'flex', 
                   alignItems: 'center', 
                   gap: { xs: 2, sm: 3 }, 
-                  mb: 3,
-                  flexWrap: 'wrap'
+                  mb: 3
                 }}>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                     <CalendarToday sx={{ fontSize: { xs: 16, sm: 18 }, color: '#6B7280' }} />
                     <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
                       {formatDate(post.pubDate)}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                    <Person sx={{ fontSize: { xs: 16, sm: 18 }, color: '#6B7280' }} />
-                    <Typography variant="body2" color="text.secondary" sx={{ fontSize: { xs: '0.8rem', sm: '0.875rem' } }}>
-                      {post.author}
                     </Typography>
                   </Box>
                 </Box>
@@ -229,20 +251,7 @@ export default function BlogPost() {
                   {post.title}
                 </Typography>
 
-                {/* Categories */}
-                <Box sx={{ display: 'flex', gap: 1, mb: 4, flexWrap: 'wrap' }}>
-                  {post.categories?.map((category) => (
-                    <Chip
-                      key={category}
-                      label={category}
-                      sx={{
-                        bgcolor: 'rgba(255, 203, 5, 0.1)',
-                        color: '#1E377C',
-                        fontWeight: 500
-                      }}
-                    />
-                  ))}
-                </Box>
+                {/* No author, no category chips */}
 
                 {/* Post Content */}
                 <Box
