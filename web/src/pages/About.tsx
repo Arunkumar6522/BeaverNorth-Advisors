@@ -65,11 +65,12 @@ export default function About() {
       <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
         {/* Hero Section */}
         <Box sx={{ 
-          background: 'linear-gradient(135deg, #1E377C 0%, #417F73 100%)',
-          color: 'white',
+          bgcolor: 'rgb(255, 203, 5)',
+          color: '#1E377C',
           py: { xs: 8, md: 12 },
           position: 'relative',
-          overflow: 'hidden'
+          overflow: 'hidden',
+          textAlign: 'center'
         }}>
           {/* Background Pattern */}
           <Box sx={{
@@ -78,7 +79,7 @@ export default function About() {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundImage: 'radial-gradient(circle at 20% 80%, rgba(255, 203, 5, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255, 203, 5, 0.1) 0%, transparent 50%)',
+            backgroundImage: 'radial-gradient(circle at 20% 80%, rgba(30, 55, 124, 0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(30, 55, 124, 0.08) 0%, transparent 50%)',
             zIndex: 1
           }} />
           
@@ -93,7 +94,7 @@ export default function About() {
                   variant="h1" 
                   sx={{ 
                     fontWeight: 800, 
-                    color: 'white', 
+                    color: '#1E377C', 
                     mb: 3,
                     fontSize: { xs: '2.5rem', md: '3.5rem', lg: '4rem' },
                     lineHeight: 1.2
@@ -104,7 +105,7 @@ export default function About() {
                 <Typography 
                   variant="h5" 
                   sx={{ 
-                    color: 'rgba(255, 255, 255, 0.9)', 
+                    color: '#1E377C', 
                     fontWeight: 400,
                     maxWidth: 800,
                     margin: '0 auto',

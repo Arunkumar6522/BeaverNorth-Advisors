@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Box, Typography, Card, CardContent, Chip, Button, Container, Grid } from '@mui/material'
-import { CalendarToday, Person, ArrowForward, OpenInNew } from '@mui/icons-material'
+import { Box, Typography, Card, CardContent, Container, Grid } from '@mui/material'
+import { CalendarToday, OpenInNew } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
 import { useNavigate } from 'react-router-dom'
 import { useI18n } from '../i18n'
@@ -119,9 +119,9 @@ export default function Blog() {
       <Box sx={{ minHeight: '100vh', bgcolor: '#f8fafc' }}>
         {/* Hero Section */}
         <Box sx={{ 
-          bgcolor: 'white', 
+          bgcolor: 'rgb(255, 203, 5)', 
           py: 8,
-          borderBottom: '1px solid rgba(105,131,204,0.1)'
+          textAlign: 'center'
         }}>
           <Container maxWidth="lg" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
             <motion.div
@@ -144,7 +144,7 @@ export default function Blog() {
               <Typography 
                 variant="h6" 
                 sx={{ 
-                  color: '#6B7280', 
+                  color: '#1E377C', 
                   textAlign: 'center',
                   maxWidth: 600,
                   mx: 'auto',
@@ -280,19 +280,12 @@ export default function Blog() {
                           display: 'flex', 
                           alignItems: 'center', 
                           gap: { xs: 1, sm: 2 }, 
-                          mb: 2,
-                          flexWrap: 'wrap'
+                          mb: 2
                         }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                             <CalendarToday sx={{ fontSize: { xs: 14, sm: 16 }, color: '#6B7280' }} />
                             <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
                               {formatDate(post.pubDate)}
-                            </Typography>
-                          </Box>
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                            <Person sx={{ fontSize: { xs: 14, sm: 16 }, color: '#6B7280' }} />
-                            <Typography variant="caption" color="text.secondary" sx={{ fontSize: { xs: '0.7rem', sm: '0.75rem' } }}>
-                              {post.author}
                             </Typography>
                           </Box>
                         </Box>
@@ -332,45 +325,7 @@ export default function Blog() {
                           {getExcerpt(post.content)}
                         </Typography>
 
-                        {/* Categories */}
-                        <Box sx={{ display: 'flex', gap: 0.5, mb: { xs: 2, sm: 3 }, flexWrap: 'wrap' }}>
-                          {post.categories?.slice(0, 2).map((category) => (
-                            <Chip
-                              key={category}
-                              label={category}
-                              size="small"
-                              sx={{
-                                bgcolor: 'rgba(255, 203, 5, 0.1)',
-                                color: '#1E377C',
-                                fontWeight: 500,
-                                fontSize: { xs: '0.65rem', sm: '0.75rem' },
-                                height: { xs: 20, sm: 24 }
-                              }}
-                            />
-                          ))}
-                        </Box>
-
-                        {/* Read More Button */}
-                        <Button
-                          variant="contained"
-                          endIcon={<ArrowForward />}
-                          sx={{
-                            bgcolor: 'rgb(255, 203, 5)',
-                            color: '#1E377C',
-                            fontWeight: 600,
-                            textTransform: 'none',
-                            fontSize: { xs: '0.8rem', sm: '0.875rem' },
-                            py: { xs: 0.5, sm: 1 },
-                            px: { xs: 1.5, sm: 2 },
-                            '&:hover': {
-                              bgcolor: 'rgb(255, 193, 0)',
-                              color: '#1E377C'
-                            }
-                          }}
-                          onClick={() => handlePostClick(post)}
-                        >
-                          Read More
-                        </Button>
+                        {/* No author, no category chips, no explicit Read More button */}
                       </CardContent>
                     </Card>
                   </motion.div>
@@ -378,42 +333,44 @@ export default function Blog() {
               ))}
             </Grid>
           )}
+          {/* Removed bottom CTA and extra links as requested */}
+        </Container>
 
-          {/* Visit Full Blog CTA */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.6 }}
-          >
-            <Box sx={{ textAlign: 'center', mt: 6 }}>
-              <Typography variant="h6" sx={{ mb: 3, color: '#6B7280' }}>
-                Want to read more articles?
-              </Typography>
-              <Button
-                variant="outlined"
-                size="large"
-                endIcon={<OpenInNew />}
-                href="https://beavernorth.blogspot.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  borderColor: 'rgb(255, 203, 5)',
-                  color: '#1E377C',
-                  fontWeight: 600,
-                  textTransform: 'none',
-                  px: 4,
-                  py: 1.5,
-                  '&:hover': {
-                    borderColor: 'rgb(255, 193, 0)',
-                    bgcolor: 'rgba(255, 203, 5, 0.05)'
-                  }
+        {/* Bottom CTA to match theme */}
+        <Box sx={{ 
+          bgcolor: '#1E377C', 
+          py: 8,
+          textAlign: 'center'
+        }}>
+          <Container maxWidth="md">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              <Typography 
+                variant="h3" 
+                sx={{ 
+                  fontWeight: 700, 
+                  color: 'white',
+                  mb: 3
                 }}
               >
-                {t('blog_visit_full')}
-              </Button>
-            </Box>
-          </motion.div>
-        </Container>
+                Stay informed with BeaverNorth insights
+              </Typography>
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  color: 'rgba(255,255,255,0.9)',
+                  mb: 4,
+                  lineHeight: 1.6
+                }}
+              >
+                Explore our latest articles on Canadian insurance and financial protection.
+              </Typography>
+            </motion.div>
+          </Container>
+        </Box>
       </Box>
     </PublicLayout>
   )
