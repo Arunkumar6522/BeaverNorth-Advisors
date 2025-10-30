@@ -341,12 +341,21 @@ export default function DeletedLeads() {
                       </TableCell>
 
                     <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
-                      <Typography variant="caption" sx={{ fontWeight: '500' }}>
-                        {lead.insurance_product}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem' }}>
-                        {lead.smoking_status}
-                      </Typography>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                        <Typography variant="caption" sx={{ fontWeight: '500' }}>
+                          {({
+                            'term-life': 'Term Life Insurance',
+                            'whole-life': 'Whole Life Insurance',
+                            'non-medical': 'Non-Medical Insurance',
+                            'mortgage-life': 'Mortgage Life Insurance',
+                            'senior-life': 'Senior Life Insurance',
+                            'travel': 'Travel Insurance'
+                          } as Record<string, string>)[lead.insurance_product] || lead.insurance_product}
+                        </Typography>
+                        <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem', mt: 0.5 }}>
+                          {lead.smoking_status}
+                        </Typography>
+                      </Box>
                     </TableCell>
 
                     <TableCell>
