@@ -230,8 +230,13 @@ export default function LeadsManagement() {
 
   // Tab change handler
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
-    setCurrentTab(newValue === 0 ? 'active' : 'closed')
+    const nextTab = newValue === 0 ? 'active' : 'closed'
+    setCurrentTab(nextTab)
     setPage(0) // Reset to first page when switching tabs
+    // Reset status filter when leaving Active tab to avoid leaking filters into Closed view
+    if (nextTab === 'closed') {
+      setFilter('all')
+    }
   }
 
   // Handle URL parameters
@@ -343,9 +348,11 @@ export default function LeadsManagement() {
       )
     }
 
-    // Filter by status if not 'all'
-    if (statusFilter !== 'all' && statusFilter !== 'overall') {
-      filtered = filtered.filter(lead => lead.status === statusFilter)
+    // Apply status filter ONLY on Active tab to prevent hiding Closed leads
+    if (currentTab === 'active') {
+      if (statusFilter !== 'all' && statusFilter !== 'overall') {
+        filtered = filtered.filter(lead => lead.status === statusFilter)
+      }
     }
 
     // Filter by date range - DISABLED to show all leads
