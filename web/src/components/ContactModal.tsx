@@ -17,8 +17,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    gender: 'male' as 'male' | 'female' | 'prefer-not-to-say',
-    dob: '',
+    gender: '' as 'male' | 'female' | 'prefer-not-to-say' | '',
+    dob: '2001-03-29',
     smokingStatus: '',
     province: '',
     insuranceProduct: '',
@@ -49,14 +49,14 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     return () => clearInterval(interval)
   }, [otpResendTimer])
 
-  // Set default date for the hidden native date picker without pre-filling the text input
+  // Keep native date input in sync with state
   useEffect(() => {
-    if (dobPickerRef.current && !formData.dob) {
+    if (dobPickerRef.current) {
       try {
-        dobPickerRef.current.value = '2001-03-29'
+        dobPickerRef.current.value = formData.dob || ''
       } catch {}
     }
-  }, [dobPickerRef, formData.dob])
+  }, [formData.dob])
 
   const sendOTP = async () => {
     if (sendingOtp || otpResendTimer > 0) return
@@ -389,8 +389,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
   const maxDobDate = () => {
     const d = new Date()
-    d.setFullYear(d.getFullYear() - 25)
-    d.setHours(0, 0, 0, 0)
+    d.setHours(23, 59, 59, 999)
     return d
   }
 
@@ -439,7 +438,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
       const iso = parseDobToISO(formatted)
       setFormData(prev => ({ ...prev, dob: iso ?? formatted }))
       if (!iso && formatted.length === 10) {
-        setValidationErrors(prev => ({ ...prev, dob: 'Enter a valid date (MM/DD/YYYY), age 25+.' }))
+        setValidationErrors(prev => ({ ...prev, dob: 'Enter a valid date (MM/DD/YYYY).' }))
       } else if (iso) {
         setValidationErrors(prev => ({ ...prev, dob: '' }))
       }
@@ -810,13 +809,13 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       aria-hidden="true"
                       tabIndex={-1}
                       style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', width: 0, height: 0 }}
-                      max={(function(){ const d=new Date(); d.setFullYear(d.getFullYear()-25); const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`})()}
+                      max={(function(){ const d=new Date(); const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`})()}
                       onChange={(e) => {
                         const iso = e.target.value // already YYYY-MM-DD
                         if (iso) {
                           const picked = new Date(iso)
                           if (picked > maxDobDate()) {
-                            setValidationErrors(prev => ({ ...prev, dob: 'Must be at least 25 years old.' }))
+                            setValidationErrors(prev => ({ ...prev, dob: 'Date cannot be in the future.' }))
                             setFormData(prev => ({ ...prev, dob: '' }))
                           } else {
                             setValidationErrors(prev => ({ ...prev, dob: '' }))
@@ -836,17 +835,17 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <button
                   type="button"
                   onClick={nextStep}
-                  disabled={!formData.firstName || !formData.gender || !formData.dob || !!validationErrors.firstName || !!validationErrors.dob}
+                  disabled={!formData.firstName || !formData.dob || !!validationErrors.firstName || !!validationErrors.dob}
                   style={{
                     width: '100%',
-                    background: (!formData.firstName || !formData.gender || !formData.dob || validationErrors.firstName || validationErrors.dob) ? 'var(--line)' : 'rgb(255, 203, 5)',
+                    background: (!formData.firstName || !formData.dob || validationErrors.firstName || validationErrors.dob) ? 'var(--line)' : 'rgb(255, 203, 5)',
                     color: '#1E377C',
                     padding: '16px',
                     borderRadius: '12px',
                     border: 'none',
                     fontSize: '16px',
                     fontWeight: '600',
-                    cursor: (!formData.firstName || !formData.gender || !formData.dob || validationErrors.firstName || validationErrors.dob) ? 'not-allowed' : 'pointer',
+                    cursor: (!formData.firstName || !formData.dob || validationErrors.firstName || validationErrors.dob) ? 'not-allowed' : 'pointer',
                     marginTop: '12px'
                   }}
                 >
