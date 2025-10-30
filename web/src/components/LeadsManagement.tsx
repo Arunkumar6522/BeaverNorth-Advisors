@@ -1514,7 +1514,6 @@ export default function LeadsManagement() {
                   value={addLeadForm.smokingStatus}
                   label="Smoking Status"
                   onChange={(e) => setAddLeadForm({...addLeadForm, smokingStatus: e.target.value as 'smoker' | 'non-smoker' | ''})}
-                  displayEmpty
                   sx={{
                     '& .MuiSelect-select': {
                       whiteSpace: 'nowrap',
@@ -1522,16 +1521,7 @@ export default function LeadsManagement() {
                       textOverflow: 'ellipsis'
                     }
                   }}
-                  renderValue={(selected) => {
-                    if (!selected) {
-                      return <em style={{ color: '#9CA3AF' }}>Select smoking status</em>
-                    }
-                    return selected as string
-                  }}
                 >
-                  <MenuItem value="">
-                    <em>Select smoking status</em>
-                  </MenuItem>
                   <MenuItem value="non-smoker">Non-smoker</MenuItem>
                   <MenuItem value="smoker">Smoker</MenuItem>
                 </Select>
@@ -1543,7 +1533,6 @@ export default function LeadsManagement() {
                   value={addLeadForm.insuranceProduct}
                   label="Insurance Product"
                   onChange={(e) => setAddLeadForm({...addLeadForm, insuranceProduct: e.target.value as any})}
-                  displayEmpty
                   sx={{
                     '& .MuiSelect-select': {
                       whiteSpace: 'nowrap',
@@ -1551,25 +1540,7 @@ export default function LeadsManagement() {
                       textOverflow: 'ellipsis'
                     }
                   }}
-                  renderValue={(selected) => {
-                    if (!selected) {
-                      return <em style={{ color: '#9CA3AF' }}>Select insurance product</em>
-                    }
-                    return (
-                      {
-                        'term-life': 'Term Life Insurance',
-                        'whole-life': 'Whole Life Insurance',
-                        'non-medical': 'Non-Medical Insurance',
-                        'mortgage-life': 'Mortgage Life Insurance',
-                        'senior-life': 'Senior Life Insurance',
-                        'travel': 'Travel Insurance'
-                      } as Record<string, string>
-                    )[selected as string] || (selected as string)
-                  }}
                 >
-                  <MenuItem value="">
-                    <em>Select insurance product</em>
-                  </MenuItem>
                   <MenuItem value="term-life">Term Life Insurance</MenuItem>
                   <MenuItem value="whole-life">Whole Life Insurance</MenuItem>
                   <MenuItem value="non-medical">Non-Medical Insurance</MenuItem>
