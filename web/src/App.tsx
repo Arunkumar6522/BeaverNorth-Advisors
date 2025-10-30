@@ -301,11 +301,12 @@ export default function App() {
                         transition: 'all 0.3s ease',
                         display: 'flex',
                         flexDirection: 'column',
+                        cursor: 'pointer',
                         '&:hover': {
                           transform: 'translateY(-4px)',
                           boxShadow: '0 16px 48px rgba(0,0,0,0.12)'
                         }
-                      }}>
+                      }} onClick={() => navigate('/testimonial')}>
                         <CardContent sx={{ 
                           p: 4, 
                           display: 'flex', 
@@ -346,15 +347,15 @@ export default function App() {
                             />
                             
                             <Typography 
-                              variant="body2" 
+                              variant="body1" 
                               sx={{ 
                                 color: '#374151',
                                 lineHeight: 1.6,
                                 fontStyle: 'italic',
                                 mb: 2,
-                                minHeight: 60, // Fixed height for testimony text
+                                minHeight: 100, // allow more lines
                                 display: '-webkit-box',
-                                WebkitLineClamp: 3,
+                                WebkitLineClamp: 5,
                                 WebkitBoxOrient: 'vertical',
                                 overflow: 'hidden'
                               }}
