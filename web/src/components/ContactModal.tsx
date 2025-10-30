@@ -18,7 +18,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     firstName: '',
     lastName: '',
     gender: '' as 'male' | 'female' | 'prefer-not-to-say' | '',
-    dob: '2001-03-29',
+    dob: '',
     smokingStatus: '',
     province: '',
     insuranceProduct: '',
@@ -37,6 +37,15 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [submitError, setSubmitError] = useState<string>('')
 
   const dobPickerRef = useRef<HTMLInputElement>(null)
+
+  // Set the calendar's initial displayed date (without filling the text input)
+  useEffect(() => {
+    if (dobPickerRef.current) {
+      try {
+        dobPickerRef.current.value = '2001-03-29'
+      } catch {}
+    }
+  }, [])
 
   // OTP Timer Effect
   useEffect(() => {
@@ -776,7 +785,15 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       />
                       <button
                         type="button"
-                        onClick={() => dobPickerRef.current?.showPicker?.() || dobPickerRef.current?.click()}
+                        onClick={() => {
+                          if (dobPickerRef.current) {
+                            if (!dobPickerRef.current.value) {
+                              try { dobPickerRef.current.value = '2001-03-29' } catch {}
+                            }
+                            (dobPickerRef.current as any).showPicker?.()
+                            dobPickerRef.current.click()
+                          }
+                        }}
                         aria-label="Pick date"
                         style={{
                           position: 'absolute',
