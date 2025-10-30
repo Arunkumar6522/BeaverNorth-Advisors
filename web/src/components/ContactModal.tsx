@@ -49,15 +49,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     return () => clearInterval(interval)
   }, [otpResendTimer])
 
-  // Keep native date input in sync with state
-  useEffect(() => {
-    if (dobPickerRef.current) {
-      try {
-        dobPickerRef.current.value = formData.dob || ''
-      } catch {}
-    }
-  }, [formData.dob])
-
   const sendOTP = async () => {
     if (sendingOtp || otpResendTimer > 0) return
     setOtpStatus('')
@@ -730,7 +721,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     name="gender"
                     value={formData.gender}
                     onChange={handleChange}
-                    required
                     style={{
                       width: '100%',
                       padding: '14px 16px',
@@ -745,6 +735,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       boxSizing: 'border-box'
                     }}
                   >
+                    <option value="">{locale === 'fr' ? 'Sélectionner' : 'Select'}</option>
                     <option value="male">{locale === 'fr' ? 'Homme' : 'Male'}</option>
                     <option value="female">{locale === 'fr' ? 'Femme' : 'Female'}</option>
                     <option value="prefer-not-to-say">{locale === 'fr' ? 'Préfère ne pas répondre' : 'Prefer not to say'}</option>
