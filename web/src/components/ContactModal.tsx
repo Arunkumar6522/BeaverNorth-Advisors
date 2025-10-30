@@ -17,7 +17,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    gender: '' as 'male' | 'female' | 'prefer-not-to-say',
+    gender: 'male' as 'male' | 'female' | 'prefer-not-to-say',
     dob: '',
     smokingStatus: '',
     province: '',
@@ -36,6 +36,8 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
   const [otpStatus, setOtpStatus] = useState<string>('')
   const [submitError, setSubmitError] = useState<string>('')
 
+  const dobPickerRef = useRef<HTMLInputElement>(null)
+
   // OTP Timer Effect
   useEffect(() => {
     let interval: number
@@ -46,6 +48,15 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     }
     return () => clearInterval(interval)
   }, [otpResendTimer])
+
+  // Set default date for the hidden native date picker without pre-filling the text input
+  useEffect(() => {
+    if (dobPickerRef.current && !formData.dob) {
+      try {
+        dobPickerRef.current.value = '2001-03-29'
+      } catch {}
+    }
+  }, [dobPickerRef, formData.dob])
 
   const sendOTP = async () => {
     if (sendingOtp || otpResendTimer > 0) return
@@ -397,8 +408,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
     return `${year.toString().padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
   }
 
-  const dobPickerRef = useRef<HTMLInputElement>(null)
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     
@@ -737,7 +746,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       boxSizing: 'border-box'
                     }}
                   >
-                    <option value="">{locale === 'fr' ? 'Sélectionnez votre genre' : 'Select your gender'}</option>
                     <option value="male">{locale === 'fr' ? 'Homme' : 'Male'}</option>
                     <option value="female">{locale === 'fr' ? 'Femme' : 'Female'}</option>
                     <option value="prefer-not-to-say">{locale === 'fr' ? 'Préfère ne pas répondre' : 'Prefer not to say'}</option>
