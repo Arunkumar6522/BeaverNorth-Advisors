@@ -1069,7 +1069,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     fontSize: '14px', 
                     fontWeight: 600, 
                     color: 'var(--text-primary)',
-                    marginBottom: '8px'
+                    marginBottom: '6px'
                   }}>
                     {locale === 'fr' ? 'Adresse e-mail' : 'Email Address'} <span style={{ color: '#6B7280' }}>({locale === 'fr' ? 'optionnel' : 'optional'})</span>
                   </label>
@@ -1111,28 +1111,21 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     fontSize: '14px', 
                     fontWeight: 600, 
                     color: 'var(--text-primary)',
-                    marginBottom: '8px'
+                    marginBottom: '6px'
                   }}>
                     {locale === 'fr' ? 'Numéro de téléphone *' : 'Phone Number *'}
                   </label>
-                  <p style={{ 
-                    fontSize: '12px',
-                    color: 'var(--text-secondary)',
-                    marginBottom: '12px'
-                  }}>
-                    {locale === 'fr' ? '📱 Nous vous contacterons à ce numéro' : "📱 We'll contact you at this number"}
-                  </p>
-                  <div style={{ display: 'flex', gap: '0' }}>
+                  <div style={{ display: 'flex', gap: 0 }}>
                     <select
                       name="countryCode"
                       value={formData.countryCode}
                       onChange={handleChange}
                       style={{
-                        padding: '14px 16px',
-                        border: '2px solid var(--line)',
+                        padding: '12px 14px',
+                        border: '1px solid var(--line)',
                         borderRight: 'none',
-                        borderRadius: '12px 0 0 12px',
-                        fontSize: '16px',
+                        borderRadius: '10px 0 0 10px',
+                        fontSize: '14px',
                         background: 'var(--surface-1)',
                         color: 'var(--text-primary)',
                         minWidth: '120px',
@@ -1157,16 +1150,19 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       required
                       style={{
                         flex: 1,
-                        padding: '14px 16px',
-                        border: '2px solid var(--line)',
+                        padding: '12px 14px',
+                        border: '1px solid var(--line)',
                         borderLeft: 'none',
-                        borderRadius: '0 12px 12px 0',
-                        fontSize: '16px',
+                        borderRadius: '0 10px 10px 0',
+                        fontSize: '14px',
                         background: 'var(--surface-1)',
                         color: 'var(--text-primary)',
                         outline: 'none'
                       }}
                     />
+                  </div>
+                  <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 6 }}>
+                    {locale === 'fr' ? 'Nous vous contacterons à ce numéro.' : "We'll contact you at this number."}
                   </div>
                 </div>
 
@@ -1174,36 +1170,28 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                 <div>
                   <label style={{ 
                     display: 'block', 
-                    fontSize: '14px', 
+                    fontSize: '13px', 
                     fontWeight: 600, 
                     color: 'var(--text-primary)',
-                    marginBottom: '8px'
+                    marginBottom: '6px'
                   }}>
                     {locale === 'fr' ? 'Vérification du téléphone *' : 'Phone Verification *'}
                   </label>
-                  <p style={{ 
-                    fontSize: '12px',
-                    color: 'var(--text-secondary)',
-                    marginBottom: '16px'
-                  }}>
-                    {locale === 'fr' ? '🔐 Nous enverrons un code de vérification sur votre téléphone' : "🔐 We'll send a verification code to your phone"}
-                  </p>
-                  
                   {/* Send OTP Button */}
-                  <div style={{ marginBottom: '16px' }}>
+                  <div style={{ marginBottom: 12 }}>
                     <button
                       type="button"
                       onClick={sendOTP}
                       disabled={!formData.phone || sendingOtp || otpResendTimer > 0}
                       style={{
                         width: '100%',
-                        padding: '16px',
-                        border: '2px solid rgb(255, 203, 5)',
-                        borderRadius: '12px',
-                        background: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'var(--line)' : 'rgb(255, 203, 5)',
+                        padding: '12px 14px',
+                        border: '1px solid var(--line)',
+                        borderRadius: '10px',
+                        background: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'var(--surface-1)' : 'rgb(255, 203, 5)',
                         color: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'var(--text-secondary)' : '#1E377C',
-                        fontSize: '16px',
-                        fontWeight: '600',
+                        fontSize: '14px',
+                        fontWeight: 600,
                         cursor: (!formData.phone || sendingOtp || otpResendTimer > 0) ? 'not-allowed' : 'pointer',
                         transition: 'all 0.2s ease'
                       }}
@@ -1213,7 +1201,7 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                        (locale === 'fr' ? 'Envoyer le code de vérification' : 'Send Verification Code')}
                     </button>
                     {otpStatus && (
-                      <p style={{ marginTop: 8, fontSize: 12, color: '#6B7280' }}>{otpStatus}</p>
+                      <p style={{ marginTop: 6, fontSize: 12, color: 'var(--text-secondary)' }}>{otpStatus}</p>
                     )}
                   </div>
 
@@ -1222,20 +1210,13 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     <div>
                       <label style={{ 
                         display: 'block', 
-                        fontSize: '14px', 
+                        fontSize: '13px', 
                         fontWeight: 600, 
                         color: 'var(--text-primary)',
-                        marginBottom: '8px'
+                        marginBottom: '6px'
                       }}>
-                        {locale === 'fr' ? 'Entrez le code de vérification *' : 'Enter Verification Code *'}
+                        {locale === 'fr' ? 'Code de vérification *' : 'Verification Code *'}
                       </label>
-                      <p style={{ 
-                        fontSize: '12px',
-                        color: 'var(--text-secondary)',
-                        marginBottom: '12px'
-                      }}>
-                        {locale === 'fr' ? '📱 Entrez le code à 6 chiffres envoyé à ' : '📱 Enter the 6-digit code sent to '}{formData.countryCode}{formData.phone}
-                      </p>
                       <input
                         type="text"
                         name="otp"
@@ -1250,10 +1231,10 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                         maxLength={6}
                         style={{
                           width: '100%',
-                          padding: '14px 16px',
-                          border: `2px solid ${validationErrors.otp ? '#EF4444' : 'var(--line)'}`,
-                          borderRadius: '12px',
-                          fontSize: '18px',
+                          padding: '12px 14px',
+                          border: `1px solid ${validationErrors.otp ? '#EF4444' : 'var(--line)'}`,
+                          borderRadius: '10px',
+                          fontSize: '16px',
                           background: 'var(--surface-1)',
                           color: 'var(--text-primary)',
                           outline: 'none',
