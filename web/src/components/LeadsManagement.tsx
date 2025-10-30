@@ -392,38 +392,21 @@ export default function LeadsManagement() {
   // Handle status update
   const handleStatusUpdate = async (leadId: string, newStatus: Lead['status'], notes?: string) => {
     try {
-      // Get current lead for logging
-      const currentLead = leads.find(lead => lead.id === leadId)
-      const leadName = currentLead?.name || 'Unknown Lead'
-      const oldStatus = currentLead?.status || 'new'
-      const username = customAuth.getCurrentUser()?.username || 'Admin'
-      
-      const updateData: any = { status: newStatus }
-      
-      if (newStatus !== 'new') {
-        updateData.last_contact_date = new Date().toISOString()
-        updateData.contacted_at = newStatus === 'contacted' ? new Date().toISOString() : undefined
-        updateData.converted_at = newStatus === 'converted' ? new Date().toISOString() : undefined
-        
-        // Track who performed the action (only if columns exist)
-        // For now, we'll add this info to notes as a workaround until SQL script is run
-        if (newStatus === 'contacted') {
-          const currentNotes = currentLead?.notes || ''
-          const userInfo = `Contacted by: ${username}`
-          updateData.notes = currentNotes ? `${currentNotes}\n\n${userInfo}` : userInfo
-        } else if (newStatus === 'converted') {
-          const currentNotes = currentLead?.notes || ''
-          const userInfo = `Converted by: ${username}`
-          updateData.notes = currentNotes ? `${currentNotes}\n\n${userInfo}` : userInfo
-        }
+      const target = leads.find(l => l.id === leadId)
+      if (!target) return
+      const oldStatus = target.status
+      // Guard: prevent reopening/changing status for closed (converted) leads
+      if (oldStatus === 'converted' && newStatus !== 'converted') {
+        alert('This lead is closed and its status cannot be changed.')
+        return
       }
 
-      // Handle additional notes from edit modal
-      if (notes && notes !== currentLead?.notes) {
-        updateData.notes = notes
+      const leadName = target.name
+      const updateData: Partial<Lead> = { status: newStatus }
+      if (notes !== undefined) {
+        updateData.notes = notes as any
       }
 
-      // Update in Supabase
       const { supabase } = await import('../lib/supabase')
       const { error } = await supabase
         .from('leads')
@@ -1484,83 +1467,67 @@ export default function LeadsManagement() {
         <DialogTitle>Add New Lead</DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <Box sx={{ display: 'flex', gap: 2 }}>
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
               <TextField
                 fullWidth
                 label="First Name"
+                required
+                InputLabelProps={{ sx: { '& .MuiFormLabel-asterisk': { color: '#EF4444' } } }}
                 value={addLeadForm.firstName}
                 onChange={(e) => setAddLeadForm({...addLeadForm, firstName: e.target.value})}
-                required
+                placeholder="Enter first name"
               />
               <TextField
                 fullWidth
                 label="Last Name"
                 value={addLeadForm.lastName}
                 onChange={(e) => setAddLeadForm({...addLeadForm, lastName: e.target.value})}
-                required
+                placeholder="Enter last name (optional)"
               />
             </Box>
-            
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <TextField
-                fullWidth
-                label="Email"
-                type="email"
-                value={addLeadForm.email}
-                onChange={(e) => setAddLeadForm({...addLeadForm, email: e.target.value})}
-                required
-              />
+
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
               <TextField
                 fullWidth
                 label="Phone"
+                required
+                InputLabelProps={{ sx: { '& .MuiFormLabel-asterisk': { color: '#EF4444' } } }}
                 value={addLeadForm.phone}
                 onChange={(e) => setAddLeadForm({...addLeadForm, phone: e.target.value})}
-                required
+                placeholder="e.g., +1 555 123 4567"
               />
-            </Box>
-            
-            <Box sx={{ display: 'flex', gap: 2 }}>
               <TextField
                 fullWidth
                 label="Date of Birth"
-                type="date"
+                required
+                InputLabelProps={{ sx: { '& .MuiFormLabel-asterisk': { color: '#EF4444' } } }}
                 value={addLeadForm.dob}
                 onChange={(e) => setAddLeadForm({...addLeadForm, dob: e.target.value})}
-                InputLabelProps={{ shrink: true }}
-                required
+                placeholder="YYYY-MM-DD"
               />
-              <FormControl fullWidth required>
-                <InputLabel>Province</InputLabel>
-                <Select
-                  value={addLeadForm.province}
-                  label="Province"
-                  onChange={(e) => setAddLeadForm({...addLeadForm, province: e.target.value})}
-                >
-                  <MenuItem value="Alberta">Alberta</MenuItem>
-                  <MenuItem value="British Columbia">British Columbia</MenuItem>
-                  <MenuItem value="Manitoba">Manitoba</MenuItem>
-                  <MenuItem value="New Brunswick">New Brunswick</MenuItem>
-                  <MenuItem value="Newfoundland and Labrador">Newfoundland and Labrador</MenuItem>
-                  <MenuItem value="Northwest Territories">Northwest Territories</MenuItem>
-                  <MenuItem value="Nova Scotia">Nova Scotia</MenuItem>
-                  <MenuItem value="Nunavut">Nunavut</MenuItem>
-                  <MenuItem value="Ontario">Ontario</MenuItem>
-                  <MenuItem value="Prince Edward Island">Prince Edward Island</MenuItem>
-                  <MenuItem value="Quebec">Quebec</MenuItem>
-                  <MenuItem value="Saskatchewan">Saskatchewan</MenuItem>
-                  <MenuItem value="Yukon">Yukon</MenuItem>
-                </Select>
-              </FormControl>
             </Box>
-            
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <FormControl fullWidth>
-                <InputLabel>Smoking Status</InputLabel>
+
+            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
+              <FormControl fullWidth required>
+                <InputLabel sx={{ '& .MuiFormLabel-asterisk': { color: '#EF4444' } }}>Smoking Status</InputLabel>
                 <Select
                   value={addLeadForm.smokingStatus}
                   label="Smoking Status"
                   onChange={(e) => setAddLeadForm({...addLeadForm, smokingStatus: e.target.value as 'smoker' | 'non-smoker' | ''})}
                   displayEmpty
+                  sx={{
+                    '& .MuiSelect-select': {
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }
+                  }}
+                  renderValue={(selected) => {
+                    if (!selected) {
+                      return <em style={{ color: '#9CA3AF' }}>Select smoking status</em>
+                    }
+                    return selected as string
+                  }}
                 >
                   <MenuItem value="">
                     <em>Select smoking status</em>
@@ -1570,13 +1537,35 @@ export default function LeadsManagement() {
                 </Select>
               </FormControl>
               
-              <FormControl fullWidth>
-                <InputLabel>Insurance Product</InputLabel>
+              <FormControl fullWidth required>
+                <InputLabel sx={{ '& .MuiFormLabel-asterisk': { color: '#EF4444' } }}>Insurance Product</InputLabel>
                 <Select
                   value={addLeadForm.insuranceProduct}
                   label="Insurance Product"
                   onChange={(e) => setAddLeadForm({...addLeadForm, insuranceProduct: e.target.value as any})}
                   displayEmpty
+                  sx={{
+                    '& .MuiSelect-select': {
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis'
+                    }
+                  }}
+                  renderValue={(selected) => {
+                    if (!selected) {
+                      return <em style={{ color: '#9CA3AF' }}>Select insurance product</em>
+                    }
+                    return (
+                      {
+                        'term-life': 'Term Life Insurance',
+                        'whole-life': 'Whole Life Insurance',
+                        'non-medical': 'Non-Medical Insurance',
+                        'mortgage-life': 'Mortgage Life Insurance',
+                        'senior-life': 'Senior Life Insurance',
+                        'travel': 'Travel Insurance'
+                      } as Record<string, string>
+                    )[selected as string] || (selected as string)
+                  }}
                 >
                   <MenuItem value="">
                     <em>Select insurance product</em>
@@ -1590,6 +1579,25 @@ export default function LeadsManagement() {
                 </Select>
               </FormControl>
             </Box>
+
+            <TextField
+              fullWidth
+              label="Province"
+              required
+              InputLabelProps={{ sx: { '& .MuiFormLabel-asterisk': { color: '#EF4444' } } }}
+              value={addLeadForm.province}
+              onChange={(e) => setAddLeadForm({...addLeadForm, province: e.target.value})}
+              placeholder="Enter province"
+            />
+            
+            <TextField
+              fullWidth
+              label="Email"
+              type="email"
+              value={addLeadForm.email}
+              onChange={(e) => setAddLeadForm({...addLeadForm, email: e.target.value})}
+              required
+            />
             
             <TextField
               fullWidth
