@@ -1134,7 +1134,6 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
                       }}
                     >
                       <option value="+1">🇨🇦 +1 (Canada)</option>
-                      <option value="+91">🇮🇳 +91 (India)</option>
                     </select>
                     <input
                       type="tel"
