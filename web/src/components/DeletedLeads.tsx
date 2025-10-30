@@ -152,11 +152,16 @@ export default function DeletedLeads() {
     fetchDeletedLeads()
   }, [])
 
-  const formatDate = (dateString: string) => {
+  const formatDateOnly = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric',
+      day: 'numeric'
+    })
+  }
+
+  const formatTimeOnly = (dateString: string) => {
+    return new Date(dateString).toLocaleTimeString([], {
       hour: '2-digit',
       minute: '2-digit'
     })
@@ -267,173 +272,179 @@ export default function DeletedLeads() {
                     <TableCell sx={{ fontWeight: '600', minWidth: { xs: 150, sm: 200 } }}>Contact</TableCell>
                     <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 180 }}>Product</TableCell>
                     <TableCell sx={{ fontWeight: '600', minWidth: { xs: 100, sm: 140 } }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 150 }}>Created On</TableCell>
-                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 150 }}>Deleted On</TableCell>
-                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 140 }}>Deleted By</TableCell>
-                    <TableCell sx={{ fontWeight: '600', textAlign: 'center', minWidth: { xs: 100, sm: 120 } }}>Actions</TableCell>
+                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 130 }}>Created On</TableCell>
+                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 130 }}>Deleted On</TableCell>
+                    <TableCell sx={{ fontWeight: '600', display: { xs: 'none', sm: 'table-cell' }, minWidth: 110 }}>Deleted By</TableCell>
+                    <TableCell sx={{ fontWeight: '600', textAlign: 'center', minWidth: { xs: 80, sm: 100 } }}>Actions</TableCell>
                   </TableRow>
-              </TableHead>
-              <TableBody>
-                {deletedLeads.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((lead, _index) => (
-                  <TableRow key={lead.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                        <Avatar sx={{ bgcolor: '#FF5722', width: 40, height: 40 }}>
-                          {lead.name.split(' ').map(n => n[0]).join('')}
-                        </Avatar>
-                        <Box>
-                          <Typography variant="body2" sx={{ fontWeight: '500' }}>
-                            {lead.name}
-                          </Typography>
-                          <Typography variant="caption" sx={{ color: '#6B7280' }}>
-                            {lead.province} • {calculateAge(lead.dob)} years old
-                          </Typography>
-                        </Box>
-                      </Box>
-                    </TableCell>
-                    
+                </TableHead>
+                <TableBody>
+                  {deletedLeads.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((lead, _index) => (
+                    <TableRow key={lead.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                       <TableCell>
-                        <Box>
-                          <Box sx={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: 1, 
-                            mb: 0.5,
-                            cursor: 'pointer',
-                            '&:hover': { backgroundColor: '#f5f5f5', borderRadius: 1 }
-                          }}
-                          onClick={() => handleEmailClick(lead.email)}
-                          >
-                            <EmailIcon sx={{ fontSize: 14, color: '#1976D2' }} />
-                            <Typography 
-                              variant="caption" 
-                              sx={{ 
-                                color: '#1976D2',
-                                textDecoration: 'underline',
-                                '&:hover': { fontWeight: 'bold' }
-                              }}
-                            >
-                              {lead.email}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Avatar sx={{ bgcolor: '#FF5722', width: 40, height: 40 }}>
+                            {lead.name.split(' ').map(n => n[0]).join('')}
+                          </Avatar>
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: '500' }}>
+                              {lead.name}
                             </Typography>
-                          </Box>
-                          <Box sx={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: 1,
-                            cursor: 'pointer',
-                            '&:hover': { backgroundColor: '#f5f5f5', borderRadius: 1 }
-                          }}
-                          onClick={() => handlePhoneClick(formatPhoneNumber(lead.phone))}
-                          >
-                            <PhoneIcon sx={{ fontSize: 14, color: '#1976D2' }} />
-                            <Typography 
-                              variant="caption" 
-                              sx={{ 
-                                color: '#1976D2',
-                                textDecoration: 'underline',
-                                '&:hover': { fontWeight: 'bold' }
-                              }}
-                            >
-                              {formatPhoneNumber(lead.phone)}
+                            <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                              {lead.province} • {calculateAge(lead.dob)} years old
                             </Typography>
                           </Box>
                         </Box>
                       </TableCell>
+                      
+                        <TableCell>
+                          <Box>
+                            <Box sx={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              gap: 1, 
+                              mb: 0.5,
+                              cursor: 'pointer',
+                              '&:hover': { backgroundColor: '#f5f5f5', borderRadius: 1 }
+                            }}
+                            onClick={() => handleEmailClick(lead.email)}
+                            >
+                              <EmailIcon sx={{ fontSize: 14, color: '#1976D2' }} />
+                              <Typography 
+                                variant="caption" 
+                                sx={{ 
+                                  color: '#1976D2',
+                                  textDecoration: 'underline',
+                                  '&:hover': { fontWeight: 'bold' }
+                                }}
+                              >
+                                {lead.email}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ 
+                              display: 'flex', 
+                              alignItems: 'center', 
+                              gap: 1,
+                              cursor: 'pointer',
+                              '&:hover': { backgroundColor: '#f5f5f5', borderRadius: 1 }
+                            }}
+                            onClick={() => handlePhoneClick(formatPhoneNumber(lead.phone))}
+                            >
+                              <PhoneIcon sx={{ fontSize: 14, color: '#1976D2' }} />
+                              <Typography 
+                                variant="caption" 
+                                sx={{ 
+                                  color: '#1976D2',
+                                  textDecoration: 'underline',
+                                  '&:hover': { fontWeight: 'bold' }
+                                }}
+                              >
+                                {formatPhoneNumber(lead.phone)}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </TableCell>
 
-                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
-                      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                        <Typography variant="caption" sx={{ fontWeight: '500' }}>
-                          {({
-                            'term-life': 'Term Life Insurance',
-                            'whole-life': 'Whole Life Insurance',
-                            'non-medical': 'Non-Medical Insurance',
-                            'mortgage-life': 'Mortgage Life Insurance',
-                            'senior-life': 'Senior Life Insurance',
-                            'travel': 'Travel Insurance'
-                          } as Record<string, string>)[lead.insurance_product] || lead.insurance_product}
+                      <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                          <Typography variant="caption" sx={{ fontWeight: '500' }}>
+                            {({
+                              'term-life': 'Term Life Insurance',
+                              'whole-life': 'Whole Life Insurance',
+                              'non-medical': 'Non-Medical Insurance',
+                              'mortgage-life': 'Mortgage Life Insurance',
+                              'senior-life': 'Senior Life Insurance',
+                              'travel': 'Travel Insurance'
+                            } as Record<string, string>)[lead.insurance_product] || lead.insurance_product}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem', mt: 0.5 }}>
+                            {lead.smoking_status}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+
+                      <TableCell>
+                        <Chip
+                          label={lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
+                          size="small"
+                          sx={{
+                            backgroundColor: `${getStatusColor(lead.status)}20`,
+                            color: getStatusColor(lead.status),
+                            fontWeight: '600',
+                            fontSize: '0.7rem'
+                          }}
+                        />
+                      </TableCell>
+
+                      <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                        <Typography variant="caption" sx={{ fontWeight: '600', display: 'block' }}>
+                          {formatDateOnly(lead.created_at)}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: '#6B7280', fontSize: '0.7rem', mt: 0.5 }}>
-                          {lead.smoking_status}
+                        <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                          {formatTimeOnly(lead.created_at)}
                         </Typography>
-                      </Box>
-                    </TableCell>
+                      </TableCell>
 
-                    <TableCell>
-                      <Chip
-                        label={lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
-                        size="small"
-                        sx={{
-                          backgroundColor: `${getStatusColor(lead.status)}20`,
-                          color: getStatusColor(lead.status),
-                          fontWeight: '600',
-                          fontSize: '0.7rem'
-                        }}
-                      />
-                    </TableCell>
-
-                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
-                      <Typography variant="caption" sx={{ fontWeight: '500' }}>
-                        {formatDate(lead.created_at)}
-                      </Typography>
-                    </TableCell>
-
-                    <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
-                      <Typography variant="caption" sx={{ fontWeight: '500' }}>
-                        {formatDate(lead.deleted_at)}
-                      </Typography>
-                    </TableCell>
-
-                    <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Avatar sx={{ 
-                          bgcolor: '#FF9800', 
-                          width: 24, 
-                          height: 24,
-                          fontSize: 12,
-                          fontWeight: 'bold'
-                        }}>
-                          {(lead.deleted_by || 'Admin').substring(0, 2).toUpperCase()}
-                        </Avatar>
-                        <Typography variant="caption" sx={{ fontWeight: '500', color: '#FF9800' }}>
-                          {lead.deleted_by || 'Admin'}
+                      <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                        <Typography variant="caption" sx={{ fontWeight: '600', display: 'block' }}>
+                          {formatDateOnly(lead.deleted_at)}
                         </Typography>
-                      </Box>
-                    </TableCell>
+                        <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                          {formatTimeOnly(lead.deleted_at)}
+                        </Typography>
+                      </TableCell>
 
-                    <TableCell align="center">
-                      <IconButton
-                        size="small"
-                        onClick={() => openViewModal(lead)}
-                        sx={{
-                          color: '#1976D2',
-                          backgroundColor: '#f0f4ff',
-                          '&:hover': { backgroundColor: '#e3f2fd' },
-                          width: 40,
-                          height: 40
-                        }}
-                        title="View Lead Details"
-                      >
-                        <ViewIcon sx={{ fontSize: 20 }} />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-            <Pagination
-              count={Math.max(1, Math.ceil(deletedLeads.length / rowsPerPage))}
-              page={page + 1}
-              onChange={(_e, value) => setPage(value - 1)}
-              showFirstButton
-              showLastButton
-              color="primary"
-            />
-          </Box>
-          </Card>
-        )}
-      </Box>
+                      <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Avatar sx={{ 
+                            bgcolor: '#FF9800', 
+                            width: 24, 
+                            height: 24,
+                            fontSize: 12,
+                            fontWeight: 'bold'
+                          }}>
+                            {(lead.deleted_by || 'Admin').substring(0, 2).toUpperCase()}
+                          </Avatar>
+                          <Typography variant="caption" sx={{ fontWeight: '500', color: '#FF9800' }}>
+                            {lead.deleted_by || 'Admin'}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+
+                      <TableCell align="center">
+                        <IconButton
+                          size="small"
+                          onClick={() => openViewModal(lead)}
+                          sx={{
+                            color: '#1976D2',
+                            backgroundColor: '#f0f4ff',
+                            '&:hover': { backgroundColor: '#e3f2fd' },
+                            width: 40,
+                            height: 40
+                          }}
+                          title="View Lead Details"
+                        >
+                          <ViewIcon sx={{ fontSize: 20 }} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+              <Pagination
+                count={Math.max(1, Math.ceil(deletedLeads.length / rowsPerPage))}
+                page={page + 1}
+                onChange={(_e, value) => setPage(value - 1)}
+                showFirstButton
+                showLastButton
+                color="primary"
+              />
+            </Box>
+            </Card>
+          )}
+        </Box>
 
       {/* View Details Modal */}
       <Modal open={viewModalOpen} onClose={() => setViewModalOpen(false)}>
@@ -503,7 +514,7 @@ export default function DeletedLeads() {
                     🗑️ <strong>Deleted By:</strong> {selectedLead.deleted_by || 'Admin'}
                   </Typography>
                   <Typography variant="body1" sx={{ mb: 1 }}>
-                    📅 <strong>Deleted On:</strong> {formatDate(selectedLead.deleted_at)}
+                    📅 <strong>Deleted On:</strong> {formatDateOnly(selectedLead.deleted_at)}
                   </Typography>
                   <Typography variant="body1" sx={{ mb: 1 }}>
                     🏥 <strong>Product:</strong> {selectedLead.insurance_product}
