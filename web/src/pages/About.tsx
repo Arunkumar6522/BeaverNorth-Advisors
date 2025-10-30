@@ -568,7 +568,8 @@ export default function About() {
               p: { xs: 4, md: 6 }, 
               borderRadius: 4,
               textAlign: 'center',
-              boxShadow: '0 8px 32px rgba(30, 55, 124, 0.3)'
+              boxShadow: '0 8px 32px rgba(30, 55, 124, 0.3)',
+              mt: 6
             }}>
               <Typography 
                 variant="h4" 
