@@ -473,7 +473,7 @@ export default function About() {
           </Box>
 
           {/* Contact Information */}
-          <Box sx={{ mb: 8 }}>
+          <Box sx={{ mb: 12 }}>
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -569,7 +569,7 @@ export default function About() {
               borderRadius: 4,
               textAlign: 'center',
               boxShadow: '0 8px 32px rgba(30, 55, 124, 0.3)',
-              mt: 6
+              mt: 8
             }}>
               <Typography 
                 variant="h4" 
