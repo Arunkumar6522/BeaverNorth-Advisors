@@ -9,9 +9,10 @@ interface ContactModalProps {
   isOpen: boolean
   onClose: () => void
   showCloseButton?: boolean
+  disableBackdropClose?: boolean
 }
 
-export default function ContactModal({ isOpen, onClose, showCloseButton = true }: ContactModalProps) {
+export default function ContactModal({ isOpen, onClose, showCloseButton = true, disableBackdropClose = false }: ContactModalProps) {
   const { locale } = useI18n()
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
@@ -495,7 +496,7 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true }
       justifyContent: 'center',
       padding: '20px',
       backdropFilter: 'blur(4px)'
-    }} onClick={onClose}>
+    }} onClick={disableBackdropClose ? undefined : onClose}>
       
       <motion.div
         initial={{ opacity: 0, scale: 0.9, y: 20 }}
