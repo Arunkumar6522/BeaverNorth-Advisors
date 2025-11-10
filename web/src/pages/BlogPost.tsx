@@ -16,6 +16,7 @@ import {
 import { 
   CalendarToday, 
   ArrowBack,
+  ArrowForward,
   Home
 } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
@@ -35,6 +36,7 @@ export default function BlogPost() {
   const { postId } = useParams<{ postId: string }>()
   const navigate = useNavigate()
   const [post, setPost] = useState<BlogPost | null>(null)
+  const [allPosts, setAllPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -47,7 +49,58 @@ export default function BlogPost() {
     })
   }
 
+  // Helper to get post ID from link
+  const getPostIdFromLink = (link: string) => {
+    return link.split('/').pop()?.split('.html')[0] || ''
+  }
+
+  // Get next and previous posts
+  const getNavigationPosts = () => {
+    if (!post || allPosts.length === 0) return { prev: null, next: null }
+    
+    const currentIndex = allPosts.findIndex(p => getPostIdFromLink(p.link) === postId)
+    if (currentIndex === -1) return { prev: null, next: null }
+    
+    return {
+      prev: currentIndex > 0 ? allPosts[currentIndex - 1] : null,
+      next: currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null
+    }
+  }
+
+  const { prev, next } = getNavigationPosts()
+
   useEffect(() => {
+    const handleResponse = async (response: Response) => {
+      const contentType = response.headers.get('content-type')
+      console.log('📊 Content-Type:', contentType)
+      if (contentType && contentType.includes('application/json')) {
+        const data = await response.json()
+        console.log('📊 Server response:', data)
+        if (data.success && data.posts) {
+          // Store all posts for navigation
+          setAllPosts(data.posts)
+          
+          // Find current post
+          const foundPost = data.posts.find((item: any) => {
+            const postLinkId = item.link.split('/').pop()?.split('.html')[0]
+            return postLinkId === postId
+          })
+          if (foundPost) {
+            console.log('✅ Found blog post:', foundPost.title)
+            setPost(foundPost)
+          } else {
+            console.log('❌ Blog post not found for ID:', postId)
+            setError('Blog post not found')
+          }
+        } else {
+          setError('Unable to fetch blog posts')
+        }
+      } else {
+        console.log('❌ Server returned non-JSON response')
+        setError('Server returned invalid response')
+      }
+    }
+
     const fetchBlogPost = async () => {
       try {
         setLoading(true)
@@ -93,32 +146,41 @@ export default function BlogPost() {
     }
   }, [postId])
 
-  const handleResponse = async (response: Response) => {
-    const contentType = response.headers.get('content-type')
-    console.log('📊 Content-Type:', contentType)
-    if (contentType && contentType.includes('application/json')) {
-      const data = await response.json()
-      console.log('📊 Server response:', data)
-      if (data.success && data.posts) {
-        const foundPost = data.posts.find((item: any) => {
-          const postLinkId = item.link.split('/').pop()?.split('.html')[0]
-          return postLinkId === postId
-        })
-        if (foundPost) {
-          console.log('✅ Found blog post:', foundPost.title)
-          setPost(foundPost)
-        } else {
-          console.log('❌ Blog post not found for ID:', postId)
-          setError('Blog post not found')
-        }
-      } else {
-        setError('Unable to fetch blog posts')
-      }
-    } else {
-      console.log('❌ Server returned non-JSON response')
-      setError('Server returned invalid response')
+  // Track article_read when user spends 30s and reaches 60% scroll
+  // Must be before conditional returns to maintain hook order
+  useEffect(() => {
+    if (!post) {
+      return
     }
-  }
+    
+    let timeOk = false
+    let scrollOk = false
+    let fired = false
+
+    const tryFire = () => {
+      if (!fired && timeOk && scrollOk) {
+        fired = true
+        trackArticleRead(post.title)
+      }
+    }
+
+    const timer = setTimeout(() => { timeOk = true; tryFire() }, 30000)
+    const onScroll = () => {
+      const scrolled = window.scrollY + window.innerHeight
+      const total = document.documentElement.scrollHeight
+      const pct = scrolled / total
+      if (pct >= 0.6) {
+        scrollOk = true
+        tryFire()
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => { 
+      window.removeEventListener('scroll', onScroll)
+      clearTimeout(timer)
+    }
+  }, [post])
 
   if (loading) {
     return (
@@ -159,35 +221,6 @@ export default function BlogPost() {
       </PublicLayout>
     )
   }
-
-  // Track article_read when user spends 30s and reaches 60% scroll
-  useEffect(() => {
-    if (!post) return
-    let timeOk = false
-    let scrollOk = false
-    let fired = false
-
-    const tryFire = () => {
-      if (!fired && timeOk && scrollOk) {
-        fired = true
-        trackArticleRead(post.title)
-      }
-    }
-
-    const timer = setTimeout(() => { timeOk = true; tryFire() }, 30000)
-    const onScroll = () => {
-      const scrolled = window.scrollY + window.innerHeight
-      const total = document.documentElement.scrollHeight
-      const pct = scrolled / total
-      if (pct >= 0.6) {
-        scrollOk = true
-        tryFire()
-      }
-    }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
-    return () => { window.removeEventListener('scroll', onScroll); clearTimeout(timer) }
-  }, [post])
 
   return (
     <PublicLayout>
@@ -318,6 +351,98 @@ export default function BlogPost() {
 
               </CardContent>
             </Card>
+
+            {/* Next/Previous Navigation */}
+            {(prev || next) && (
+              <Box sx={{ 
+                display: 'flex', 
+                gap: 2, 
+                mt: 4,
+                flexDirection: { xs: 'column', sm: 'row' }
+              }}>
+                {prev && (
+                  <Card 
+                    sx={{ 
+                      flex: 1,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateX(-4px)',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.12)'
+                      }
+                    }}
+                    onClick={() => {
+                      const prevId = getPostIdFromLink(prev.link)
+                      navigate(`/blog/${prevId}`)
+                      window.scrollTo(0, 0)
+                    }}
+                  >
+                    <CardContent sx={{ p: 3 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                        <ArrowBack sx={{ fontSize: 16, color: '#6B7280' }} />
+                        <Typography variant="caption" sx={{ color: '#6B7280', fontWeight: 600 }}>
+                          Previous Article
+                        </Typography>
+                      </Box>
+                      <Typography 
+                        variant="h6" 
+                        sx={{ 
+                          fontWeight: 600, 
+                          color: '#1E377C',
+                          fontSize: { xs: '0.95rem', sm: '1rem' }
+                        }}
+                      >
+                        {prev.title.length > 60 ? prev.title.substring(0, 60) + '...' : prev.title}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                )}
+                
+                {next && (
+                  <Card 
+                    sx={{ 
+                      flex: 1,
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease',
+                      '&:hover': {
+                        transform: 'translateX(4px)',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.12)'
+                      }
+                    }}
+                    onClick={() => {
+                      const nextId = getPostIdFromLink(next.link)
+                      navigate(`/blog/${nextId}`)
+                      window.scrollTo(0, 0)
+                    }}
+                  >
+                    <CardContent sx={{ p: 3, textAlign: { xs: 'left', sm: 'right' } }}>
+                      <Box sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        gap: 1, 
+                        mb: 1,
+                        justifyContent: { xs: 'flex-start', sm: 'flex-end' }
+                      }}>
+                        <Typography variant="caption" sx={{ color: '#6B7280', fontWeight: 600 }}>
+                          Next Article
+                        </Typography>
+                        <ArrowForward sx={{ fontSize: 16, color: '#6B7280' }} />
+                      </Box>
+                      <Typography 
+                        variant="h6" 
+                        sx={{ 
+                          fontWeight: 600, 
+                          color: '#1E377C',
+                          fontSize: { xs: '0.95rem', sm: '1rem' }
+                        }}
+                      >
+                        {next.title.length > 60 ? next.title.substring(0, 60) + '...' : next.title}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                )}
+              </Box>
+            )}
           </motion.div>
         </Container>
       </Box>

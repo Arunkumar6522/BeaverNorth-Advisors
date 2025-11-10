@@ -113,6 +113,12 @@ export default function App() {
       : cleanContent
   }
 
+  // Helper function to extract first image from content
+  const getFirstImage = (content: string): string | undefined => {
+    const imgMatch = content.match(/<img[^>]+src="([^"]+)"/i)
+    return imgMatch ? imgMatch[1] : undefined
+  }
+
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#F3F8FF' }}>
       <Nav />
@@ -476,6 +482,9 @@ export default function App() {
                         border: '1px solid rgba(0,0,0,0.05)',
                         transition: 'all 0.3s ease',
                         cursor: 'pointer',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        overflow: 'hidden',
                         '&:hover': {
                           transform: 'translateY(-4px)',
                           boxShadow: '0 16px 48px rgba(0,0,0,0.12)'
@@ -485,7 +494,39 @@ export default function App() {
                         const postId = blog.link.split('/').pop()?.split('.html')[0]
                         navigate(`/blog/${postId}`)
                       }}>
-                        <CardContent sx={{ p: 4 }}>
+                        {/* Thumbnail Image */}
+                        {(blog.thumbnail || getFirstImage(blog.content)) ? (
+                          <Box
+                            component="img"
+                            src={blog.thumbnail || getFirstImage(blog.content) || ''}
+                            alt={blog.title}
+                            sx={{
+                              width: '100%',
+                              height: { xs: 180, sm: 200, md: 220 },
+                              objectFit: 'cover',
+                              display: 'block'
+                            }}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none'
+                            }}
+                          />
+                        ) : (
+                          <Box
+                            sx={{
+                              width: '100%',
+                              height: { xs: 180, sm: 200, md: 220 },
+                              bgcolor: '#f3f4f6',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              color: '#6B7280'
+                            }}
+                          >
+                            <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>No Image</Typography>
+                          </Box>
+                        )}
+                        
+                        <CardContent sx={{ p: 4, flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
                           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                             <CalendarToday sx={{ fontSize: 16, color: '#6B7280' }} />
                             <Typography variant="caption" color="text.secondary">
@@ -514,13 +555,14 @@ export default function App() {
                               color: '#6B7280',
                               lineHeight: 1.6,
                               mb: 3,
-                              fontSize: { xs: '0.85rem', md: '0.9rem' }
+                              fontSize: { xs: '0.85rem', md: '0.9rem' },
+                              flexGrow: 1
                             }}
                           >
                             {getExcerpt(blog.content, 120)}
                           </Typography>
                           
-                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mt: 'auto' }}>
                             <Typography 
                               variant="body2" 
                               sx={{ 

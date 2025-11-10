@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Box, Typography, Container, Card, CardContent, Avatar, Rating, CircularProgress, Alert } from '@mui/material'
+import { Box, Typography, Container, Card, CardContent, Avatar, Rating, CircularProgress, Alert, Grid } from '@mui/material'
 import { motion } from 'framer-motion'
 import PublicLayout from '../components/PublicLayout'
 import { testimonialsFallbackAPI, type Testimonial } from '../services/testimonialsFallbackAPI'
@@ -129,9 +129,9 @@ export default function Testimonials() {
               </Typography>
             </Box>
           ) : (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+            <Grid container spacing={4}>
               {testimonials.map((testimonial, index) => (
-                <Box sx={{ flex: '1 1 300px', minWidth: '300px' }} key={testimonial.id}>
+                <Grid size={{ xs: 12, sm: 6, md: 4 }} key={testimonial.id}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -143,13 +143,16 @@ export default function Testimonials() {
                         display: 'flex',
                         flexDirection: 'column',
                         transition: 'all 0.3s ease',
+                        boxShadow: '0 8px 32px rgba(0,0,0,0.08)',
+                        border: '1px solid rgba(0,0,0,0.05)',
+                        borderRadius: 4,
                         '&:hover': {
                           transform: 'translateY(-4px)',
                           boxShadow: '0 12px 24px rgba(0,0,0,0.15)'
                         }
                       }}
                     >
-                      <CardContent sx={{ flexGrow: 1, p: 4 }}>
+                      <CardContent sx={{ flexGrow: 1, p: 4, display: 'flex', flexDirection: 'column' }}>
                         {/* Rating */}
                         <Box sx={{ mb: 3, display: 'flex', justifyContent: 'center' }}>
                           <Rating 
@@ -171,7 +174,8 @@ export default function Testimonials() {
                             lineHeight: 1.7,
                             color: '#374151',
                             fontStyle: 'italic',
-                            fontSize: '1.1rem'
+                            fontSize: '1.1rem',
+                            flexGrow: 1
                           }}
                         >
                           "{testimonial.testimony}"
@@ -182,7 +186,8 @@ export default function Testimonials() {
                           display: 'flex', 
                           alignItems: 'center', 
                           justifyContent: 'center',
-                          gap: 2
+                          gap: 2,
+                          mt: 'auto'
                         }}>
                           <Avatar 
                             src={testimonial.photo_url || undefined}
@@ -230,9 +235,9 @@ export default function Testimonials() {
                       </CardContent>
                     </Card>
                   </motion.div>
-                </Box>
+                </Grid>
               ))}
-            </Box>
+            </Grid>
           )}
         </Container>
 

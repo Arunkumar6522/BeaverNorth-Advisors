@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Box, Typography, Card, CardContent, Container, Grid, Button } from '@mui/material'
+import { Box, Typography, Card, CardContent, Container, Grid, Button, Pagination } from '@mui/material'
 import { CalendarToday, OpenInNew } from '@mui/icons-material'
 import PublicLayout from '../components/PublicLayout'
-import { trackArticleClick } from '../lib/analytics'
+import { trackArticleClick, trackPagination } from '../lib/analytics'
 import { useNavigate } from 'react-router-dom'
 import { useI18n } from '../i18n'
 
@@ -21,6 +21,8 @@ export default function Blog() {
   const [posts, setPosts] = useState<BlogPost[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+  const postsPerPage = 10
   const navigate = useNavigate()
   const { t } = useI18n()
 
@@ -69,6 +71,19 @@ export default function Blog() {
     navigate(`/blog/${postId}`)
   }
 
+  // Pagination calculations
+  const totalPages = Math.ceil(posts.length / postsPerPage)
+  const startIndex = (page - 1) * postsPerPage
+  const endIndex = startIndex + postsPerPage
+  const paginatedPosts = posts.slice(startIndex, endIndex)
+
+  // Handle page change
+  const handlePageChange = (_event: React.ChangeEvent<unknown>, value: number) => {
+    setPage(value)
+    trackPagination('blog', value)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   useEffect(() => {
     const handleResponse = async (response: Response) => {
       const contentType = response.headers.get('content-type')
@@ -79,6 +94,7 @@ export default function Blog() {
         if (data.success && data.posts && data.posts.length > 0) {
           console.log('✅ Success with server endpoint:', data.posts.length, 'posts')
           setPosts(data.posts)
+          setPage(1) // Reset to first page when new posts are loaded
         } else {
           console.log('❌ No posts found in server response')
           setError(t('blog_error_no_posts'))
@@ -238,8 +254,9 @@ export default function Blog() {
           )}
 
           {posts.length > 0 && (
-            <Grid container spacing={4}>
-              {posts.slice(0, 6).map((post, index) => (
+            <>
+              <Grid container spacing={4}>
+                {paginatedPosts.map((post, index) => (
                 <Grid size={{ xs: 12, md: 6 }} key={post.link}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -350,7 +367,42 @@ export default function Blog() {
                   </motion.div>
                 </Grid>
               ))}
-            </Grid>
+              </Grid>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <Box sx={{ 
+                  display: 'flex', 
+                  justifyContent: 'center', 
+                  mt: 6,
+                  mb: 4
+                }}>
+                  <Pagination
+                    count={totalPages}
+                    page={page}
+                    onChange={handlePageChange}
+                    color="primary"
+                    size="large"
+                    sx={{
+                      '& .MuiPaginationItem-root': {
+                        fontSize: { xs: '0.875rem', sm: '1rem' },
+                        '&.Mui-selected': {
+                          bgcolor: 'rgb(255, 203, 5)',
+                          color: '#1E377C',
+                          fontWeight: 600,
+                          '&:hover': {
+                            bgcolor: 'rgb(255, 193, 0)',
+                          }
+                        },
+                        '&:hover': {
+                          bgcolor: 'rgba(255, 203, 5, 0.1)',
+                        }
+                      }
+                    }}
+                  />
+                </Box>
+              )}
+            </>
           )}
           {/* Removed bottom CTA and extra links as requested */}
         </Container>

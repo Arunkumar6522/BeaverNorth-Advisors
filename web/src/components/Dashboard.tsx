@@ -7,9 +7,7 @@ import {
   Avatar,
   FormControl,
   Select,
-  MenuItem,
-  IconButton,
-  Tooltip as MuiTooltip
+  MenuItem
 } from '@mui/material'
 import { 
   TrendingUp, 
@@ -18,7 +16,6 @@ import {
   CheckCircleOutline,
   CalendarToday
 } from '@mui/icons-material'
-import { Handshake } from '@mui/icons-material'
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
@@ -224,13 +221,8 @@ export default function Dashboard() {
       <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 2 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
           <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#111827' }}>
-            Welcome, {customAuth.getCurrentUser()?.username || 'Admin'}
+            Welcome, {customAuth.getCurrentUser()?.username || 'Admin'} 👋
           </Typography>
-          <MuiTooltip title="Welcome">
-            <IconButton size="large" sx={{ color: '#1E377C' }}>
-              <Handshake />
-            </IconButton>
-          </MuiTooltip>
         </Box>
         <FormControl size="small" sx={{ minWidth: 200 }}>
           <Select

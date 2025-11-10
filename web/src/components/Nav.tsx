@@ -98,7 +98,7 @@ export default function Nav() {
           alignItems: 'center',
           transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
           transform: scrollDirection === 'down' && isScrolled ? 
-            { xs: 'scale(1)', md: 'scale(0.95)' } : 
+            { xs: 'scale(1)', md: 'scale(0.99)' } : 
             'scale(1)',
           opacity: scrollDirection === 'down' && isScrolled ? 
             { xs: 1, md: 0.9 } : 
@@ -142,13 +142,13 @@ export default function Nav() {
                 fontWeight: 800,
                 color: '#1E377C',
                 fontSize: scrollDirection === 'down' && isScrolled ? 
-                  { xs: '1.2rem', sm: '1.3rem', md: '0.9rem' } : 
+                  { xs: '1.2rem', sm: '1.3rem', md: '1.2rem' } : 
                   { xs: '1.2rem', sm: '1.3rem', md: '1.5rem' },
                 lineHeight: 1.2,
                 letterSpacing: '-0.02em',
                 transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                 transform: scrollDirection === 'down' && isScrolled ? 
-                  { xs: 'scale(1)', md: 'scale(0.85)' } : 
+                  { xs: 'scale(1)', md: 'scale(0.95)' } : 
                   'scale(1)'
               }}>
                 BeaverNorth Advisors

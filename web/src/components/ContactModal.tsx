@@ -10,9 +10,10 @@ interface ContactModalProps {
   onClose: () => void
   showCloseButton?: boolean
   disableBackdropClose?: boolean
+  onFormSuccess?: () => void
 }
 
-export default function ContactModal({ isOpen, onClose, showCloseButton = true, disableBackdropClose = false }: ContactModalProps) {
+export default function ContactModal({ isOpen, onClose, showCloseButton = true, disableBackdropClose = false, onFormSuccess }: ContactModalProps) {
   const { locale } = useI18n()
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
@@ -114,7 +115,13 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
       await verifyOTPAndSubmit()
       onClose()
       gtagEvent('lead_submit_success', { form_id: 'enquiry' })
-      navigate('/success', { state: { submitted: true } })
+      // If onFormSuccess callback is provided, use it (for /enquiry route)
+      // Otherwise, navigate to success page (default behavior)
+      if (onFormSuccess) {
+        onFormSuccess()
+      } else {
+        navigate('/success', { state: { submitted: true } })
+      }
     } catch (error: any) {
       const errorMessage = error?.message || 'Unknown error occurred'
       // If OTP failed, only show inline OTP error, not global submit error
@@ -565,7 +572,7 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
                      (locale === 'fr' ? 'Presque terminé' : 'Almost Done')}
           </h2>
           <p style={{ 
-            margin: '0 0 24px 0', 
+            margin: '0 0 8px 0', 
             color: '#6B7280', 
             fontSize: '15px',
             fontWeight: '400'
@@ -574,6 +581,23 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
                      currentStep === 2 ? (locale === 'fr' ? 'Aidez-nous à personnaliser votre devis' : 'Help us personalize your quote') :
                      (locale === 'fr' ? 'Vérifiez vos coordonnées' : 'Verify your contact information')}
           </p>
+          
+          {/* Time Estimate */}
+          {currentStep === 1 && (
+            <p style={{ 
+              margin: '0 0 24px 0', 
+              color: '#22C55E', 
+              fontSize: '13px',
+              fontWeight: '500',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px'
+            }}>
+              <span>⏱️</span>
+              <span>{locale === 'fr' ? 'Cela ne prendra que 2 minutes' : 'It will take only 2 minutes'}</span>
+            </p>
+          )}
           
           {/* Progress Bar */}
           <div style={{ 
@@ -1162,9 +1186,6 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
                         outline: 'none'
                       }}
                     />
-                  </div>
-                  <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginTop: 6 }}>
-                    {locale === 'fr' ? 'Nous vous contacterons à ce numéro.' : "We'll contact you at this number."}
                   </div>
                 </div>
 
