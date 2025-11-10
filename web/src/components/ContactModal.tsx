@@ -8,9 +8,10 @@ import { gtagEvent } from '../lib/analytics'
 interface ContactModalProps {
   isOpen: boolean
   onClose: () => void
+  showCloseButton?: boolean
 }
 
-export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
+export default function ContactModal({ isOpen, onClose, showCloseButton = true }: ContactModalProps) {
   const { locale } = useI18n()
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
@@ -516,37 +517,38 @@ export default function ContactModal({ isOpen, onClose }: ContactModalProps) {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
-            border: 'none',
-            fontSize: '20px',
-            cursor: 'pointer',
-            color: '#9CA3AF',
-            width: '32px',
-            height: '32px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: '50%',
-            background: 'transparent',
-            transition: 'all 0.2s ease'
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = '#F3F4F6'
-            e.currentTarget.style.color = '#374151'
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = 'transparent'
-            e.currentTarget.style.color = '#9CA3AF'
-          }}
-        >
-          ×
-        </button>
+        {showCloseButton && (
+          <button
+            onClick={onClose}
+            style={{
+              position: 'absolute',
+              top: '20px',
+              right: '20px',
+              border: 'none',
+              fontSize: '20px',
+              cursor: 'pointer',
+              color: '#9CA3AF',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '50%',
+              background: 'transparent',
+              transition: 'all 0.2s ease'
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = '#F3F4F6'
+              e.currentTarget.style.color = '#374151'
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.color = '#9CA3AF'
+            }}
+          >
+            ×
+          </button>
+        )}
 
         {/* Header (no logo) */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>

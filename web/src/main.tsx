@@ -14,6 +14,7 @@ import NotFound from './pages/NotFound.tsx'
 import DashboardLayout from './components/DashboardLayout.tsx'
 import ProtectedRoute from './components/ProtectedRoute.tsx'
 import SuccessPage from './components/SuccessPage.tsx'
+import Enquiry from './pages/Enquiry.tsx'
 import { I18nProvider } from './i18n.tsx'
 
 const router = createBrowserRouter([
@@ -35,6 +36,7 @@ const router = createBrowserRouter([
   { path: '/blog/:postId', element: <BlogPost /> },
   { path: '/testimonial', element: <Testimonials /> },
   { path: '/success', element: <SuccessPage /> },
+  { path: '/enquiry', element: <Enquiry /> },
   // Protected routes - require authentication
   {
     path: '/dashboard',

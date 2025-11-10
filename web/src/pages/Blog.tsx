@@ -70,38 +70,56 @@ export default function Blog() {
   }
 
   useEffect(() => {
+    const handleResponse = async (response: Response) => {
+      const contentType = response.headers.get('content-type')
+      console.log('📊 Content-Type:', contentType)
+      if (contentType && contentType.includes('application/json')) {
+        const data = await response.json()
+        console.log('📊 Server response:', data)
+        if (data.success && data.posts && data.posts.length > 0) {
+          console.log('✅ Success with server endpoint:', data.posts.length, 'posts')
+          setPosts(data.posts)
+        } else {
+          console.log('❌ No posts found in server response')
+          setError(t('blog_error_no_posts'))
+        }
+      } else {
+        console.log('❌ Server returned non-JSON response')
+        setError('Server returned invalid response')
+      }
+    }
+
     const fetchBlogPosts = async () => {
       try {
         setLoading(true)
         console.log('🔍 Fetching blog posts...')
         
         // Use Netlify function for production, local server for development
-        const apiUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001/api/blog-posts' : '/.netlify/functions/blog-posts'
-        const response = await fetch(apiUrl)
-        console.log('📡 Response status:', response.status)
-        
-        if (response.ok) {
-          const contentType = response.headers.get('content-type')
-          console.log('📊 Content-Type:', contentType)
-          
-          if (contentType && contentType.includes('application/json')) {
-            const data = await response.json()
-            console.log('📊 Server response:', data)
-            
-            if (data.success && data.posts && data.posts.length > 0) {
-              console.log('✅ Success with server endpoint:', data.posts.length, 'posts')
-              setPosts(data.posts)
-            } else {
-              console.log('❌ No posts found in server response')
-              setError(t('blog_error_no_posts'))
-            }
-          } else {
-            console.log('❌ Server returned non-JSON response')
-            setError('Server returned invalid response')
-          }
+        if (window.location.hostname === 'localhost') {
+          const response = await fetch('http://localhost:3001/api/blog-posts')
+          await handleResponse(response)
         } else {
-          console.log('❌ Server request failed:', response.status)
-          setError(t('blog_error_fetch'))
+          const candidateUrls = [
+            '/.netlify/functions/blog-posts',
+            'https://beavernorth.netlify.app/.netlify/functions/blog-posts'
+          ]
+          let success = false
+          for (const url of candidateUrls) {
+            try {
+              const response = await fetch(url)
+              console.log('📡 Response status from', url, ':', response.status)
+              if (response.ok) {
+                await handleResponse(response)
+                success = true
+                break
+              }
+            } catch (err) {
+              console.error('❌ Fetch error from', url, err)
+            }
+          }
+          if (!success) {
+            setError(t('blog_error_fetch'))
+          }
         }
         
       } catch (err) {
@@ -113,7 +131,7 @@ export default function Blog() {
     }
 
     fetchBlogPosts()
-  }, [])
+  }, [t])
 
   return (
     <PublicLayout>
