@@ -56,7 +56,7 @@ export default function About() {
   ]
 
   const stats = [
-    { number: '100%', label: 'Free Consultation', icon: <CheckCircle sx={{ fontSize: 32, color: 'rgb(255, 203, 5)' }} /> },
+    { number: '100%', label: 'Complimentary Consultation', icon: <CheckCircle sx={{ fontSize: 32, color: 'rgb(255, 203, 5)' }} /> },
     { number: 'LLQP', label: 'Licensed Professional', icon: <Security sx={{ fontSize: 32, color: 'rgb(255, 203, 5)' }} /> }
   ]
 
@@ -468,10 +468,10 @@ export default function About() {
                         <Schedule sx={{ fontSize: 48, color: 'rgb(255, 203, 5)' }} />
                       </Box>
                       <Typography variant="h5" sx={{ fontWeight: 700, color: '#1E377C', mb: 2 }}>
-                        Free Consultation
+                        Complimentary Consultation
                       </Typography>
                       <Typography variant="body2" sx={{ color: '#6B7280', lineHeight: 1.6 }}>
-                        No-cost 30-minute financial analysis to understand your unique situation and goals.
+                        Complimentary financial analysis to understand your unique situation and goals.
                       </Typography>
                     </Box>
                   </motion.div>

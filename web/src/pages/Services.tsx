@@ -65,7 +65,7 @@ export default function Services() {
     {
       icon: <TrendingUp sx={{ fontSize: 48, color: '#2196F3' }} />,
       title: 'TFSAs',
-      description: 'Tax-free savings accounts to grow your money without tax on investment returns or withdrawals.',
+      description: 'Tax-exempt savings accounts to grow your money without tax on investment returns or withdrawals.',
       color: '#2196F3'
     },
     {
@@ -428,7 +428,7 @@ export default function Services() {
                   opacity: 0.9
                 }}
               >
-                Schedule your free 30-minute consultation to discuss your financial needs and goals.
+                Schedule your complimentary consultation to discuss your financial needs and goals.
               </Typography>
               <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
                 <Button
@@ -447,7 +447,7 @@ export default function Services() {
                     }
                   }}
                 >
-                  Get Free Consultation
+                  Get Complimentary Consultation
                 </Button>
                 <Button
                   href="tel:+14387635120"

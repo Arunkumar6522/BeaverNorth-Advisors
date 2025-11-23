@@ -63,6 +63,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: '/email',
+    element: (
+      <ProtectedRoute>
+        <DashboardLayout />
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: '/settings',
     element: (
       <ProtectedRoute>

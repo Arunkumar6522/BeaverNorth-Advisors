@@ -111,7 +111,7 @@ export default function Enquiry() {
                 fontSize: { xs: '2rem', md: '2.5rem' }
               }}
             >
-              {locale === 'fr' ? 'Demandez Votre Devis Gratuit' : 'Get Your Free Insurance Quote'}
+              {locale === 'fr' ? 'Demandez Votre Devis' : 'Get Your Insurance Quote'}
             </Typography>
             <Typography 
               variant="h6" 
@@ -135,7 +135,7 @@ export default function Enquiry() {
               <Box sx={{ textAlign: 'center' }}>
                 <CheckCircle sx={{ fontSize: 40, color: '#22C55E', mb: 1 }} />
                 <Typography variant="body2" sx={{ color: '#1E377C', fontWeight: 600 }}>
-                  {locale === 'fr' ? 'Gratuit' : 'Free Quote'}
+                  {locale === 'fr' ? 'Complémentaire' : 'Complimentary Quote'}
                 </Typography>
               </Box>
             </Grid>
