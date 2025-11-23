@@ -11,9 +11,10 @@ interface ContactModalProps {
   showCloseButton?: boolean
   disableBackdropClose?: boolean
   onFormSuccess?: () => void
+  embeddedMode?: boolean
 }
 
-export default function ContactModal({ isOpen, onClose, showCloseButton = true, disableBackdropClose = false, onFormSuccess }: ContactModalProps) {
+export default function ContactModal({ isOpen, onClose, showCloseButton = true, disableBackdropClose = false, onFormSuccess, embeddedMode = false }: ContactModalProps) {
   const { locale } = useI18n()
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
@@ -489,42 +490,27 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
 
   if (!isOpen) return null
 
-  return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.6)',
-      zIndex: 1000,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px',
-      backdropFilter: 'blur(4px)'
-    }} onClick={disableBackdropClose ? undefined : onClose}>
-      
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.9, y: 20 }}
-        transition={{ duration: 0.3 }}
-        style={{
-          background: '#ffffff',
-          borderRadius: '24px',
-          padding: window.innerWidth < 768 ? '24px' : '40px',
-          width: '100%',
-          maxWidth: window.innerWidth < 768 ? '95vw' : '420px',
-          maxHeight: '90vh',
-          overflow: 'auto',
-          boxShadow: '0 32px 64px rgba(0,0,0,0.12)',
-          border: '1px solid rgba(0,0,0,0.08)',
-          position: 'relative',
-          margin: window.innerWidth < 768 ? '16px' : '0'
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
+  const formContent = (
+    <motion.div
+      initial={embeddedMode ? { opacity: 1 } : { opacity: 0, scale: 0.9, y: 20 }}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.9, y: 20 }}
+      transition={{ duration: 0.3 }}
+      style={{
+        background: embeddedMode ? 'transparent' : '#ffffff',
+        borderRadius: embeddedMode ? '0' : '24px',
+        padding: embeddedMode ? '0' : (window.innerWidth < 768 ? '24px' : '40px'),
+        width: '100%',
+        maxWidth: embeddedMode ? '100%' : (window.innerWidth < 768 ? '95vw' : '420px'),
+        maxHeight: embeddedMode ? 'none' : '90vh',
+        overflow: 'auto',
+        boxShadow: embeddedMode ? 'none' : '0 32px 64px rgba(0,0,0,0.12)',
+        border: embeddedMode ? 'none' : '1px solid rgba(0,0,0,0.08)',
+        position: 'relative',
+        margin: embeddedMode ? '0' : (window.innerWidth < 768 ? '16px' : '0')
+      }}
+      onClick={(e) => e.stopPropagation()}
+    >
         {showCloseButton && (
           <button
             onClick={onClose}
@@ -1331,31 +1317,56 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
               </motion.div>
             )}
         </div>
-      </motion.div>
-      {loading && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background: 'rgba(255,255,255,0.6)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 1100
-        }}>
+        {loading && (
           <div style={{
-            width: 40,
-            height: 40,
-            border: '4px solid rgba(30,55,124,0.2)',
-            borderTopColor: '#1E377C',
-            borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
-          }} />
-          <style>{'@keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }'}</style>
-        </div>
-      )}
+            position: embeddedMode ? 'absolute' : 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(255,255,255,0.6)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1100,
+            borderRadius: embeddedMode ? '0' : '24px'
+          }}>
+            <div style={{
+              width: 40,
+              height: 40,
+              border: '4px solid rgba(30,55,124,0.2)',
+              borderTopColor: '#1E377C',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite'
+            }} />
+            <style>{'@keyframes spin { from { transform: rotate(0deg);} to { transform: rotate(360deg);} }'}</style>
+          </div>
+        )}
+      </motion.div>
+  )
+
+  // If embedded mode, return form content directly without modal overlay
+  if (embeddedMode) {
+    return formContent
+  }
+
+  // Otherwise, return with modal overlay
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.6)',
+      zIndex: 1000,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '20px',
+      backdropFilter: 'blur(4px)'
+    }} onClick={disableBackdropClose ? undefined : onClose}>
+      {formContent}
     </div>
   )
 }

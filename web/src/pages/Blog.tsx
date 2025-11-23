@@ -186,7 +186,7 @@ export default function Blog() {
                   lineHeight: 1.6
                 }}
               >
-                Insights on insurance, risk management, and financial protection in Canada from BeaverNorth Advisors.
+                Insights on insurance, risk management, and financial protection in Canada from BeaverNorth Financials.
               </Typography>
             </motion.div>
           </Container>

@@ -57,7 +57,7 @@ export default function PrivacyPolicyModal({ open, onClose }: PrivacyPolicyModal
               1. Information We Collect
             </Typography>
             <Typography variant="body2" sx={{ color: '#333', lineHeight: 1.6, mb: 2 }}>
-              BeaverNorth Advisors collects personal information when you:
+              BeaverNorth Financials collects personal information when you:
             </Typography>
             <Box component="ul" sx={{ pl: 2, mb: 2 }}>
               <Typography component="li" variant="body2" sx={{ color: '#333', lineHeight: 1.6, mb: 1 }}>

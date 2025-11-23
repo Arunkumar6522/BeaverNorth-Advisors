@@ -151,7 +151,7 @@ export default function Nav() {
                   { xs: 'scale(1)', md: 'scale(0.95)' } : 
                   'scale(1)'
               }}>
-                BeaverNorth Advisors
+                BeaverNorth Financials
               </Box>
             </Link>
 

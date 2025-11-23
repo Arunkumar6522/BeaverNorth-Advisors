@@ -25,7 +25,7 @@ export default function Footer() {
             {/* Logo and Copyright */}
             <Box>
               <Typography variant="h6" sx={{ fontWeight: 800, color: '#1E377C', mb: 1 }}>
-                BeaverNorth Advisors
+                BeaverNorth Financials
               </Typography>
               <Typography variant="body2" sx={{ color: '#417F73', mb: 1 }}>
                 {t('footer_description')}

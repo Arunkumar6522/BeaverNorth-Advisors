@@ -79,7 +79,7 @@ export default function Login() {
           boxSizing: 'border-box'
         }}
       >
-        <h2 style={{ marginTop: 0, marginBottom: 16 }}>BeaverNorth Advisors</h2>
+        <h2 style={{ marginTop: 0, marginBottom: 16 }}>BeaverNorth Financials</h2>
         <p style={{ marginTop: 0, color: '#555', marginBottom: 16 }}>Admin Login</p>
         
         

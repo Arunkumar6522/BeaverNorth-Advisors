@@ -6,11 +6,11 @@ type Dict = Record<string, string>
 
 const en: Dict = {
   nav_home: 'Home',
-  nav_about: 'About Us',
+  nav_about: 'About',
   nav_services: 'Services',
   nav_blog: 'Blog',
   nav_testimonials: 'Testimonials',
-  nav_contact: 'Contact Us',
+  nav_contact: 'Contact',
   top_email: 'beavernorthadvisors@gmail.com',
   top_contact: 'Contact',
   top_location: 'Location',
@@ -80,7 +80,7 @@ const fr: Dict = {
   nav_services: 'Services',
   nav_blog: 'Blog',
   nav_testimonials: 'Témoignages',
-  nav_contact: 'Nous contacter',
+  nav_contact: 'Contact',
   top_email: 'beavernorthadvisors@gmail.com',
   top_contact: 'Contact',
   top_location: 'Localisation',

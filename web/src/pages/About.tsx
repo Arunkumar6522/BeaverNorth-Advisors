@@ -10,7 +10,8 @@ import {
   Schedule,
   Phone,
   Email,
-  LocationOn
+  LocationOn,
+  Savings
 } from '@mui/icons-material'
 import { motion } from 'framer-motion'
 import PublicLayout from '../components/PublicLayout'
@@ -31,21 +32,21 @@ export default function About() {
     },
     {
       icon: <AccountBalance sx={{ fontSize: 48, color: '#6983CC' }} />,
-      title: 'Budgeting & Savings',
-      description: 'Personalized budgeting strategies to optimize your finances and build emergency funds.',
+      title: 'Budgeting',
+      description: 'Personalized budgeting strategies to optimize your finances and track your spending effectively.',
       color: '#6983CC'
     },
     {
-      icon: <Assessment sx={{ fontSize: 48, color: '#FF6B35' }} />,
-      title: 'Tax Optimization',
-      description: 'Expert strategies to minimize your tax burden legally and maximize your savings.',
-      color: '#FF6B35'
+      icon: <Savings sx={{ fontSize: 48, color: '#10B981' }} />,
+      title: 'Savings',
+      description: 'Expert guidance to build emergency funds and achieve your savings goals efficiently.',
+      color: '#10B981'
     },
     {
-      icon: <CreditCard sx={{ fontSize: 48, color: '#10B981' }} />,
+      icon: <CreditCard sx={{ fontSize: 48, color: '#FF6B35' }} />,
       title: 'Debt Management',
       description: 'Effective debt reduction and management solutions to improve your financial health.',
-      color: '#10B981'
+      color: '#FF6B35'
     },
     {
       icon: <School sx={{ fontSize: 48, color: '#8B5CF6' }} />,
@@ -100,7 +101,7 @@ export default function About() {
                     lineHeight: 1.2
                   }}
                 >
-                  About BeaverNorth Advisors
+                  About BeaverNorth Financials
                 </Typography>
                 <Typography 
                   variant="h5" 
@@ -209,10 +210,10 @@ export default function About() {
                     margin: '0 auto'
                   }}
                 >
-                  Based in Canada, <strong style={{ color: '#1E377C' }}>BeaverNorth Advisors</strong> is dedicated to helping families improve their 
+                  Based in Canada, <strong style={{ color: '#1E377C' }}>BeaverNorth Financials</strong> is dedicated to helping families improve their 
                   financial literacy and achieve long-term financial well-being. As a <strong style={{ color: '#417F73' }}>LLQP-licensed 
                   financial associate</strong>, we offer a comprehensive range of personal financial services, 
-                  including life insurance, investments, budgeting, tax reduction, and debt management, 
+                  including life insurance, investments, budgeting, savings, and debt management, 
                   all under one roof with personalized guidance.
                 </Typography>
               </Box>
@@ -247,12 +248,26 @@ export default function About() {
                     lineHeight: 1.8,
                     maxWidth: 800,
                     margin: '0 auto',
-                    fontWeight: 500
+                    fontWeight: 500,
+                    mb: 2
                   }}
                 >
-                  We start with a <strong>free 30-minute financial analysis</strong> to understand your 
+                  We start with a <strong>complimentary financial analysis</strong> to understand your 
                   unique needs before recommending any solutions. Our guidance is personalized, and our 
-                  service is completely free with no obligations.
+                  services come with no cost and no obligations.
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontSize: { xs: '0.85rem', md: '0.9rem' },
+                    lineHeight: 1.6,
+                    maxWidth: 800,
+                    margin: '0 auto',
+                    fontStyle: 'italic',
+                    color: '#6B7280'
+                  }}
+                >
+                  You do not pay us. Our compensation is commission-based and is paid by the insurance carrier solely when you elect to secure a policy through our services.
                 </Typography>
               </Box>
             </motion.div>
@@ -357,7 +372,7 @@ export default function About() {
                   fontSize: { xs: '2rem', md: '2.5rem' }
                 }}
               >
-                Why Choose BeaverNorth Advisors?
+                Why Choose BeaverNorth Financials?
               </Typography>
               
               <Grid container spacing={4}>
@@ -592,7 +607,7 @@ export default function About() {
                   opacity: 0.9
                 }}
               >
-                Start with our free 30-minute financial analysis and discover how we can help 
+                Start with our complimentary financial analysis and discover how we can help 
                 you achieve your long-term financial goals.
               </Typography>
               <Box sx={{ 
@@ -619,7 +634,7 @@ export default function About() {
                     }
                   }}
                 >
-                  Get Free Analysis
+                  Get in Touch
                 </Button>
                 <Button
                   href="tel:+14387635120"
