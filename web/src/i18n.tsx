@@ -66,7 +66,7 @@ const en: Dict = {
   testimonials_cta_sub: 'Let us help you achieve your financial goals with personalized advice and expert guidance',
   testimonials_cta_button: 'Get Started Today',
   contact_cta_title: 'Ready to Secure Your Future?',
-  contact_cta_sub: 'Our expert advisors are here to help you make informed financial decisions',
+  contact_cta_sub: 'Our expert professionals are here to help you make informed financial decisions',
   contact_cta_button: 'Call (438) 763-5120',
   // Privacy modal
   privacy_title: 'Privacy Policy',

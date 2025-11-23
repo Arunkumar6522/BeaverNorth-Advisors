@@ -31,7 +31,7 @@ export default function Footer() {
                 {t('footer_description')}
               </Typography>
               <Typography variant="body2" sx={{ color: '#6B7280', fontSize: '0.85rem' }}>
-                © {new Date().getFullYear()} BeaverNorth Advisors
+                © {new Date().getFullYear()} BeaverNorth Financials
               </Typography>
             </Box>
 

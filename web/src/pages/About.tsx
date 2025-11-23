@@ -206,14 +206,44 @@ export default function About() {
                     color: '#374151',
                     textAlign: 'center',
                     maxWidth: 900,
-                    margin: '0 auto'
+                    margin: '0 auto',
+                    mb: 3
                   }}
                 >
                   Based in Canada, <strong style={{ color: '#1E377C' }}>BeaverNorth Financials</strong> is dedicated to helping families improve their 
-                  financial literacy and achieve long-term financial well-being. As a <strong style={{ color: '#417F73' }}>LLQP-licensed 
+                  financial literacy and achieve long-term financial well-being. As <strong style={{ color: '#417F73' }}>LLQP-licensed 
                   financial associate</strong>, we offer a comprehensive range of personal financial services, 
                   including life insurance, investments, budgeting, savings, and debt management, 
-                  all under one roof with personalized guidance.
+                  all under one roof with personalized guidance. We work as independent financial professionals and contracted with Experior Financial Group Inc. (MGA), giving us access to a wide range of top Canadian insurance providers.
+                </Typography>
+                <Typography 
+                  variant="body1" 
+                  sx={{ 
+                    fontSize: { xs: '1rem', md: '1.2rem' },
+                    lineHeight: 1.8,
+                    color: '#374151',
+                    textAlign: 'center',
+                    maxWidth: 900,
+                    margin: '0 auto',
+                    mb: 3
+                  }}
+                >
+                  Our network includes more than 20 trusted insurers including Manulife, Beneva, iA Financial Group, Foresters Financial, Assumption Life, Travelance, allowing us to source highly competitive offerings.
+                </Typography>
+                <Typography 
+                  variant="caption" 
+                  sx={{ 
+                    fontSize: { xs: '0.7rem', md: '0.75rem' },
+                    lineHeight: 1.6,
+                    color: '#6B7280',
+                    textAlign: 'center',
+                    maxWidth: 900,
+                    margin: '0 auto',
+                    display: 'block',
+                    fontStyle: 'italic'
+                  }}
+                >
+                  Experior Financial Group Inc. is our contracted Managing General Agency (MGA) and is not an insurer.
                 </Typography>
               </Box>
 

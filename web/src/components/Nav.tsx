@@ -137,7 +137,7 @@ export default function Nav() {
           }}>
             
             {/* Company Name Only */}
-            <Link to="/" style={{ textDecoration: 'none' }} aria-label="BeaverNorth Advisors Home">
+            <Link to="/" style={{ textDecoration: 'none' }} aria-label="BeaverNorth Financials Home">
               <Box sx={{ 
                 fontWeight: 800,
                 color: '#1E377C',
@@ -286,7 +286,7 @@ export default function Nav() {
       >
         {/* Drawer Header */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2, borderBottom: '1px solid rgba(105,131,204,0.1)' }}>
-          <Box sx={{ fontWeight: 800, color: '#1E377C', fontSize: '1.2rem' }}>BeaverNorth Advisors</Box>
+          <Box sx={{ fontWeight: 800, color: '#1E377C', fontSize: '1.2rem' }}>BeaverNorth Financials</Box>
           <IconButton aria-label="Close menu" onClick={toggleMenu} sx={{ color: '#6B7280' }}>
             <CloseIcon />
           </IconButton>

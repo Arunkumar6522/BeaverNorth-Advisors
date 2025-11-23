@@ -187,7 +187,7 @@ export default function Enquiry() {
                     <Typography variant="body2" sx={{ color: '#6B7280' }}>
                       {locale === 'fr' 
                         ? 'Nos conseillers expérimentés vous aident à trouver la meilleure couverture.'
-                        : 'Our experienced advisors help you find the best coverage.'}
+                        : 'Our experienced professionals help you find the best coverage.'}
                     </Typography>
                   </Box>
                 </Box>
@@ -299,7 +299,7 @@ export default function Enquiry() {
           </Grid>
           <Box sx={{ textAlign: 'center', mt: 3, pt: 3, borderTop: '1px solid rgba(255,255,255,0.2)' }}>
             <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.8)' }}>
-              © 2024 BeaverNorth Advisors. {locale === 'fr' ? 'Tous droits réservés.' : 'All rights reserved.'}
+              © 2024 BeaverNorth Financials. {locale === 'fr' ? 'Tous droits réservés.' : 'All rights reserved.'}
             </Typography>
           </Box>
         </Container>

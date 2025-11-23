@@ -43,7 +43,7 @@ export default function Contact() {
                   lineHeight: 1.6
                 }}
               >
-                Get in touch with our expert advisors for personalized financial guidance
+                Get in touch with our expert professionals for personalized financial guidance
               </Typography>
             </motion.div>
           </Container>

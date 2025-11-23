@@ -64,7 +64,7 @@ export default function SuccessPage() {
         >
           Your insurance quote request has been submitted successfully.
           <br />
-          Our licensed advisors will contact you within 24 hours.
+          Our licensed professionals will contact you within 24 hours.
         </motion.p>
         <motion.div
           initial={{ y: 20, opacity: 0 }}

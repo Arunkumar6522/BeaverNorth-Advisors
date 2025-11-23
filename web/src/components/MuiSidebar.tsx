@@ -102,7 +102,7 @@ export default function MuiSidebar({
                   BeaverNorth
                 </Typography>
                 <Typography variant="caption" sx={{ opacity: 0.9 }}>
-                  Insurance Advisors
+                  Insurance Professionals
                 </Typography>
               </Box>
             </Box>

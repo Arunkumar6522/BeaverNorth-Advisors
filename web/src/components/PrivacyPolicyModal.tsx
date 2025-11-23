@@ -89,7 +89,7 @@ export default function PrivacyPolicyModal({ open, onClose }: PrivacyPolicyModal
                 Provide personalized insurance quotes and recommendations
               </Typography>
               <Typography component="li" variant="body2" sx={{ color: '#333', lineHeight: 1.6, mb: 1 }}>
-                Connect you with licensed Canadian insurance advisors
+                Connect you with licensed Canadian insurance professionals
               </Typography>
               <Typography component="li" variant="body2" sx={{ color: '#333', lineHeight: 1.6, mb: 1 }}>
                 Communicate about your insurance needs and our services
@@ -116,7 +116,7 @@ export default function PrivacyPolicyModal({ open, onClose }: PrivacyPolicyModal
                 Helps prevent fraudulent quote requests
               </Typography>
               <Typography component="li" variant="body2" sx={{ color: '#333', lineHeight: 1.6, mb: 1 }}>
-                Ensures our advisors can reach you with accurate quotes
+                Ensures our professionals can reach you with accurate quotes
               </Typography>
             </Box>
             <Typography variant="body2" sx={{ color: '#333', lineHeight: 1.6 }}>
@@ -134,7 +134,7 @@ export default function PrivacyPolicyModal({ open, onClose }: PrivacyPolicyModal
             </Typography>
             <Box component="ul" sx={{ pl: 2, mb: 2 }}>
               <Typography component="li" variant="body2" sx={{ color: '#333', lineHeight: 1.6, mb: 1 }}>
-                Licensed Canadian insurance advisors and brokers
+                Licensed Canadian insurance professionals and brokers
               </Typography>
               <Typography component="li" variant="body2" sx={{ color: '#333', lineHeight: 1.6, mb: 1 }}>
                 Insurance companies to obtain quotes

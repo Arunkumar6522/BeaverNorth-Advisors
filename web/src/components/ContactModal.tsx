@@ -1312,7 +1312,7 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
                   lineHeight: 1.5
                 }}>
                   {locale === 'fr' ? 'Vos informations sont sécurisées et confidentielles.' : 'Your information is secure and confidential.'}<br/>
-                  {locale === 'fr' ? 'Des conseillers d’assurance canadiens agréés vous répondent sous 24 heures.' : 'Licensed Canadian insurance advisors respond within 24 hours.'}
+                  {locale === 'fr' ? "Des conseillers d'assurance canadiens agréés vous répondent sous 24 heures." : 'Licensed Canadian insurance professionals respond within 24 hours.'}
                 </p>
               </motion.div>
             )}
