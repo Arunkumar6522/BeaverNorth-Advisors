@@ -613,7 +613,9 @@ export default function About() {
               borderRadius: 4,
               textAlign: 'center',
               boxShadow: '0 8px 32px rgba(30, 55, 124, 0.3)',
-              mt: 8
+              mt: 8,
+              position: 'relative',
+              overflow: 'hidden'
             }}>
               <Typography 
                 variant="h4" 
@@ -643,7 +645,8 @@ export default function About() {
                 display: 'flex', 
                 gap: 2, 
                 justifyContent: 'center',
-                flexWrap: 'wrap'
+                flexWrap: 'wrap',
+                mb: 4
               }}>
                 <Button
                   href="/contact"
@@ -685,6 +688,48 @@ export default function About() {
                 >
                   Call (438) 763-5120
                 </Button>
+              </Box>
+
+              {/* Advisor Photo - bottom right corner */}
+              <Box
+                sx={{
+                  position: { xs: 'static', md: 'absolute' },
+                  right: { md: 24 },
+                  bottom: { md: 24 },
+                  mt: { xs: 2, md: 0 },
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: { xs: 'center', md: 'flex-end' },
+                  gap: 2
+                }}
+              >
+                <Box
+                  component="img"
+                  src="/shantoshini-dash.jpg"
+                  alt="Shantoshini Dash, PhD"
+                  sx={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: '50%',
+                    objectFit: 'cover',
+                    border: '3px solid rgba(255,255,255,0.8)',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
+                  }}
+                />
+                <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ fontWeight: 700, color: 'white' }}
+                  >
+                    Shantoshini Dash, PhD
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: 'rgba(255,255,255,0.85)' }}
+                  >
+                    Senior Financial Associate
+                  </Typography>
+                </Box>
               </Box>
             </Box>
           </motion.div>

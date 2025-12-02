@@ -268,19 +268,6 @@ export default function App() {
               >
                 {t('testimonials_title_home')}
               </Typography>
-              <Typography 
-                variant="h6" 
-                sx={{ 
-                  color: '#417F73', 
-                  fontWeight: 400,
-                  maxWidth: 600,
-                  margin: '0 auto',
-                  fontSize: { xs: '1rem', md: '1.1rem' }
-                }}
-              >
-                {/* keep existing descriptive sentence for now or localize later */}
-                {t('capabilities_title')}
-              </Typography>
             </Box>
 
             {loadingTestimonials ? (
