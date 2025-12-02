@@ -80,7 +80,7 @@ export default function Contact() {
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#1E377C', mb: 1 }}>Email</Typography>
                       <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-                        beavernorthadvisors@gmail.com
+                        info@beavernorth.ca
                       </Typography>
                     </Box>
                   </Box>

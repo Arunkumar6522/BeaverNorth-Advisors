@@ -284,7 +284,7 @@ export default function Enquiry() {
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
                 <Email sx={{ color: 'rgb(255, 203, 5)' }} />
                 <Typography variant="body1" sx={{ color: 'white' }}>
-                  beavernorthadvisors@gmail.com
+                  info@beavernorth.ca
                 </Typography>
               </Box>
             </Grid>

@@ -202,7 +202,7 @@ export default function PrivacyPolicyModal({ open, onClose }: PrivacyPolicyModal
             </Typography>
             <Box sx={{ pl: 2 }}>
               <Typography variant="body2" sx={{ color: '#333', lineHeight: 1.6, mb: 1 }}>
-                <strong>Email:</strong> beavernorthadvisors@gmail.com
+                <strong>Email:</strong> info@beavernorth.ca
               </Typography>
               <Typography variant="body2" sx={{ color: '#333', lineHeight: 1.6, mb: 1 }}>
                 <strong>Phone:</strong> (438) 763-5120

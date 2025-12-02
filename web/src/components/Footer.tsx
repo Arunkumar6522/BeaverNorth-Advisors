@@ -57,7 +57,7 @@ export default function Footer() {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Email sx={{ fontSize: 18, color: '#6B7280' }} />
                   <Typography variant="body2" sx={{ color: '#417F73', fontSize: '0.9rem' }}>
-                    beavernorthadvisors@gmail.com
+                    info@beavernorth.ca
                   </Typography>
                 </Box>
                 
