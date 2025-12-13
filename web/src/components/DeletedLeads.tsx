@@ -14,14 +14,17 @@ import {
   Avatar,
   Button,
   Modal,
-  Pagination
+  Pagination,
+  ToggleButton,
+  ToggleButtonGroup
 } from '@mui/material'
 import {
   Refresh as RestoreIcon,
   Email as EmailIcon,
   Phone as PhoneIcon,
   Visibility as ViewIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
+  People as PeopleIcon
 } from '@mui/icons-material'
 
 interface DeletedLead {
@@ -43,10 +46,19 @@ interface DeletedLead {
   delete_comment?: string
 }
 
-// Sample deleted leads data (removed - now loads from Supabase)
+interface DeletedEmailContact {
+  id: string
+  name: string
+  email: string
+  categoryName: string
+  deleted_at: string
+  deleted_by?: string
+}
 
 export default function DeletedLeads() {
+  const [viewType, setViewType] = useState<'leads' | 'email'>('leads')
   const [deletedLeads, setDeletedLeads] = useState<DeletedLead[]>([])
+  const [deletedEmailContacts, setDeletedEmailContacts] = useState<DeletedEmailContact[]>([])
   const [viewModalOpen, setViewModalOpen] = useState(false)
   const [selectedLead, setSelectedLead] = useState<DeletedLead | null>(null)
   const [page, setPage] = useState(0)
@@ -224,12 +236,44 @@ export default function DeletedLeads() {
     }
   }
 
+  // Load deleted email contacts from localStorage (since we're not using DB)
+  useEffect(() => {
+    const stored = localStorage.getItem('deletedEmailContacts')
+    if (stored) {
+      try {
+        setDeletedEmailContacts(JSON.parse(stored))
+      } catch (e) {
+        console.error('Error loading deleted email contacts:', e)
+      }
+    }
+  }, [])
+
+  const handleViewTypeChange = (_event: React.MouseEvent<HTMLElement>, newView: 'leads' | 'email' | null) => {
+    if (newView !== null) {
+      setViewType(newView)
+      setPage(0) // Reset pagination when switching views
+    }
+  }
+
   return (
     <Box sx={{ height: '100%', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      {/* Header removed (Top bar already shows module name) */}
-
       {/* Actions */}
-      <Box sx={{ px: 1, py: 1, flexShrink: 0 }}>
+      <Box sx={{ px: 1, py: 1, flexShrink: 0, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <ToggleButtonGroup
+          value={viewType}
+          exclusive
+          onChange={handleViewTypeChange}
+          aria-label="view type"
+        >
+          <ToggleButton value="leads" aria-label="leads">
+            <PeopleIcon sx={{ mr: 1 }} />
+            Leads
+          </ToggleButton>
+          <ToggleButton value="email" aria-label="email">
+            <EmailIcon sx={{ mr: 1 }} />
+            Email
+          </ToggleButton>
+        </ToggleButtonGroup>
         <Button
           variant="outlined"
           size="medium"
@@ -251,18 +295,20 @@ export default function DeletedLeads() {
         </Button>
       </Box>
 
-      {/* Deleted Leads Table */}
+      {/* Content based on view type */}
       <Box sx={{ flex: 1, overflow: 'hidden', px: 1 }}>
-        {deletedLeads.length === 0 ? (
-          <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', p: 4, textAlign: 'center' }}>
-            <Typography variant="h6" sx={{ color: '#666666', mb: 2 }}>
-              No Deleted Leads
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#999999' }}>
-              All your deleted leads will appear here. You can restore them or permanently delete them.
-            </Typography>
-          </Card>
-        ) : (
+        {viewType === 'leads' ? (
+          // Deleted Leads Table
+          deletedLeads.length === 0 ? (
+            <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', p: 4, textAlign: 'center' }}>
+              <Typography variant="h6" sx={{ color: '#666666', mb: 2 }}>
+                No Deleted Leads
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#999999' }}>
+                All your deleted leads will appear here. You can restore them or permanently delete them.
+              </Typography>
+            </Card>
+          ) : (
           <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%' }}>
             <TableContainer sx={{ height: '100%', overflow: 'auto', overflowX: 'auto', '&::-webkit-scrollbar': { height: '6px' } }}>
               <Table stickyHeader sx={{ minWidth: 800, width: '100%' }}>
@@ -443,8 +489,125 @@ export default function DeletedLeads() {
               />
             </Box>
             </Card>
-          )}
-        </Box>
+          )
+        ) : (
+          // Deleted Email Contacts Table
+          deletedEmailContacts.length === 0 ? (
+            <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', p: 4, textAlign: 'center' }}>
+              <Typography variant="h6" sx={{ color: '#666666', mb: 2 }}>
+                No Deleted Email Contacts
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#999999' }}>
+                All your deleted email contacts will appear here.
+              </Typography>
+            </Card>
+          ) : (
+            <Card sx={{ borderRadius: 2, backgroundColor: '#ffffff', height: '100%' }}>
+              <TableContainer sx={{ height: '100%', overflow: 'auto', overflowX: 'auto', '&::-webkit-scrollbar': { height: '6px' } }}>
+                <Table stickyHeader sx={{ minWidth: 600, width: '100%' }}>
+                  <TableHead>
+                    <TableRow sx={{ backgroundColor: '#F9FAFB' }}>
+                      <TableCell sx={{ fontWeight: '600', minWidth: 200 }}>Name</TableCell>
+                      <TableCell sx={{ fontWeight: '600', minWidth: 250 }}>Email</TableCell>
+                      <TableCell sx={{ fontWeight: '600', minWidth: 150 }}>Category</TableCell>
+                      <TableCell sx={{ fontWeight: '600', display: { xs: 'none', md: 'table-cell' }, minWidth: 130 }}>Deleted On</TableCell>
+                      <TableCell sx={{ fontWeight: '600', textAlign: 'center', minWidth: 100 }}>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {deletedEmailContacts.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((contact) => (
+                      <TableRow key={contact.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                        <TableCell>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                            <Avatar sx={{ bgcolor: '#FF5722', width: 40, height: 40 }}>
+                              {contact.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                            </Avatar>
+                            <Typography variant="body2" sx={{ fontWeight: '500' }}>
+                              {contact.name}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Box sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: 1,
+                            cursor: 'pointer',
+                            '&:hover': { backgroundColor: '#f5f5f5', borderRadius: 1 }
+                          }}
+                          onClick={() => handleEmailClick(contact.email)}
+                          >
+                            <EmailIcon sx={{ fontSize: 14, color: '#1976D2' }} />
+                            <Typography 
+                              variant="caption" 
+                              sx={{ 
+                                color: '#1976D2',
+                                textDecoration: 'underline',
+                                '&:hover': { fontWeight: 'bold' }
+                              }}
+                            >
+                              {contact.email}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={contact.categoryName}
+                            size="small"
+                            sx={{
+                              backgroundColor: '#E3F2FD',
+                              color: '#1976D2',
+                              fontWeight: '600',
+                              fontSize: '0.7rem'
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                          <Typography variant="caption" sx={{ fontWeight: '600', display: 'block' }}>
+                            {formatDateOnly(contact.deleted_at)}
+                          </Typography>
+                          <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                            {formatTimeOnly(contact.deleted_at)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          <IconButton
+                            size="small"
+                            onClick={() => {
+                              // View details or restore
+                              alert(`Contact: ${contact.name}\nEmail: ${contact.email}\nCategory: ${contact.categoryName}`)
+                            }}
+                            sx={{
+                              color: '#1976D2',
+                              backgroundColor: '#f0f4ff',
+                              '&:hover': { backgroundColor: '#e3f2fd' },
+                              width: 40,
+                              height: 40
+                            }}
+                            title="View Details"
+                          >
+                            <ViewIcon sx={{ fontSize: 20 }} />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
+                <Pagination
+                  count={Math.max(1, Math.ceil(deletedEmailContacts.length / rowsPerPage))}
+                  page={page + 1}
+                  onChange={(_e, value) => setPage(value - 1)}
+                  showFirstButton
+                  showLastButton
+                  color="primary"
+                />
+              </Box>
+            </Card>
+          )
+        )}
+      </Box>
 
       {/* View Details Modal */}
       <Modal open={viewModalOpen} onClose={() => setViewModalOpen(false)}>
@@ -463,7 +626,7 @@ export default function DeletedLeads() {
         }}>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', p: 3, borderBottom: 1, borderColor: 'divider' }}>
             <Typography variant="h5" sx={{ fontWeight: '600' }}>
-              Deleted Lead Details
+              {viewType === 'leads' ? 'Deleted Lead Details' : 'Deleted Email Contact Details'}
             </Typography>
             <IconButton onClick={() => setViewModalOpen(false)} sx={{ color: '#6B7280' }}>
               <CloseIcon />

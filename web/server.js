@@ -555,6 +555,197 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// ============================================
+// EMAIL MARKETING API ENDPOINTS
+// ============================================
+
+// Unsubscribe endpoint
+app.get('/api/unsubscribe', async (req, res) => {
+  try {
+    const { email, reason, name, category_id, category_name } = req.query;
+    
+    if (!email) {
+      return res.status(400).send(`
+        <!DOCTYPE html>
+        <html>
+        <head><title>Error</title></head>
+        <body style="font-family: Arial; text-align: center; padding: 50px;">
+          <h1>Error</h1><p>Email parameter is required</p>
+        </body>
+        </html>
+      `);
+    }
+
+    if (!supabase) {
+      return res.status(500).send(`
+        <!DOCTYPE html>
+        <html>
+        <head><title>Error</title></head>
+        <body style="font-family: Arial; text-align: center; padding: 50px;">
+          <h1>Error</h1><p>Database not configured</p>
+        </body>
+        </html>
+      `);
+    }
+
+    // Check if already unsubscribed
+    const { data: existing } = await supabase
+      .from('email_unsubscribers')
+      .select('*')
+      .eq('email', email.toLowerCase())
+      .single();
+
+    if (existing) {
+      return res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Already Unsubscribed</title>
+          <style>
+            body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f5f5f5; }
+            .container { background: white; padding: 40px; border-radius: 8px; max-width: 500px; margin: 0 auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+            h1 { color: #1E377C; }
+            p { color: #6B7280; line-height: 1.6; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h1>Already Unsubscribed</h1>
+            <p>You have already been removed from our email list.</p>
+          </div>
+        </body>
+        </html>
+      `);
+    }
+
+    const ipAddress = req.ip || req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || 'unknown';
+    const userAgent = req.headers['user-agent'] || 'unknown';
+
+    const { data, error } = await supabase
+      .from('email_unsubscribers')
+      .insert({
+        email: email.toLowerCase(),
+        name: name || null,
+        category_id: category_id || null,
+        category_name: category_name || null,
+        unsubscribed_at: new Date().toISOString(),
+        reason: reason || 'User requested unsubscribe',
+        ip_address: ipAddress,
+        user_agent: userAgent
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('❌ Unsubscribe error:', error);
+      return res.status(500).send(`
+        <!DOCTYPE html>
+        <html>
+        <head><title>Error</title></head>
+        <body style="font-family: Arial; text-align: center; padding: 50px;">
+          <h1>Error</h1><p>Failed to unsubscribe. Please try again.</p>
+        </body>
+        </html>
+      `);
+    }
+
+    console.log('✅ User unsubscribed:', email);
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Unsubscribed</title>
+        <style>
+          body { font-family: Arial, sans-serif; text-align: center; padding: 50px; background: #f5f5f5; }
+          .container { background: white; padding: 40px; border-radius: 8px; max-width: 500px; margin: 0 auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+          h1 { color: #1E377C; }
+          p { color: #6B7280; line-height: 1.6; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>✓ Successfully Unsubscribed</h1>
+          <p>You have been removed from our email list. You will no longer receive emails from us.</p>
+          <p style="font-size: 12px; color: #9CA3AF; margin-top: 20px;">If you have any questions, please contact us at beavernorthadvisors@gmail.com</p>
+        </div>
+      </body>
+      </html>
+    `);
+  } catch (error) {
+    console.error('❌ Unsubscribe error:', error);
+    res.status(500).send(`
+      <!DOCTYPE html>
+      <html>
+      <head><title>Error</title></head>
+      <body style="font-family: Arial; text-align: center; padding: 50px;">
+        <h1>Error</h1><p>An error occurred. Please try again later.</p>
+      </body>
+      </html>
+    `);
+  }
+});
+
+// Get unsubscribers list
+app.get('/api/unsubscribers', async (req, res) => {
+  try {
+    if (!supabase) {
+      return res.status(500).json({
+        success: false,
+        message: 'Database not configured'
+      });
+    }
+
+    const { data, error } = await supabase
+      .from('email_unsubscribers')
+      .select('*')
+      .order('unsubscribed_at', { ascending: false });
+
+    if (error) {
+      console.error('❌ Error fetching unsubscribers:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to fetch unsubscribers',
+        error: error.message
+      });
+    }
+
+    res.json({
+      success: true,
+      data: data || []
+    });
+  } catch (error) {
+    console.error('❌ Get unsubscribers error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+      error: error.message
+    });
+  }
+});
+
+// Check if email is unsubscribed
+app.get('/api/check-unsubscribed', async (req, res) => {
+  try {
+    const { email } = req.query;
+    
+    if (!email || !supabase) {
+      return res.json({ isUnsubscribed: false });
+    }
+
+    const { data } = await supabase
+      .from('email_unsubscribers')
+      .select('id')
+      .eq('email', email.toLowerCase())
+      .single();
+
+    res.json({
+      isUnsubscribed: !!data
+    });
+  } catch (error) {
+    res.json({ isUnsubscribed: false });
+  }
+});
+
 // Serve React app in production
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {

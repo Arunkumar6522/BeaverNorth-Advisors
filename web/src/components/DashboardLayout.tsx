@@ -28,7 +28,7 @@ const modules: Module[] = [
   { id: 'leads', name: 'Leads Management', icon: <LeadsIcon /> },
   { id: 'testimonials', name: 'Testimonials', icon: <TestimonialsIcon /> },
   { id: 'email', name: 'Email Marketing', icon: <EmailIcon /> },
-  { id: 'deleted', name: 'Deleted Leads', icon: <DeletedIcon /> },
+  { id: 'deleted', name: 'Recycle Bin', icon: <DeletedIcon /> },
   { id: 'logs', name: 'Logs', icon: <LogsIcon /> },
   { id: 'settings', name: 'Settings', icon: <SettingsIcon /> }
 ]
