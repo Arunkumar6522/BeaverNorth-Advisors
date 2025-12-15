@@ -11,8 +11,7 @@ import {
   InputLabel,
   CircularProgress,
   Alert,
-  Card,
-  Grid
+  Card
 } from '@mui/material'
 import { 
   AccessTime, 
@@ -416,69 +415,60 @@ export default function Enquiry() {
           {/* Step 1: Personal Information */}
           {currentStep === 1 && (
             <Box>
-              <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label={locale === 'fr' ? 'Prénom' : 'First name'}
-                    required
-                    value={formData.firstName}
-                    onChange={(e) => updateFormData('firstName', e.target.value)}
-                    error={!!errors.firstName}
-                    helperText={errors.firstName}
-                    placeholder={locale === 'fr' ? 'Votre prénom' : 'Your first name'}
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    label={locale === 'fr' ? 'Nom de famille (optionnel)' : 'Last name (optional)'}
-                    value={formData.lastName}
-                    onChange={(e) => updateFormData('lastName', e.target.value)}
-                    error={!!errors.lastName}
-                    helperText={errors.lastName}
-                    placeholder={locale === 'fr' ? 'Votre nom de famille' : 'Your last name'}
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <FormControl fullWidth error={!!errors.gender} sx={{ mb: 2 }}>
-                    <InputLabel>{locale === 'fr' ? 'Genre' : 'Gender'}</InputLabel>
-                    <Select
-                      value={formData.gender}
-                      onChange={(e) => updateFormData('gender', e.target.value)}
-                      label={locale === 'fr' ? 'Genre' : 'Gender'}
-                    >
-                      <MenuItem value="male">{locale === 'fr' ? 'Homme' : 'Male'}</MenuItem>
-                      <MenuItem value="female">{locale === 'fr' ? 'Femme' : 'Female'}</MenuItem>
-                      <MenuItem value="prefer-not-to-say">
-                        {locale === 'fr' ? 'Je préfère ne pas le dire' : 'Prefer not to say'}
-                      </MenuItem>
-                    </Select>
-                    {errors.gender && (
-                      <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
-                        {errors.gender}
-                      </Typography>
-                    )}
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    type="date"
-                    label={locale === 'fr' ? 'Date de naissance' : 'Date of Birth'}
-                    required
-                    value={formData.dob}
-                    onChange={(e) => updateFormData('dob', e.target.value)}
-                    error={!!errors.dob}
-                    helperText={errors.dob}
-                    InputLabelProps={{ shrink: true }}
-                    inputProps={{ max: new Date().toISOString().split('T')[0] }}
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-              </Grid>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 2 }}>
+                <TextField
+                  fullWidth
+                  label={locale === 'fr' ? 'Prénom' : 'First name'}
+                  required
+                  value={formData.firstName}
+                  onChange={(e) => updateFormData('firstName', e.target.value)}
+                  error={!!errors.firstName}
+                  helperText={errors.firstName}
+                  placeholder={locale === 'fr' ? 'Votre prénom' : 'Your first name'}
+                />
+                <TextField
+                  fullWidth
+                  label={locale === 'fr' ? 'Nom de famille (optionnel)' : 'Last name (optional)'}
+                  value={formData.lastName}
+                  onChange={(e) => updateFormData('lastName', e.target.value)}
+                  error={!!errors.lastName}
+                  helperText={errors.lastName}
+                  placeholder={locale === 'fr' ? 'Votre nom de famille' : 'Your last name'}
+                />
+              </Box>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
+                <FormControl fullWidth error={!!errors.gender}>
+                  <InputLabel>{locale === 'fr' ? 'Genre' : 'Gender'}</InputLabel>
+                  <Select
+                    value={formData.gender}
+                    onChange={(e) => updateFormData('gender', e.target.value)}
+                    label={locale === 'fr' ? 'Genre' : 'Gender'}
+                  >
+                    <MenuItem value="male">{locale === 'fr' ? 'Homme' : 'Male'}</MenuItem>
+                    <MenuItem value="female">{locale === 'fr' ? 'Femme' : 'Female'}</MenuItem>
+                    <MenuItem value="prefer-not-to-say">
+                      {locale === 'fr' ? 'Je préfère ne pas le dire' : 'Prefer not to say'}
+                    </MenuItem>
+                  </Select>
+                  {errors.gender && (
+                    <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
+                      {errors.gender}
+                    </Typography>
+                  )}
+                </FormControl>
+                <TextField
+                  fullWidth
+                  type="date"
+                  label={locale === 'fr' ? 'Date de naissance' : 'Date of Birth'}
+                  required
+                  value={formData.dob}
+                  onChange={(e) => updateFormData('dob', e.target.value)}
+                  error={!!errors.dob}
+                  helperText={errors.dob}
+                  InputLabelProps={{ shrink: true }}
+                  inputProps={{ max: new Date().toISOString().split('T')[0] }}
+                />
+              </Box>
             </Box>
           )}
 
@@ -488,54 +478,46 @@ export default function Enquiry() {
               <Typography variant="h6" sx={{ mb: 3, color: '#111827', fontWeight: 600 }}>
                 {locale === 'fr' ? 'Informations de contact' : 'Contact Information'}
               </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    type="email"
-                    label={locale === 'fr' ? 'Email' : 'Email'}
-                    required
-                    value={formData.email}
-                    onChange={(e) => updateFormData('email', e.target.value)}
-                    error={!!errors.email}
-                    helperText={errors.email}
-                    placeholder="your.email@example.com"
-                    sx={{ mb: 2 }}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <Box sx={{ display: 'flex', gap: 1 }}>
-                    <FormControl sx={{ width: '120px' }}>
-                      <Select
-                        value={formData.countryCode}
-                        onChange={(e) => updateFormData('countryCode', e.target.value)}
-                      >
-                        <MenuItem value="+1">+1</MenuItem>
-                        <MenuItem value="+44">+44</MenuItem>
-                        <MenuItem value="+33">+33</MenuItem>
-                      </Select>
-                    </FormControl>
-                    <TextField
-                      fullWidth
-                      type="tel"
-                      label={locale === 'fr' ? 'Numéro de téléphone' : 'Phone Number'}
-                      required
-                      value={formData.phone}
-                      onChange={(e) => updateFormData('phone', e.target.value.replace(/\D/g, ''))}
-                      error={!!errors.phone}
-                      helperText={errors.phone}
-                      placeholder="1234567890"
-                    />
-                  </Box>
-                </Grid>
-                {otpStatus && (
-                  <Grid item xs={12}>
-                    <Alert severity={otpSent ? 'success' : 'error'} sx={{ mt: 1 }}>
-                      {otpStatus}
-                    </Alert>
-                  </Grid>
-                )}
-              </Grid>
+              <TextField
+                fullWidth
+                type="email"
+                label={locale === 'fr' ? 'Email' : 'Email'}
+                required
+                value={formData.email}
+                onChange={(e) => updateFormData('email', e.target.value)}
+                error={!!errors.email}
+                helperText={errors.email}
+                placeholder="your.email@example.com"
+                sx={{ mb: 2 }}
+              />
+              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                <FormControl sx={{ width: '120px' }}>
+                  <Select
+                    value={formData.countryCode}
+                    onChange={(e) => updateFormData('countryCode', e.target.value)}
+                  >
+                    <MenuItem value="+1">+1</MenuItem>
+                    <MenuItem value="+44">+44</MenuItem>
+                    <MenuItem value="+33">+33</MenuItem>
+                  </Select>
+                </FormControl>
+                <TextField
+                  fullWidth
+                  type="tel"
+                  label={locale === 'fr' ? 'Numéro de téléphone' : 'Phone Number'}
+                  required
+                  value={formData.phone}
+                  onChange={(e) => updateFormData('phone', e.target.value.replace(/\D/g, ''))}
+                  error={!!errors.phone}
+                  helperText={errors.phone}
+                  placeholder="1234567890"
+                />
+              </Box>
+              {otpStatus && (
+                <Alert severity={otpSent ? 'success' : 'error'} sx={{ mt: 1 }}>
+                  {otpStatus}
+                </Alert>
+              )}
             </Box>
           )}
 
@@ -545,64 +527,56 @@ export default function Enquiry() {
               <Typography variant="h6" sx={{ mb: 3, color: '#111827', fontWeight: 600 }}>
                 {locale === 'fr' ? 'Détails de l\'assurance' : 'Insurance Details'}
               </Typography>
-              <Grid container spacing={3}>
-                <Grid item xs={12}>
-                  <FormControl fullWidth error={!!errors.smokingStatus} sx={{ mb: 2 }}>
-                    <InputLabel>{locale === 'fr' ? 'Statut de tabagisme' : 'Smoking Status'}</InputLabel>
-                    <Select
-                      value={formData.smokingStatus}
-                      onChange={(e) => updateFormData('smokingStatus', e.target.value)}
-                      label={locale === 'fr' ? 'Statut de tabagisme' : 'Smoking Status'}
-                    >
-                      <MenuItem value="non-smoker">{locale === 'fr' ? 'Non-fumeur' : 'Non-smoker'}</MenuItem>
-                      <MenuItem value="smoker">{locale === 'fr' ? 'Fumeur' : 'Smoker'}</MenuItem>
-                    </Select>
-                    {errors.smokingStatus && (
-                      <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
-                        {errors.smokingStatus}
-                      </Typography>
-                    )}
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl fullWidth error={!!errors.province} sx={{ mb: 2 }}>
-                    <InputLabel>{locale === 'fr' ? 'Province' : 'Province'}</InputLabel>
-                    <Select
-                      value={formData.province}
-                      onChange={(e) => updateFormData('province', e.target.value)}
-                      label={locale === 'fr' ? 'Province' : 'Province'}
-                    >
-                      {provinces.map((province) => (
-                        <MenuItem key={province} value={province}>{province}</MenuItem>
-                      ))}
-                    </Select>
-                    {errors.province && (
-                      <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
-                        {errors.province}
-                      </Typography>
-                    )}
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12}>
-                  <FormControl fullWidth error={!!errors.insuranceProduct} sx={{ mb: 2 }}>
-                    <InputLabel>{locale === 'fr' ? 'Produit d\'assurance' : 'Insurance Product'}</InputLabel>
-                    <Select
-                      value={formData.insuranceProduct}
-                      onChange={(e) => updateFormData('insuranceProduct', e.target.value)}
-                      label={locale === 'fr' ? 'Produit d\'assurance' : 'Insurance Product'}
-                    >
-                      {insuranceProducts.map((product) => (
-                        <MenuItem key={product} value={product}>{product}</MenuItem>
-                      ))}
-                    </Select>
-                    {errors.insuranceProduct && (
-                      <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
-                        {errors.insuranceProduct}
-                      </Typography>
-                    )}
-                  </FormControl>
-                </Grid>
-              </Grid>
+              <FormControl fullWidth error={!!errors.smokingStatus} sx={{ mb: 2 }}>
+                <InputLabel>{locale === 'fr' ? 'Statut de tabagisme' : 'Smoking Status'}</InputLabel>
+                <Select
+                  value={formData.smokingStatus}
+                  onChange={(e) => updateFormData('smokingStatus', e.target.value)}
+                  label={locale === 'fr' ? 'Statut de tabagisme' : 'Smoking Status'}
+                >
+                  <MenuItem value="non-smoker">{locale === 'fr' ? 'Non-fumeur' : 'Non-smoker'}</MenuItem>
+                  <MenuItem value="smoker">{locale === 'fr' ? 'Fumeur' : 'Smoker'}</MenuItem>
+                </Select>
+                {errors.smokingStatus && (
+                  <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
+                    {errors.smokingStatus}
+                  </Typography>
+                )}
+              </FormControl>
+              <FormControl fullWidth error={!!errors.province} sx={{ mb: 2 }}>
+                <InputLabel>{locale === 'fr' ? 'Province' : 'Province'}</InputLabel>
+                <Select
+                  value={formData.province}
+                  onChange={(e) => updateFormData('province', e.target.value)}
+                  label={locale === 'fr' ? 'Province' : 'Province'}
+                >
+                  {provinces.map((province) => (
+                    <MenuItem key={province} value={province}>{province}</MenuItem>
+                  ))}
+                </Select>
+                {errors.province && (
+                  <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
+                    {errors.province}
+                  </Typography>
+                )}
+              </FormControl>
+              <FormControl fullWidth error={!!errors.insuranceProduct} sx={{ mb: 2 }}>
+                <InputLabel>{locale === 'fr' ? 'Produit d\'assurance' : 'Insurance Product'}</InputLabel>
+                <Select
+                  value={formData.insuranceProduct}
+                  onChange={(e) => updateFormData('insuranceProduct', e.target.value)}
+                  label={locale === 'fr' ? 'Produit d\'assurance' : 'Insurance Product'}
+                >
+                  {insuranceProducts.map((product) => (
+                    <MenuItem key={product} value={product}>{product}</MenuItem>
+                  ))}
+                </Select>
+                {errors.insuranceProduct && (
+                  <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
+                    {errors.insuranceProduct}
+                  </Typography>
+                )}
+              </FormControl>
             </Box>
           )}
 
