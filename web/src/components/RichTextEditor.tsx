@@ -8,15 +8,11 @@ import {
   Popover,
   TextField,
   MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Typography,
-  Grid,
   Checkbox,
   FormControlLabel
 } from '@mui/material'
@@ -38,8 +34,6 @@ import {
   FormatAlignJustify,
   FormatSize,
   FormatStrikethrough,
-  Subscript,
-  Superscript,
   FormatClear,
   AspectRatio,
   Crop,
@@ -55,13 +49,13 @@ interface RichTextEditorProps {
 
 export default function RichTextEditor({ value, onChange, placeholder = 'Enter your email content here...' }: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null)
-  const [imageUrl, setImageUrl] = useState('')
   const [colorAnchor, setColorAnchor] = useState<HTMLButtonElement | null>(null)
   const [bgColorAnchor, setBgColorAnchor] = useState<HTMLButtonElement | null>(null)
   const [fontSizeAnchor, setFontSizeAnchor] = useState<HTMLButtonElement | null>(null)
-  const [textColor, setTextColor] = useState('#000000')
-  const [bgColor, setBgColor] = useState('#FFFFFF')
-  const [fontSize, setFontSize] = useState('16px')
+  // We only need setters for these – values themselves are not read
+  const [, setTextColor] = useState('#000000')
+  const [, setBgColor] = useState('#FFFFFF')
+  const [, setFontSize] = useState('16px')
   
   // Image resize/crop dialog state
   const [resizeDialogOpen, setResizeDialogOpen] = useState(false)
@@ -297,29 +291,6 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Enter y
       editorRef.current.focus()
     } else {
       editorRef.current.innerHTML += signature
-      updateContent()
-    }
-  }
-  
-  const handleInsertUnsubscribe = () => {
-    if (!editorRef.current) return
-    
-    const unsubscribeLink = `
-      <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #E5E7EB; text-align: center; font-size: 12px; color: #6B7280;">
-        <p style="margin: 0;">Don't want to receive these emails? <a href="{UNSUBSCRIBE_URL}" style="color: #1E377C; text-decoration: underline;">Unsubscribe</a></p>
-      </div>
-    `
-    
-    const selection = window.getSelection()
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0)
-      const div = document.createElement('div')
-      div.innerHTML = unsubscribeLink.trim()
-      range.insertNode(div)
-      updateContent()
-      editorRef.current.focus()
-    } else {
-      editorRef.current.innerHTML += unsubscribeLink
       updateContent()
     }
   }
@@ -782,8 +753,15 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Enter y
                   <Typography variant="body2" sx={{ mb: 2, fontWeight: 600, color: '#6B7280' }}>
                     Preset Sizes
                   </Typography>
-                  <Grid container spacing={1} sx={{ mb: 3 }}>
-                    <Grid item xs={3}>
+                  <Box
+                    sx={{
+                      mb: 3,
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+                      gap: 1
+                    }}
+                  >
+                    <Box>
                       <Button
                         variant="outlined"
                         size="small"
@@ -792,8 +770,8 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Enter y
                       >
                         Small
                       </Button>
-                    </Grid>
-                    <Grid item xs={3}>
+                    </Box>
+                    <Box>
                       <Button
                         variant="outlined"
                         size="small"
@@ -802,8 +780,8 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Enter y
                       >
                         Medium
                       </Button>
-                    </Grid>
-                    <Grid item xs={3}>
+                    </Box>
+                    <Box>
                       <Button
                         variant="outlined"
                         size="small"
@@ -812,8 +790,8 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Enter y
                       >
                         Large
                       </Button>
-                    </Grid>
-                    <Grid item xs={3}>
+                    </Box>
+                    <Box>
                       <Button
                         variant="outlined"
                         size="small"
@@ -822,8 +800,8 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Enter y
                       >
                         Full Width
                       </Button>
-                    </Grid>
-                  </Grid>
+                    </Box>
+                  </Box>
 
                   <FormControlLabel
                     control={
@@ -836,28 +814,30 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Enter y
                     sx={{ mb: 2 }}
                   />
 
-                  <Grid container spacing={2}>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Width"
-                        value={imageWidth}
-                        onChange={(e) => handleWidthChange(e.target.value)}
-                        placeholder="e.g., 500 or 100"
-                        helperText="Enter pixels (e.g., 500) or percentage (e.g., 100)"
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Height"
-                        value={imageHeight}
-                        onChange={(e) => handleHeightChange(e.target.value)}
-                        placeholder="e.g., 300 or auto"
-                        helperText="Enter pixels (e.g., 300) or leave empty for auto"
-                      />
-                    </Grid>
-                  </Grid>
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                      gap: 2
+                    }}
+                  >
+                    <TextField
+                      fullWidth
+                      label="Width"
+                      value={imageWidth}
+                      onChange={(e) => handleWidthChange(e.target.value)}
+                      placeholder="e.g., 500 or 100"
+                      helperText="Enter pixels (e.g., 500) or percentage (e.g., 100)"
+                    />
+                    <TextField
+                      fullWidth
+                      label="Height"
+                      value={imageHeight}
+                      onChange={(e) => handleHeightChange(e.target.value)}
+                      placeholder="e.g., 300 or auto"
+                      helperText="Enter pixels (e.g., 300) or leave empty for auto"
+                    />
+                  </Box>
                 </>
               ) : (
                 <>
@@ -865,28 +845,31 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Enter y
                     Crop Image
                   </Typography>
                   <canvas ref={canvasRef} style={{ display: 'none' }} />
-                  <Grid container spacing={2} sx={{ mb: 2 }}>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Crop Width"
-                        value={imageWidth}
-                        onChange={(e) => setImageWidth(e.target.value)}
-                        placeholder="e.g., 500"
-                        helperText="Width in pixels"
-                      />
-                    </Grid>
-                    <Grid item xs={6}>
-                      <TextField
-                        fullWidth
-                        label="Crop Height"
-                        value={imageHeight}
-                        onChange={(e) => setImageHeight(e.target.value)}
-                        placeholder="e.g., 300"
-                        helperText="Height in pixels"
-                      />
-                    </Grid>
-                  </Grid>
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+                      gap: 2,
+                      mb: 2
+                    }}
+                  >
+                    <TextField
+                      fullWidth
+                      label="Crop Width"
+                      value={imageWidth}
+                      onChange={(e) => setImageWidth(e.target.value)}
+                      placeholder="e.g., 500"
+                      helperText="Width in pixels"
+                    />
+                    <TextField
+                      fullWidth
+                      label="Crop Height"
+                      value={imageHeight}
+                      onChange={(e) => setImageHeight(e.target.value)}
+                      placeholder="e.g., 300"
+                      helperText="Height in pixels"
+                    />
+                  </Box>
                   <Button
                     variant="outlined"
                     onClick={handleCropImage}
@@ -903,29 +886,31 @@ export default function RichTextEditor({ value, onChange, placeholder = 'Enter y
               <Typography variant="body2" sx={{ mb: 2, fontWeight: 600, color: '#6B7280' }}>
                 Image Link (Optional)
               </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={9}>
-                  <TextField
-                    fullWidth
-                    label="Link URL"
-                    value={imageLink}
-                    onChange={(e) => setImageLink(e.target.value)}
-                    placeholder="https://example.com"
-                    helperText="Make image clickable by adding a link"
-                  />
-                </Grid>
-                <Grid item xs={3}>
-                  <Button
-                    variant="outlined"
-                    fullWidth
-                    onClick={handleAddImageLink}
-                    startIcon={<LinkIcon />}
-                    sx={{ height: '56px' }}
-                  >
-                    Add Link
-                  </Button>
-                </Grid>
-              </Grid>
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: '3fr 1fr',
+                  gap: 2
+                }}
+              >
+                <TextField
+                  fullWidth
+                  label="Link URL"
+                  value={imageLink}
+                  onChange={(e) => setImageLink(e.target.value)}
+                  placeholder="https://example.com"
+                  helperText="Make image clickable by adding a link"
+                />
+                <Button
+                  variant="outlined"
+                  fullWidth
+                  onClick={handleAddImageLink}
+                  startIcon={<LinkIcon />}
+                  sx={{ height: '56px' }}
+                >
+                  Add Link
+                </Button>
+              </Box>
             </Box>
           )}
         </DialogContent>
