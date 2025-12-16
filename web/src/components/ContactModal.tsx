@@ -1089,7 +1089,7 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
                   <input
                     type="email"
                     name="email"
-                    placeholder="your.email@example.com"
+                    placeholder="beavernorthadvisors@gmail.com"
                     value={formData.email}
                     onChange={handleChange}
                     style={{
