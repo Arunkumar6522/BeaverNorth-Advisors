@@ -433,29 +433,30 @@ export default function Enquiry() {
                   </Typography>
 
                   {/* Enhanced Stepper Component */}
-                  <Box sx={{ mb: 4, px: 2 }}>
+                  <Box sx={{ mb: 4, px: { xs: 0, sm: 2 } }}>
                     <Box sx={{ 
                       display: 'flex', 
                       justifyContent: 'space-between',
                       alignItems: 'center',
                       position: 'relative',
-                      maxWidth: 500,
-                      mx: 'auto'
+                      maxWidth: { xs: '100%', sm: 500 },
+                      mx: 'auto',
+                      px: { xs: 1, sm: 0 }
                     }}>
                       {/* Progress Line */}
                       <Box sx={{
                         position: 'absolute',
-                        top: '20px',
-                        left: '20px',
-                        right: '20px',
+                        top: { xs: '18px', sm: '20px' },
+                        left: { xs: '15px', sm: '20px' },
+                        right: { xs: '15px', sm: '20px' },
                         height: '2px',
                         bgcolor: '#E5E7EB',
                         zIndex: 0
                       }} />
                       <Box sx={{
                         position: 'absolute',
-                        top: '20px',
-                        left: '20px',
+                        top: { xs: '18px', sm: '20px' },
+                        left: { xs: '15px', sm: '20px' },
                         width: `${((currentStep - 1) / 3) * 100}%`,
                         height: '2px',
                         bgcolor: 'rgb(255, 203, 5)',
@@ -464,11 +465,11 @@ export default function Enquiry() {
                       }} />
 
                       {[1, 2, 3, 4].map((step) => (
-                        <Box key={step} sx={{ position: 'relative', zIndex: 2 }}>
+                        <Box key={step} sx={{ position: 'relative', zIndex: 2, flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                           <Box
                             sx={{
-                              width: '40px',
-                              height: '40px',
+                              width: { xs: '32px', sm: '40px' },
+                              height: { xs: '32px', sm: '40px' },
                               borderRadius: '50%',
                               bgcolor: step <= currentStep ? 'rgb(255, 203, 5)' : '#E5E7EB',
                               color: step <= currentStep ? '#1E377C' : '#9CA3AF',
@@ -476,14 +477,14 @@ export default function Enquiry() {
                               alignItems: 'center',
                               justifyContent: 'center',
                               fontWeight: 700,
-                              fontSize: '16px',
+                              fontSize: { xs: '14px', sm: '16px' },
                               boxShadow: step === currentStep ? '0 0 0 4px rgba(30, 55, 124, 0.1)' : 'none',
                               transition: 'all 0.3s ease',
                               cursor: 'default'
                             }}
                           >
                             {step < currentStep ? (
-                              <CheckCircle sx={{ fontSize: 24, color: '#1E377C' }} />
+                              <CheckCircle sx={{ fontSize: { xs: 20, sm: 24 }, color: '#1E377C' }} />
                             ) : (
                               step
                             )}
@@ -491,7 +492,7 @@ export default function Enquiry() {
                           <Typography 
                             variant="caption" 
                             sx={{ 
-                              display: 'block',
+                              display: { xs: 'none', sm: 'block' },
                               mt: 1,
                               color: step <= currentStep ? '#1E377C' : '#9CA3AF',
                               fontWeight: step === currentStep ? 600 : 400,
@@ -505,7 +506,7 @@ export default function Enquiry() {
                              step === 2 ? (locale === 'fr' ? 'Assurance' : 'Insurance') :
                              step === 3 ? (locale === 'fr' ? 'Contact' : 'Contact') :
                              (locale === 'fr' ? 'Vérifier' : 'Verify')}
-                    </Typography>
+                          </Typography>
                         </Box>
                       ))}
                     </Box>
