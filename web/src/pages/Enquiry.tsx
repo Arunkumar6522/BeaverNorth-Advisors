@@ -15,12 +15,10 @@ import {
   Fade
 } from '@mui/material'
 import { 
-  AccessTime, 
   Security,
   ArrowBack,
   ArrowForward,
   CheckCircle,
-  Shield,
   VerifiedUser,
   Lock,
   Phone,
@@ -361,7 +359,7 @@ export default function Enquiry() {
               </Typography>
               {[
                 { icon: <VerifiedUser sx={{ fontSize: 24 }} />, title: locale === 'fr' ? 'Conseil Expert' : 'Expert Guidance', desc: locale === 'fr' ? 'Professionnels expérimentés' : 'Experienced professionals' },
-                { icon: <Shield sx={{ fontSize: 24 }} />, title: locale === 'fr' ? 'Sécurisé' : 'Secure & Protected', desc: locale === 'fr' ? 'Données cryptées SSL' : 'SSL encrypted data' },
+                { icon: <Lock sx={{ fontSize: 24 }} />, title: locale === 'fr' ? 'Sécurisé' : 'Secure & Protected', desc: locale === 'fr' ? 'Données cryptées SSL' : 'SSL encrypted data' },
                 { icon: <CheckCircle sx={{ fontSize: 24 }} />, title: locale === 'fr' ? 'Rapide' : 'Quick Response', desc: locale === 'fr' ? 'Réponse sous 24h' : 'Response within 24h' },
                 { icon: <Star sx={{ fontSize: 24 }} />, title: locale === 'fr' ? 'Service Client' : 'Customer Service', desc: locale === 'fr' ? 'Support dédié' : 'Dedicated support' }
               ].map((item, idx) => (
@@ -392,9 +390,9 @@ export default function Enquiry() {
               </Box>
               <Typography variant="h6" sx={{ fontWeight: 700, color: '#1E377C', mb: 1 }}>
                 {locale === 'fr' ? '100% Sécurisé' : '100% Secure'}
-              </Typography>
-              <Typography variant="body2" sx={{ color: '#6B7280' }}>
-                {locale === 'fr' 
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#6B7280' }}>
+                      {locale === 'fr' 
                   ? 'Vos informations sont protégées et ne seront jamais partagées.'
                   : 'Your information is protected and never shared.'}
               </Typography>
@@ -402,7 +400,7 @@ export default function Enquiry() {
           </Box>
 
           {/* Right Side - Form */}
-          <Box sx={{ flex: 1 }}>
+          <Box sx={{ flex: 1, order: { xs: 1, lg: 2 } }}>
             <Fade in={true} timeout={500}>
               <Card sx={{ 
                 p: { xs: 3, md: 4 },
@@ -507,13 +505,13 @@ export default function Enquiry() {
                              step === 2 ? (locale === 'fr' ? 'Assurance' : 'Insurance') :
                              step === 3 ? (locale === 'fr' ? 'Contact' : 'Contact') :
                              (locale === 'fr' ? 'Vérifier' : 'Verify')}
-                          </Typography>
+                    </Typography>
                         </Box>
                       ))}
                     </Box>
                   </Box>
                 </Box>
-
+                
                 {/* Error Alert */}
                 {submitError && (
                   <Alert severity="error" sx={{ mb: 3 }} onClose={() => setSubmitError('')}>
@@ -559,7 +557,7 @@ export default function Enquiry() {
                         }}
                       />
                     </Box>
-                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
+                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
                       <FormControl fullWidth error={!!errors.gender} sx={{
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 2,
@@ -831,12 +829,13 @@ export default function Enquiry() {
                         bgcolor: 'rgb(255, 203, 5)',
                         color: '#1E377C',
                         '&:hover': { bgcolor: 'rgb(255, 193, 0)' },
-                        minWidth: '140px',
+                        minWidth: { xs: '100%', sm: '140px' },
                         borderRadius: 2,
-                        px: 3,
+                        px: { xs: 2, sm: 3 },
                         py: 1.5,
                         fontWeight: 700,
-                        boxShadow: '0 4px 12px rgba(255, 203, 5, 0.3)'
+                        boxShadow: '0 4px 12px rgba(255, 203, 5, 0.3)',
+                        width: { xs: '100%', sm: 'auto' }
                       }}
                     >
                       {currentStep === 3 && sendingOtp ? (
@@ -855,7 +854,7 @@ export default function Enquiry() {
                         color: '#1E377C',
                         '&:hover': { bgcolor: 'rgb(255, 193, 0)' },
                         minWidth: '140px',
-                        borderRadius: 2,
+                borderRadius: 2,
                         px: 3,
                         py: 1.5,
                         fontWeight: 700,
@@ -869,12 +868,12 @@ export default function Enquiry() {
                       )}
                     </Button>
                   )}
-                </Box>
-              </Card>
+              </Box>
+            </Card>
             </Fade>
           </Box>
-        </Box>
-      </Container>
+          </Box>
+        </Container>
     </Box>
   )
 }
