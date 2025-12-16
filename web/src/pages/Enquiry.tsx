@@ -360,13 +360,13 @@ export default function Enquiry() {
                 {locale === 'fr' ? 'Pourquoi nous choisir ?' : 'Why Choose Us?'}
               </Typography>
               {[
-                { icon: <VerifiedUser />, title: locale === 'fr' ? 'Conseil Expert' : 'Expert Guidance', desc: locale === 'fr' ? 'Professionnels expérimentés' : 'Experienced professionals' },
+                { icon: <VerifiedUser sx={{ fontSize: 24 }} />, title: locale === 'fr' ? 'Conseil Expert' : 'Expert Guidance', desc: locale === 'fr' ? 'Professionnels expérimentés' : 'Experienced professionals' },
                 { icon: <Shield sx={{ fontSize: 24 }} />, title: locale === 'fr' ? 'Sécurisé' : 'Secure & Protected', desc: locale === 'fr' ? 'Données cryptées SSL' : 'SSL encrypted data' },
-                { icon: <CheckCircle />, title: locale === 'fr' ? 'Rapide' : 'Quick Response', desc: locale === 'fr' ? 'Réponse sous 24h' : 'Response within 24h' },
-                { icon: <Star />, title: locale === 'fr' ? 'Service Client' : 'Customer Service', desc: locale === 'fr' ? 'Support dédié' : 'Dedicated support' }
+                { icon: <CheckCircle sx={{ fontSize: 24 }} />, title: locale === 'fr' ? 'Rapide' : 'Quick Response', desc: locale === 'fr' ? 'Réponse sous 24h' : 'Response within 24h' },
+                { icon: <Star sx={{ fontSize: 24 }} />, title: locale === 'fr' ? 'Service Client' : 'Customer Service', desc: locale === 'fr' ? 'Support dédié' : 'Dedicated support' }
               ].map((item, idx) => (
                 <Box key={idx} sx={{ display: 'flex', gap: 2, mb: 2 }}>
-                  <Box sx={{ color: '#417F73', mt: 0.5 }}>{item.icon}</Box>
+                  <Box sx={{ color: '#22C55E', mt: 0.5, display: 'flex', alignItems: 'flex-start' }}>{item.icon}</Box>
                   <Box>
                     <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1E377C', mb: 0.5 }}>
                       {item.title}
