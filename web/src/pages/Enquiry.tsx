@@ -699,7 +699,7 @@ export default function Enquiry() {
                       onChange={(e) => updateFormData('email', e.target.value)}
                       error={!!errors.email}
                       helperText={errors.email}
-                      placeholder="beavernorthadvisors@gmail.com"
+                      placeholder="your.email@example.com"
                       sx={{ mb: 2,
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 2,
@@ -808,13 +808,19 @@ export default function Enquiry() {
                 </Fade>
 
                 {/* Navigation Buttons */}
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4, gap: 2 }}>
+                <Box sx={{ display: 'flex', flexDirection: { xs: 'column-reverse', sm: 'row' }, justifyContent: 'space-between', mt: 4, gap: 2 }}>
                   <Button
                     variant="outlined"
                     onClick={handleBack}
                     disabled={currentStep === 1 || loading}
                     startIcon={<ArrowBack />}
-                    sx={{ borderRadius: 2, px: 3, borderColor: '#417F73', color: '#417F73',
+                    fullWidth
+                    sx={{ 
+                      borderRadius: 2, 
+                      px: { xs: 2, sm: 3 }, 
+                      py: { xs: 1.5, sm: 1.5 },
+                      borderColor: '#417F73', 
+                      color: '#417F73',
                       '&:hover': { borderColor: '#1E377C', bgcolor: '#F3F8FF' }
                     }}
                   >
@@ -826,17 +832,16 @@ export default function Enquiry() {
                       onClick={handleNext}
                       disabled={loading || (currentStep === 3 && sendingOtp)}
                       endIcon={<ArrowForward />}
+                      fullWidth
                       sx={{
                         bgcolor: 'rgb(255, 203, 5)',
                         color: '#1E377C',
                         '&:hover': { bgcolor: 'rgb(255, 193, 0)' },
-                        minWidth: { xs: '100%', sm: '140px' },
                         borderRadius: 2,
                         px: { xs: 2, sm: 3 },
-                        py: 1.5,
+                        py: { xs: 1.5, sm: 1.5 },
                         fontWeight: 700,
-                        boxShadow: '0 4px 12px rgba(255, 203, 5, 0.3)',
-                        width: { xs: '100%', sm: 'auto' }
+                        boxShadow: '0 4px 12px rgba(255, 203, 5, 0.3)'
                       }}
                     >
                       {currentStep === 3 && sendingOtp ? (
@@ -850,14 +855,14 @@ export default function Enquiry() {
                       variant="contained"
                       onClick={handleSubmit}
                       disabled={loading}
+                      fullWidth
                       sx={{
                         bgcolor: 'rgb(255, 203, 5)',
                         color: '#1E377C',
                         '&:hover': { bgcolor: 'rgb(255, 193, 0)' },
-                        minWidth: '140px',
-                borderRadius: 2,
-                        px: 3,
-                        py: 1.5,
+                        borderRadius: 2,
+                        px: { xs: 2, sm: 3 },
+                        py: { xs: 1.5, sm: 1.5 },
                         fontWeight: 700,
                         boxShadow: '0 4px 12px rgba(255, 203, 5, 0.3)'
                       }}
@@ -869,7 +874,7 @@ export default function Enquiry() {
                       )}
                     </Button>
                   )}
-              </Box>
+                </Box>
             </Card>
             </Fade>
           </Box>
