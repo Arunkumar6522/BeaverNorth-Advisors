@@ -330,8 +330,8 @@ export default function Enquiry() {
               BeaverNorth Financials
             </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'white' }}>
-              <Security sx={{ fontSize: 18 }} />
-              <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+              <Security sx={{ fontSize: 18, color: 'white' }} />
+              <Typography variant="body2" sx={{ fontSize: '0.875rem', color: 'white' }}>
                 {locale === 'fr' ? 'Sécurisé' : 'Secure'}
               </Typography>
             </Box>
@@ -387,7 +387,7 @@ export default function Enquiry() {
               border: '2px solid #417F73',
               textAlign: 'center'
             }}>
-              <Security sx={{ fontSize: 48, color: '#417F73', mb: 1 }} />
+              <Lock sx={{ fontSize: 48, color: '#417F73', mb: 1 }} />
               <Typography variant="h6" sx={{ fontWeight: 700, color: '#1E377C', mb: 1 }}>
                 {locale === 'fr' ? '100% Sécurisé' : '100% Secure'}
               </Typography>
@@ -477,7 +477,6 @@ export default function Enquiry() {
                               justifyContent: 'center',
                               fontWeight: 700,
                               fontSize: '16px',
-                              border: step === currentStep ? '3px solid #1E377C' : 'none',
                               boxShadow: step === currentStep ? '0 0 0 4px rgba(30, 55, 124, 0.1)' : 'none',
                               transition: 'all 0.3s ease',
                               cursor: 'default'
