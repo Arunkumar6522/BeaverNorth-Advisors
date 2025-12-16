@@ -361,7 +361,7 @@ export default function Enquiry() {
               </Typography>
               {[
                 { icon: <VerifiedUser />, title: locale === 'fr' ? 'Conseil Expert' : 'Expert Guidance', desc: locale === 'fr' ? 'Professionnels expérimentés' : 'Experienced professionals' },
-                { icon: <Shield />, title: locale === 'fr' ? 'Sécurisé' : 'Secure & Protected', desc: locale === 'fr' ? 'Données cryptées SSL' : 'SSL encrypted data' },
+                { icon: <Shield sx={{ fontSize: 24 }} />, title: locale === 'fr' ? 'Sécurisé' : 'Secure & Protected', desc: locale === 'fr' ? 'Données cryptées SSL' : 'SSL encrypted data' },
                 { icon: <CheckCircle />, title: locale === 'fr' ? 'Rapide' : 'Quick Response', desc: locale === 'fr' ? 'Réponse sous 24h' : 'Response within 24h' },
                 { icon: <Star />, title: locale === 'fr' ? 'Service Client' : 'Customer Service', desc: locale === 'fr' ? 'Support dédié' : 'Dedicated support' }
               ].map((item, idx) => (
@@ -387,7 +387,9 @@ export default function Enquiry() {
               border: '2px solid #417F73',
               textAlign: 'center'
             }}>
-              <Lock sx={{ fontSize: 48, color: '#417F73', mb: 1 }} />
+              <Box sx={{ display: 'flex', justifyContent: 'center', mb: 1 }}>
+                <Lock sx={{ fontSize: 56, color: '#1E377C', display: 'block' }} />
+              </Box>
               <Typography variant="h6" sx={{ fontWeight: 700, color: '#1E377C', mb: 1 }}>
                 {locale === 'fr' ? '100% Sécurisé' : '100% Secure'}
               </Typography>
