@@ -11,13 +11,21 @@ import {
   InputLabel,
   CircularProgress,
   Alert,
-  Card
+  Card,
+  Fade
 } from '@mui/material'
 import { 
   AccessTime, 
   Security,
   ArrowBack,
-  ArrowForward
+  ArrowForward,
+  CheckCircle,
+  Shield,
+  VerifiedUser,
+  Lock,
+  Phone,
+  Email,
+  Star
 } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { useI18n } from '../i18n'
@@ -300,8 +308,7 @@ export default function Enquiry() {
   return (
     <Box sx={{ 
       minHeight: '100vh', 
-      bgcolor: '#f8fafc',
-      position: 'relative',
+      backgroundColor: '#F3F8FF',
       pb: 8
     }}>
       {/* Header */}
@@ -310,14 +317,14 @@ export default function Enquiry() {
         py: 2,
         boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
       }}>
-        <Container maxWidth="md">
+        <Container maxWidth="lg">
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <Typography 
-              variant="h6" 
+              variant="h5" 
               sx={{ 
                 fontWeight: 700, 
                 color: 'white',
-                fontSize: { xs: '1rem', md: '1.25rem' }
+                fontSize: { xs: '1.25rem', md: '1.5rem' }
               }}
             >
               BeaverNorth Financials
@@ -332,346 +339,507 @@ export default function Enquiry() {
         </Container>
       </Box>
 
-      {/* Main Form Container */}
-      <Container maxWidth="md" sx={{ py: { xs: 3, md: 6 } }}>
-        <Card sx={{ 
-          p: { xs: 3, md: 4 },
-          borderRadius: 3,
-          boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-          bgcolor: 'white'
-        }}>
-          {/* Form Header */}
-          <Box sx={{ mb: 4 }}>
-            <Typography 
-              variant="h4" 
-              sx={{ 
-                fontWeight: 700, 
-                color: '#111827',
-                mb: 1,
-                fontSize: { xs: '1.75rem', md: '2rem' }
-              }}
-            >
-              {locale === 'fr' ? 'Commencer' : 'Get Started'}
-            </Typography>
-            <Typography 
-              variant="body1" 
-              sx={{ 
-                color: '#6B7280',
-                mb: 2
-              }}
-            >
-              {locale === 'fr' ? 'Parlez-nous de vous' : 'Tell us about yourself'}
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
-              <AccessTime sx={{ fontSize: 18, color: '#22C55E' }} />
-              <Typography variant="body2" sx={{ color: '#22C55E', fontWeight: 500 }}>
-                {locale === 'fr' ? 'Cela ne prendra que 2 minutes' : 'It will take only 2 minutes'}
+      {/* Main Content */}
+      <Container maxWidth="lg" sx={{ py: { xs: 4, md: 6 } }}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: 4 }}>
+          
+          {/* Left Side - Trust Indicators & Benefits */}
+          <Box sx={{ 
+            flex: { lg: '0 0 350px' },
+            display: { xs: 'none', lg: 'flex' },
+            flexDirection: 'column',
+            gap: 3
+          }}>
+            <Card sx={{ 
+              p: 3,
+              borderRadius: 3,
+              bgcolor: 'white',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.08)'
+            }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, color: '#1E377C', mb: 2 }}>
+                {locale === 'fr' ? 'Pourquoi nous choisir ?' : 'Why Choose Us?'}
               </Typography>
-            </Box>
-
-            {/* Progress Indicator */}
-            <Box sx={{ position: 'relative', mb: 4 }}>
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between',
-                position: 'relative',
-                zIndex: 1
-              }}>
-                {[1, 2, 3, 4].map((step) => (
-                  <Box
-                    key={step}
-                    sx={{
-                      width: step === currentStep ? '24px' : '8px',
-                      height: '8px',
-                      borderRadius: '4px',
-                      bgcolor: step <= currentStep ? '#22C55E' : '#E5E7EB',
-                      transition: 'all 0.3s ease',
-                      position: 'relative'
-                    }}
-                  />
-                ))}
-              </Box>
-              <Box sx={{
-                position: 'absolute',
-                top: '4px',
-                left: 0,
-                height: '8px',
-                width: `${((currentStep - 1) / 3) * 100}%`,
-                bgcolor: '#22C55E',
-                borderRadius: '4px',
-                transition: 'width 0.3s ease',
-                zIndex: 0
-              }} />
-            </Box>
-          </Box>
-
-          {/* Error Alert */}
-          {submitError && (
-            <Alert severity="error" sx={{ mb: 3 }} onClose={() => setSubmitError('')}>
-              {submitError}
-            </Alert>
-          )}
-
-          {/* Step 1: Personal Information */}
-          {currentStep === 1 && (
-            <Box>
-              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 2 }}>
-                <TextField
-                  fullWidth
-                  label={locale === 'fr' ? 'Prénom' : 'First name'}
-                  required
-                  value={formData.firstName}
-                  onChange={(e) => updateFormData('firstName', e.target.value)}
-                  error={!!errors.firstName}
-                  helperText={errors.firstName}
-                  placeholder={locale === 'fr' ? 'Votre prénom' : 'Your first name'}
-                />
-                <TextField
-                  fullWidth
-                  label={locale === 'fr' ? 'Nom de famille (optionnel)' : 'Last name (optional)'}
-                  value={formData.lastName}
-                  onChange={(e) => updateFormData('lastName', e.target.value)}
-                  error={!!errors.lastName}
-                  helperText={errors.lastName}
-                  placeholder={locale === 'fr' ? 'Votre nom de famille' : 'Your last name'}
-                />
-              </Box>
-              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
-                <FormControl fullWidth error={!!errors.gender}>
-                  <InputLabel>{locale === 'fr' ? 'Genre' : 'Gender'}</InputLabel>
-                  <Select
-                    value={formData.gender}
-                    onChange={(e) => updateFormData('gender', e.target.value)}
-                    label={locale === 'fr' ? 'Genre' : 'Gender'}
-                  >
-                    <MenuItem value="male">{locale === 'fr' ? 'Homme' : 'Male'}</MenuItem>
-                    <MenuItem value="female">{locale === 'fr' ? 'Femme' : 'Female'}</MenuItem>
-                    <MenuItem value="prefer-not-to-say">
-                      {locale === 'fr' ? 'Je préfère ne pas le dire' : 'Prefer not to say'}
-                    </MenuItem>
-                  </Select>
-                  {errors.gender && (
-                    <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
-                      {errors.gender}
+              {[
+                { icon: <VerifiedUser />, title: locale === 'fr' ? 'Conseil Expert' : 'Expert Guidance', desc: locale === 'fr' ? 'Professionnels expérimentés' : 'Experienced professionals' },
+                { icon: <Shield />, title: locale === 'fr' ? 'Sécurisé' : 'Secure & Protected', desc: locale === 'fr' ? 'Données cryptées SSL' : 'SSL encrypted data' },
+                { icon: <CheckCircle />, title: locale === 'fr' ? 'Rapide' : 'Quick Response', desc: locale === 'fr' ? 'Réponse sous 24h' : 'Response within 24h' },
+                { icon: <Star />, title: locale === 'fr' ? 'Gratuit' : 'Free Quote', desc: locale === 'fr' ? 'Devis sans engagement' : 'No obligation quote' }
+              ].map((item, idx) => (
+                <Box key={idx} sx={{ display: 'flex', gap: 2, mb: 2 }}>
+                  <Box sx={{ color: '#417F73', mt: 0.5 }}>{item.icon}</Box>
+                  <Box>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 600, color: '#1E377C', mb: 0.5 }}>
+                      {item.title}
                     </Typography>
-                  )}
-                </FormControl>
-                <TextField
-                  fullWidth
-                  type="date"
-                  label={locale === 'fr' ? 'Date de naissance' : 'Date of Birth'}
-                  required
-                  value={formData.dob}
-                  onChange={(e) => updateFormData('dob', e.target.value)}
-                  error={!!errors.dob}
-                  helperText={errors.dob}
-                  InputLabelProps={{ shrink: true }}
-                  inputProps={{ max: new Date().toISOString().split('T')[0] }}
-                />
-              </Box>
-            </Box>
-          )}
+                    <Typography variant="caption" sx={{ color: '#6B7280' }}>
+                      {item.desc}
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Card>
 
-          {/* Step 2: Contact Information */}
-          {currentStep === 2 && (
-            <Box>
-              <Typography variant="h6" sx={{ mb: 3, color: '#111827', fontWeight: 600 }}>
-                {locale === 'fr' ? 'Informations de contact' : 'Contact Information'}
+            {/* Trust Badge */}
+            <Card sx={{ 
+              p: 3,
+              borderRadius: 3,
+              bgcolor: '#F3F8FF',
+              border: '2px solid #417F73',
+              textAlign: 'center'
+            }}>
+              <Security sx={{ fontSize: 48, color: '#417F73', mb: 1 }} />
+              <Typography variant="h6" sx={{ fontWeight: 700, color: '#1E377C', mb: 1 }}>
+                {locale === 'fr' ? '100% Sécurisé' : '100% Secure'}
               </Typography>
-              <TextField
-                fullWidth
-                type="email"
-                label={locale === 'fr' ? 'Email' : 'Email'}
-                required
-                value={formData.email}
-                onChange={(e) => updateFormData('email', e.target.value)}
-                error={!!errors.email}
-                helperText={errors.email}
-                placeholder="your.email@example.com"
-                sx={{ mb: 2 }}
-              />
-              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                <FormControl sx={{ width: '120px' }}>
-                  <Select
-                    value={formData.countryCode}
-                    onChange={(e) => updateFormData('countryCode', e.target.value)}
-                  >
-                    <MenuItem value="+1">+1</MenuItem>
-                    <MenuItem value="+44">+44</MenuItem>
-                    <MenuItem value="+33">+33</MenuItem>
-                  </Select>
-                </FormControl>
-                <TextField
-                  fullWidth
-                  type="tel"
-                  label={locale === 'fr' ? 'Numéro de téléphone' : 'Phone Number'}
-                  required
-                  value={formData.phone}
-                  onChange={(e) => updateFormData('phone', e.target.value.replace(/\D/g, ''))}
-                  error={!!errors.phone}
-                  helperText={errors.phone}
-                  placeholder="1234567890"
-                />
-              </Box>
-              {otpStatus && (
-                <Alert severity={otpSent ? 'success' : 'error'} sx={{ mt: 1 }}>
-                  {otpStatus}
-                </Alert>
-              )}
-            </Box>
-          )}
-
-          {/* Step 3: Insurance Details */}
-          {currentStep === 3 && (
-            <Box>
-              <Typography variant="h6" sx={{ mb: 3, color: '#111827', fontWeight: 600 }}>
-                {locale === 'fr' ? 'Détails de l\'assurance' : 'Insurance Details'}
-              </Typography>
-              <FormControl fullWidth error={!!errors.smokingStatus} sx={{ mb: 2 }}>
-                <InputLabel>{locale === 'fr' ? 'Statut de tabagisme' : 'Smoking Status'}</InputLabel>
-                <Select
-                  value={formData.smokingStatus}
-                  onChange={(e) => updateFormData('smokingStatus', e.target.value)}
-                  label={locale === 'fr' ? 'Statut de tabagisme' : 'Smoking Status'}
-                >
-                  <MenuItem value="non-smoker">{locale === 'fr' ? 'Non-fumeur' : 'Non-smoker'}</MenuItem>
-                  <MenuItem value="smoker">{locale === 'fr' ? 'Fumeur' : 'Smoker'}</MenuItem>
-                </Select>
-                {errors.smokingStatus && (
-                  <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
-                    {errors.smokingStatus}
-                  </Typography>
-                )}
-              </FormControl>
-              <FormControl fullWidth error={!!errors.province} sx={{ mb: 2 }}>
-                <InputLabel>{locale === 'fr' ? 'Province' : 'Province'}</InputLabel>
-                <Select
-                  value={formData.province}
-                  onChange={(e) => updateFormData('province', e.target.value)}
-                  label={locale === 'fr' ? 'Province' : 'Province'}
-                >
-                  {provinces.map((province) => (
-                    <MenuItem key={province} value={province}>{province}</MenuItem>
-                  ))}
-                </Select>
-                {errors.province && (
-                  <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
-                    {errors.province}
-                  </Typography>
-                )}
-              </FormControl>
-              <FormControl fullWidth error={!!errors.insuranceProduct} sx={{ mb: 2 }}>
-                <InputLabel>{locale === 'fr' ? 'Produit d\'assurance' : 'Insurance Product'}</InputLabel>
-                <Select
-                  value={formData.insuranceProduct}
-                  onChange={(e) => updateFormData('insuranceProduct', e.target.value)}
-                  label={locale === 'fr' ? 'Produit d\'assurance' : 'Insurance Product'}
-                >
-                  {insuranceProducts.map((product) => (
-                    <MenuItem key={product} value={product}>{product}</MenuItem>
-                  ))}
-                </Select>
-                {errors.insuranceProduct && (
-                  <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
-                    {errors.insuranceProduct}
-                  </Typography>
-                )}
-              </FormControl>
-            </Box>
-          )}
-
-          {/* Step 4: OTP Verification */}
-          {currentStep === 4 && (
-            <Box>
-              <Typography variant="h6" sx={{ mb: 3, color: '#111827', fontWeight: 600 }}>
-                {locale === 'fr' ? 'Vérification OTP' : 'OTP Verification'}
-              </Typography>
-              <Typography variant="body2" sx={{ mb: 3, color: '#6B7280' }}>
+              <Typography variant="body2" sx={{ color: '#6B7280' }}>
                 {locale === 'fr' 
-                  ? 'Nous avons envoyé un code de vérification à votre numéro de téléphone. Veuillez l\'entrer ci-dessous.'
-                  : 'We\'ve sent a verification code to your phone number. Please enter it below.'}
+                  ? 'Vos informations sont protégées et ne seront jamais partagées.'
+                  : 'Your information is protected and never shared.'}
               </Typography>
-              <TextField
-                fullWidth
-                label={locale === 'fr' ? 'Code de vérification' : 'Verification Code'}
-                required
-                value={formData.otp}
-                onChange={(e) => updateFormData('otp', e.target.value.replace(/\D/g, '').slice(0, 6))}
-                error={!!errors.otp}
-                helperText={errors.otp}
-                placeholder="000000"
-                inputProps={{ maxLength: 6, style: { textAlign: 'center', fontSize: '24px', letterSpacing: '8px' } }}
-                sx={{ mb: 2 }}
-              />
-              {otpResendTimer > 0 && (
-                <Typography variant="body2" sx={{ color: '#6B7280', textAlign: 'center', mb: 2 }}>
-                  {locale === 'fr' 
-                    ? `Renvoyer le code dans ${otpResendTimer}s`
-                    : `Resend code in ${otpResendTimer}s`}
-                </Typography>
-              )}
-              {otpResendTimer === 0 && otpSent && (
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  onClick={sendOTP}
-                  disabled={sendingOtp}
-                  sx={{ mb: 2 }}
-                >
-                  {sendingOtp ? <CircularProgress size={20} /> : (locale === 'fr' ? 'Renvoyer le code' : 'Resend Code')}
-                </Button>
-              )}
-            </Box>
-          )}
-
-          {/* Navigation Buttons */}
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4, gap: 2 }}>
-            <Button
-              variant="outlined"
-              onClick={handleBack}
-              disabled={currentStep === 1 || loading}
-              startIcon={<ArrowBack />}
-            >
-              {locale === 'fr' ? 'Précédent' : 'Back'}
-            </Button>
-            {currentStep < 4 ? (
-              <Button
-                variant="contained"
-                onClick={handleNext}
-                disabled={loading || (currentStep === 2 && sendingOtp)}
-                endIcon={<ArrowForward />}
-                sx={{
-                  bgcolor: '#1E377C',
-                  '&:hover': { bgcolor: '#152A5C' },
-                  minWidth: '120px'
-                }}
-              >
-                {currentStep === 2 && sendingOtp ? (
-                  <CircularProgress size={20} sx={{ color: 'white' }} />
-                ) : (
-                  locale === 'fr' ? 'Étape suivante' : 'Next Step'
-                )}
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                onClick={handleSubmit}
-                disabled={loading}
-                sx={{
-                  bgcolor: '#22C55E',
-                  '&:hover': { bgcolor: '#16A34A' },
-                  minWidth: '120px'
-                }}
-              >
-                {loading ? (
-                  <CircularProgress size={20} sx={{ color: 'white' }} />
-                ) : (
-                  locale === 'fr' ? 'Soumettre' : 'Submit'
-                )}
-              </Button>
-            )}
+            </Card>
           </Box>
-        </Card>
+
+          {/* Right Side - Form */}
+          <Box sx={{ flex: 1 }}>
+            <Fade in={true} timeout={500}>
+              <Card sx={{ 
+                p: { xs: 3, md: 4 },
+                borderRadius: 3,
+                bgcolor: 'white',
+                boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+              }}>
+                {/* Form Header */}
+                <Box sx={{ mb: 4, textAlign: 'center' }}>
+                  <Typography 
+                    variant="h4" 
+                    sx={{ 
+                      fontWeight: 700, 
+                      color: '#1E377C',
+                      mb: 1,
+                      fontSize: { xs: '1.75rem', md: '2rem' }
+                    }}
+                  >
+                    {locale === 'fr' ? 'Obtenez Votre Devis' : 'Get Your Free Quote'}
+                  </Typography>
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      color: '#417F73',
+                      fontWeight: 400,
+                      mb: 2
+                    }}
+                  >
+                    {locale === 'fr' ? 'Parlez-nous de vous' : 'Tell us about yourself'}
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 3 }}>
+                    <AccessTime sx={{ fontSize: 18, color: '#22C55E' }} />
+                    <Typography variant="body1" sx={{ color: '#22C55E', fontWeight: 500 }}>
+                      {locale === 'fr' ? 'Seulement 2 minutes' : 'Takes only 2 minutes'}
+                    </Typography>
+                  </Box>
+
+                  {/* Progress Indicator */}
+                  <Box sx={{ position: 'relative', mb: 4 }}>
+                    <Box sx={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between',
+                      position: 'relative',
+                      zIndex: 1,
+                      maxWidth: 400,
+                      mx: 'auto'
+                    }}>
+                      {[1, 2, 3, 4].map((step) => (
+                        <Box
+                          key={step}
+                          sx={{
+                            width: step === currentStep ? '24px' : '8px',
+                            height: '8px',
+                            borderRadius: '4px',
+                            bgcolor: step <= currentStep ? '#22C55E' : '#E5E7EB',
+                            transition: 'all 0.3s ease'
+                          }}
+                        />
+                      ))}
+                    </Box>
+                    <Box sx={{
+                      position: 'absolute',
+                      top: '4px',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      height: '4px',
+                      width: `${((currentStep - 1) / 3) * 100}%`,
+                      maxWidth: 400,
+                      bgcolor: 'rgb(255, 203, 5)',
+                      borderRadius: '2px',
+                      transition: 'width 0.3s ease',
+                      zIndex: 0
+                    }} />
+                  </Box>
+                </Box>
+
+                {/* Error Alert */}
+                {submitError && (
+                  <Alert severity="error" sx={{ mb: 3 }} onClose={() => setSubmitError('')}>
+                    {submitError}
+                  </Alert>
+                )}
+
+                {/* Step 1: Personal Information */}
+                <Fade in={currentStep === 1} timeout={300}>
+                  <Box sx={{ display: currentStep === 1 ? 'block' : 'none' }}>
+                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2, mb: 2 }}>
+                      <TextField
+                        fullWidth
+                        label={locale === 'fr' ? 'Prénom' : 'First name'}
+                        required
+                        value={formData.firstName}
+                        onChange={(e) => updateFormData('firstName', e.target.value)}
+                        error={!!errors.firstName}
+                        helperText={errors.firstName}
+                        placeholder={locale === 'fr' ? 'Votre prénom' : 'Your first name'}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                            '&:hover fieldset': { borderColor: '#417F73' },
+                            '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                          }
+                        }}
+                      />
+                      <TextField
+                        fullWidth
+                        label={locale === 'fr' ? 'Nom de famille (optionnel)' : 'Last name (optional)'}
+                        value={formData.lastName}
+                        onChange={(e) => updateFormData('lastName', e.target.value)}
+                        error={!!errors.lastName}
+                        helperText={errors.lastName}
+                        placeholder={locale === 'fr' ? 'Votre nom de famille' : 'Your last name'}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                            '&:hover fieldset': { borderColor: '#417F73' },
+                            '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                          }
+                        }}
+                      />
+                    </Box>
+                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
+                      <FormControl fullWidth error={!!errors.gender} sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                          '&:hover fieldset': { borderColor: '#417F73' },
+                          '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                        }
+                      }}>
+                        <InputLabel>{locale === 'fr' ? 'Genre' : 'Gender'}</InputLabel>
+                        <Select
+                          value={formData.gender}
+                          onChange={(e) => updateFormData('gender', e.target.value)}
+                          label={locale === 'fr' ? 'Genre' : 'Gender'}
+                        >
+                          <MenuItem value="male">{locale === 'fr' ? 'Homme' : 'Male'}</MenuItem>
+                          <MenuItem value="female">{locale === 'fr' ? 'Femme' : 'Female'}</MenuItem>
+                          <MenuItem value="prefer-not-to-say">
+                            {locale === 'fr' ? 'Je préfère ne pas le dire' : 'Prefer not to say'}
+                          </MenuItem>
+                        </Select>
+                        {errors.gender && (
+                          <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
+                            {errors.gender}
+                          </Typography>
+                        )}
+                      </FormControl>
+                      <TextField
+                        fullWidth
+                        type="date"
+                        label={locale === 'fr' ? 'Date de naissance' : 'Date of Birth'}
+                        required
+                        value={formData.dob}
+                        onChange={(e) => updateFormData('dob', e.target.value)}
+                        error={!!errors.dob}
+                        helperText={errors.dob}
+                        InputLabelProps={{ shrink: true }}
+                        inputProps={{ max: new Date().toISOString().split('T')[0] }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                            '&:hover fieldset': { borderColor: '#417F73' },
+                            '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                          }
+                        }}
+                      />
+                    </Box>
+                  </Box>
+                </Fade>
+
+                {/* Step 2: Contact Information */}
+                <Fade in={currentStep === 2} timeout={300}>
+                  <Box sx={{ display: currentStep === 2 ? 'block' : 'none' }}>
+                    <Typography variant="h6" sx={{ mb: 3, color: '#1E377C', fontWeight: 600 }}>
+                      {locale === 'fr' ? 'Informations de contact' : 'Contact Information'}
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      type="email"
+                      label={locale === 'fr' ? 'Email' : 'Email'}
+                      required
+                      value={formData.email}
+                      onChange={(e) => updateFormData('email', e.target.value)}
+                      error={!!errors.email}
+                      helperText={errors.email}
+                      placeholder="your.email@example.com"
+                      sx={{ mb: 2,
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                          '&:hover fieldset': { borderColor: '#417F73' },
+                          '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                        }
+                      }}
+                      InputProps={{
+                        startAdornment: <Email sx={{ mr: 1, color: '#417F73' }} />
+                      }}
+                    />
+                    <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+                      <FormControl sx={{ width: '120px',
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                          '&:hover fieldset': { borderColor: '#417F73' },
+                          '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                        }
+                      }}>
+                        <Select
+                          value={formData.countryCode}
+                          onChange={(e) => updateFormData('countryCode', e.target.value)}
+                        >
+                          <MenuItem value="+1">+1</MenuItem>
+                          <MenuItem value="+44">+44</MenuItem>
+                          <MenuItem value="+33">+33</MenuItem>
+                        </Select>
+                      </FormControl>
+                      <TextField
+                        fullWidth
+                        type="tel"
+                        label={locale === 'fr' ? 'Numéro de téléphone' : 'Phone Number'}
+                        required
+                        value={formData.phone}
+                        onChange={(e) => updateFormData('phone', e.target.value.replace(/\D/g, ''))}
+                        error={!!errors.phone}
+                        helperText={errors.phone}
+                        placeholder="1234567890"
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                            '&:hover fieldset': { borderColor: '#417F73' },
+                            '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                          }
+                        }}
+                        InputProps={{
+                          startAdornment: <Phone sx={{ mr: 1, color: '#417F73' }} />
+                        }}
+                      />
+                    </Box>
+                    {otpStatus && (
+                      <Alert severity={otpSent ? 'success' : 'error'} sx={{ mt: 1 }}>
+                        {otpStatus}
+                      </Alert>
+                    )}
+                  </Box>
+                </Fade>
+
+                {/* Step 3: Insurance Details */}
+                <Fade in={currentStep === 3} timeout={300}>
+                  <Box sx={{ display: currentStep === 3 ? 'block' : 'none' }}>
+                    <Typography variant="h6" sx={{ mb: 3, color: '#1E377C', fontWeight: 600 }}>
+                      {locale === 'fr' ? 'Détails de l\'assurance' : 'Insurance Details'}
+                    </Typography>
+                    <FormControl fullWidth error={!!errors.smokingStatus} sx={{ mb: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&:hover fieldset': { borderColor: '#417F73' },
+                        '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                      }
+                    }}>
+                      <InputLabel>{locale === 'fr' ? 'Statut de tabagisme' : 'Smoking Status'}</InputLabel>
+                      <Select
+                        value={formData.smokingStatus}
+                        onChange={(e) => updateFormData('smokingStatus', e.target.value)}
+                        label={locale === 'fr' ? 'Statut de tabagisme' : 'Smoking Status'}
+                      >
+                        <MenuItem value="non-smoker">{locale === 'fr' ? 'Non-fumeur' : 'Non-smoker'}</MenuItem>
+                        <MenuItem value="smoker">{locale === 'fr' ? 'Fumeur' : 'Smoker'}</MenuItem>
+                      </Select>
+                      {errors.smokingStatus && (
+                        <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
+                          {errors.smokingStatus}
+                        </Typography>
+                      )}
+                    </FormControl>
+                    <FormControl fullWidth error={!!errors.province} sx={{ mb: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&:hover fieldset': { borderColor: '#417F73' },
+                        '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                      }
+                    }}>
+                      <InputLabel>{locale === 'fr' ? 'Province' : 'Province'}</InputLabel>
+                      <Select
+                        value={formData.province}
+                        onChange={(e) => updateFormData('province', e.target.value)}
+                        label={locale === 'fr' ? 'Province' : 'Province'}
+                      >
+                        {provinces.map((province) => (
+                          <MenuItem key={province} value={province}>{province}</MenuItem>
+                        ))}
+                      </Select>
+                      {errors.province && (
+                        <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
+                          {errors.province}
+                        </Typography>
+                      )}
+                    </FormControl>
+                    <FormControl fullWidth error={!!errors.insuranceProduct} sx={{ mb: 2,
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2,
+                        '&:hover fieldset': { borderColor: '#417F73' },
+                        '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                      }
+                    }}>
+                      <InputLabel>{locale === 'fr' ? 'Produit d\'assurance' : 'Insurance Product'}</InputLabel>
+                      <Select
+                        value={formData.insuranceProduct}
+                        onChange={(e) => updateFormData('insuranceProduct', e.target.value)}
+                        label={locale === 'fr' ? 'Produit d\'assurance' : 'Insurance Product'}
+                      >
+                        {insuranceProducts.map((product) => (
+                          <MenuItem key={product} value={product}>{product}</MenuItem>
+                        ))}
+                      </Select>
+                      {errors.insuranceProduct && (
+                        <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
+                          {errors.insuranceProduct}
+                        </Typography>
+                      )}
+                    </FormControl>
+                  </Box>
+                </Fade>
+
+                {/* Step 4: OTP Verification */}
+                <Fade in={currentStep === 4} timeout={300}>
+                  <Box sx={{ display: currentStep === 4 ? 'block' : 'none' }}>
+                    <Typography variant="h6" sx={{ mb: 2, color: '#1E377C', fontWeight: 600 }}>
+                      {locale === 'fr' ? 'Vérification OTP' : 'OTP Verification'}
+                    </Typography>
+                    <Typography variant="body2" sx={{ mb: 3, color: '#6B7280' }}>
+                      {locale === 'fr' 
+                        ? 'Nous avons envoyé un code de vérification à votre numéro de téléphone. Veuillez l\'entrer ci-dessous.'
+                        : 'We\'ve sent a verification code to your phone number. Please enter it below.'}
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      label={locale === 'fr' ? 'Code de vérification' : 'Verification Code'}
+                      required
+                      value={formData.otp}
+                      onChange={(e) => updateFormData('otp', e.target.value.replace(/\D/g, '').slice(0, 6))}
+                      error={!!errors.otp}
+                      helperText={errors.otp}
+                      placeholder="000000"
+                      inputProps={{ maxLength: 6, style: { textAlign: 'center', fontSize: '28px', letterSpacing: '10px', fontWeight: 600 } }}
+                      sx={{ mb: 2,
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                          '&:hover fieldset': { borderColor: '#417F73' },
+                          '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                        }
+                      }}
+                    />
+                    {otpResendTimer > 0 && (
+                      <Typography variant="body2" sx={{ color: '#6B7280', textAlign: 'center', mb: 2 }}>
+                        {locale === 'fr' 
+                          ? `Renvoyer le code dans ${otpResendTimer}s`
+                          : `Resend code in ${otpResendTimer}s`}
+                      </Typography>
+                    )}
+                    {otpResendTimer === 0 && otpSent && (
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        onClick={sendOTP}
+                        disabled={sendingOtp}
+                        sx={{ mb: 2, borderRadius: 2, borderColor: '#417F73', color: '#417F73',
+                          '&:hover': { borderColor: '#1E377C', bgcolor: '#F3F8FF' }
+                        }}
+                      >
+                        {sendingOtp ? <CircularProgress size={20} /> : (locale === 'fr' ? 'Renvoyer le code' : 'Resend Code')}
+                      </Button>
+                    )}
+                  </Box>
+                </Fade>
+
+                {/* Navigation Buttons */}
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4, gap: 2 }}>
+                  <Button
+                    variant="outlined"
+                    onClick={handleBack}
+                    disabled={currentStep === 1 || loading}
+                    startIcon={<ArrowBack />}
+                    sx={{ borderRadius: 2, px: 3, borderColor: '#417F73', color: '#417F73',
+                      '&:hover': { borderColor: '#1E377C', bgcolor: '#F3F8FF' }
+                    }}
+                  >
+                    {locale === 'fr' ? 'Précédent' : 'Back'}
+                  </Button>
+                  {currentStep < 4 ? (
+                    <Button
+                      variant="contained"
+                      onClick={handleNext}
+                      disabled={loading || (currentStep === 2 && sendingOtp)}
+                      endIcon={<ArrowForward />}
+                      sx={{
+                        bgcolor: 'rgb(255, 203, 5)',
+                        color: '#1E377C',
+                        '&:hover': { bgcolor: 'rgb(255, 193, 0)' },
+                        minWidth: '140px',
+                        borderRadius: 2,
+                        px: 3,
+                        py: 1.5,
+                        fontWeight: 700,
+                        boxShadow: '0 4px 12px rgba(255, 203, 5, 0.3)'
+                      }}
+                    >
+                      {currentStep === 2 && sendingOtp ? (
+                        <CircularProgress size={20} sx={{ color: '#1E377C' }} />
+                      ) : (
+                        locale === 'fr' ? 'Étape suivante' : 'Next Step'
+                      )}
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="contained"
+                      onClick={handleSubmit}
+                      disabled={loading}
+                      sx={{
+                        bgcolor: 'rgb(255, 203, 5)',
+                        color: '#1E377C',
+                        '&:hover': { bgcolor: 'rgb(255, 193, 0)' },
+                        minWidth: '140px',
+                        borderRadius: 2,
+                        px: 3,
+                        py: 1.5,
+                        fontWeight: 700,
+                        boxShadow: '0 4px 12px rgba(255, 203, 5, 0.3)'
+                      }}
+                    >
+                      {loading ? (
+                        <CircularProgress size={20} sx={{ color: '#1E377C' }} />
+                      ) : (
+                        locale === 'fr' ? 'Soumettre' : 'Submit'
+                      )}
+                    </Button>
+                  )}
+                </Box>
+              </Card>
+            </Fade>
+          </Box>
+        </Box>
       </Container>
     </Box>
   )
