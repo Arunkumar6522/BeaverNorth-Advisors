@@ -699,7 +699,7 @@ export default function Enquiry() {
                       onChange={(e) => updateFormData('email', e.target.value)}
                       error={!!errors.email}
                       helperText={errors.email}
-                      placeholder="your.email@example.com"
+                      placeholder="beavernorthadvisors@gmail.com"
                       sx={{ mb: 2,
                         '& .MuiOutlinedInput-root': {
                           borderRadius: 2,
