@@ -97,6 +97,16 @@ export default function Enquiry() {
         newErrors.dob = 'Date of birth is required'
       }
     } else if (step === 2) {
+      if (!formData.smokingStatus) {
+        newErrors.smokingStatus = 'Smoking status is required'
+      }
+      if (!formData.province) {
+        newErrors.province = 'Province is required'
+      }
+      if (!formData.insuranceProduct) {
+        newErrors.insuranceProduct = 'Insurance product is required'
+      }
+    } else if (step === 3) {
       if (!formData.email.trim()) {
         newErrors.email = 'Email is required'
       } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -106,16 +116,6 @@ export default function Enquiry() {
         newErrors.phone = 'Phone number is required'
       } else if (formData.phone.replace(/\D/g, '').length < 10) {
         newErrors.phone = 'Please enter a valid phone number'
-      }
-    } else if (step === 3) {
-      if (!formData.smokingStatus) {
-        newErrors.smokingStatus = 'Smoking status is required'
-      }
-      if (!formData.province) {
-        newErrors.province = 'Province is required'
-      }
-      if (!formData.insuranceProduct) {
-        newErrors.insuranceProduct = 'Insurance product is required'
       }
     } else if (step === 4) {
       if (!formData.otp.trim()) {
@@ -131,8 +131,8 @@ export default function Enquiry() {
 
   const handleNext = () => {
     if (validateStep(currentStep)) {
-      if (currentStep === 2 && !otpSent) {
-        // Send OTP before moving to step 3
+      if (currentStep === 3 && !otpSent) {
+        // Send OTP before moving to step 4
         sendOTP()
         return
       }
@@ -179,7 +179,7 @@ export default function Enquiry() {
         setOtpSent(true)
         setOtpResendTimer(30)
         setOtpStatus('Verification code sent successfully!')
-        setCurrentStep(3) // Move to step 3 after OTP is sent
+        setCurrentStep(4) // Move to step 4 after OTP is sent
         gtagEvent('otp_sent', { form_id: 'enquiry' })
       } else {
         setOtpStatus(result.message || 'Failed to send verification code. Please try again.')
@@ -363,7 +363,7 @@ export default function Enquiry() {
                 { icon: <VerifiedUser />, title: locale === 'fr' ? 'Conseil Expert' : 'Expert Guidance', desc: locale === 'fr' ? 'Professionnels expérimentés' : 'Experienced professionals' },
                 { icon: <Shield />, title: locale === 'fr' ? 'Sécurisé' : 'Secure & Protected', desc: locale === 'fr' ? 'Données cryptées SSL' : 'SSL encrypted data' },
                 { icon: <CheckCircle />, title: locale === 'fr' ? 'Rapide' : 'Quick Response', desc: locale === 'fr' ? 'Réponse sous 24h' : 'Response within 24h' },
-                { icon: <Star />, title: locale === 'fr' ? 'Gratuit' : 'Free Quote', desc: locale === 'fr' ? 'Devis sans engagement' : 'No obligation quote' }
+                { icon: <Star />, title: locale === 'fr' ? 'Service Client' : 'Customer Service', desc: locale === 'fr' ? 'Support dédié' : 'Dedicated support' }
               ].map((item, idx) => (
                 <Box key={idx} sx={{ display: 'flex', gap: 2, mb: 2 }}>
                   <Box sx={{ color: '#417F73', mt: 0.5 }}>{item.icon}</Box>
@@ -419,61 +419,97 @@ export default function Enquiry() {
                       fontSize: { xs: '1.75rem', md: '2rem' }
                     }}
                   >
-                    {locale === 'fr' ? 'Obtenez Votre Devis' : 'Get Your Free Quote'}
+                    {locale === 'fr' ? 'Obtenez Votre Devis' : 'Get Started'}
                   </Typography>
                   <Typography 
                     variant="h6" 
                     sx={{ 
                       color: '#417F73',
                       fontWeight: 400,
-                      mb: 2
+                      mb: 3
                     }}
                   >
                     {locale === 'fr' ? 'Parlez-nous de vous' : 'Tell us about yourself'}
                   </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1, mb: 3 }}>
-                    <AccessTime sx={{ fontSize: 18, color: '#22C55E' }} />
-                    <Typography variant="body1" sx={{ color: '#22C55E', fontWeight: 500 }}>
-                      {locale === 'fr' ? 'Seulement 2 minutes' : 'Takes only 2 minutes'}
-                    </Typography>
-                  </Box>
 
-                  {/* Progress Indicator */}
-                  <Box sx={{ position: 'relative', mb: 4 }}>
+                  {/* Enhanced Stepper Component */}
+                  <Box sx={{ mb: 4, px: 2 }}>
                     <Box sx={{ 
                       display: 'flex', 
                       justifyContent: 'space-between',
+                      alignItems: 'center',
                       position: 'relative',
-                      zIndex: 1,
-                      maxWidth: 400,
+                      maxWidth: 500,
                       mx: 'auto'
                     }}>
+                      {/* Progress Line */}
+                      <Box sx={{
+                        position: 'absolute',
+                        top: '20px',
+                        left: '20px',
+                        right: '20px',
+                        height: '2px',
+                        bgcolor: '#E5E7EB',
+                        zIndex: 0
+                      }} />
+                      <Box sx={{
+                        position: 'absolute',
+                        top: '20px',
+                        left: '20px',
+                        width: `${((currentStep - 1) / 3) * 100}%`,
+                        height: '2px',
+                        bgcolor: 'rgb(255, 203, 5)',
+                        transition: 'width 0.4s ease',
+                        zIndex: 1
+                      }} />
+
                       {[1, 2, 3, 4].map((step) => (
-                        <Box
-                          key={step}
-                          sx={{
-                            width: step === currentStep ? '24px' : '8px',
-                            height: '8px',
-                            borderRadius: '4px',
-                            bgcolor: step <= currentStep ? '#22C55E' : '#E5E7EB',
-                            transition: 'all 0.3s ease'
-                          }}
-                        />
+                        <Box key={step} sx={{ position: 'relative', zIndex: 2 }}>
+                          <Box
+                            sx={{
+                              width: '40px',
+                              height: '40px',
+                              borderRadius: '50%',
+                              bgcolor: step <= currentStep ? 'rgb(255, 203, 5)' : '#E5E7EB',
+                              color: step <= currentStep ? '#1E377C' : '#9CA3AF',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontWeight: 700,
+                              fontSize: '16px',
+                              border: step === currentStep ? '3px solid #1E377C' : 'none',
+                              boxShadow: step === currentStep ? '0 0 0 4px rgba(30, 55, 124, 0.1)' : 'none',
+                              transition: 'all 0.3s ease',
+                              cursor: 'default'
+                            }}
+                          >
+                            {step < currentStep ? (
+                              <CheckCircle sx={{ fontSize: 24, color: '#1E377C' }} />
+                            ) : (
+                              step
+                            )}
+                          </Box>
+                          <Typography 
+                            variant="caption" 
+                            sx={{ 
+                              display: 'block',
+                              mt: 1,
+                              color: step <= currentStep ? '#1E377C' : '#9CA3AF',
+                              fontWeight: step === currentStep ? 600 : 400,
+                              fontSize: '11px',
+                              textAlign: 'center',
+                              maxWidth: '60px',
+                              mx: 'auto'
+                            }}
+                          >
+                            {step === 1 ? (locale === 'fr' ? 'Info' : 'Info') :
+                             step === 2 ? (locale === 'fr' ? 'Assurance' : 'Insurance') :
+                             step === 3 ? (locale === 'fr' ? 'Contact' : 'Contact') :
+                             (locale === 'fr' ? 'Vérifier' : 'Verify')}
+                          </Typography>
+                        </Box>
                       ))}
                     </Box>
-                    <Box sx={{
-                      position: 'absolute',
-                      top: '4px',
-                      left: '50%',
-                      transform: 'translateX(-50%)',
-                      height: '4px',
-                      width: `${((currentStep - 1) / 3) * 100}%`,
-                      maxWidth: 400,
-                      bgcolor: 'rgb(255, 203, 5)',
-                      borderRadius: '2px',
-                      transition: 'width 0.3s ease',
-                      zIndex: 0
-                    }} />
                   </Box>
                 </Box>
 
@@ -571,83 +607,9 @@ export default function Enquiry() {
                   </Box>
                 </Fade>
 
-                {/* Step 2: Contact Information */}
+                {/* Step 2: Insurance Details */}
                 <Fade in={currentStep === 2} timeout={300}>
                   <Box sx={{ display: currentStep === 2 ? 'block' : 'none' }}>
-                    <Typography variant="h6" sx={{ mb: 3, color: '#1E377C', fontWeight: 600 }}>
-                      {locale === 'fr' ? 'Informations de contact' : 'Contact Information'}
-                    </Typography>
-                    <TextField
-                      fullWidth
-                      type="email"
-                      label={locale === 'fr' ? 'Email' : 'Email'}
-                      required
-                      value={formData.email}
-                      onChange={(e) => updateFormData('email', e.target.value)}
-                      error={!!errors.email}
-                      helperText={errors.email}
-                      placeholder="your.email@example.com"
-                      sx={{ mb: 2,
-                        '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
-                          '&:hover fieldset': { borderColor: '#417F73' },
-                          '&.Mui-focused fieldset': { borderColor: '#1E377C' }
-                        }
-                      }}
-                      InputProps={{
-                        startAdornment: <Email sx={{ mr: 1, color: '#417F73' }} />
-                      }}
-                    />
-                    <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
-                      <FormControl sx={{ width: '120px',
-                        '& .MuiOutlinedInput-root': {
-                          borderRadius: 2,
-                          '&:hover fieldset': { borderColor: '#417F73' },
-                          '&.Mui-focused fieldset': { borderColor: '#1E377C' }
-                        }
-                      }}>
-                        <Select
-                          value={formData.countryCode}
-                          onChange={(e) => updateFormData('countryCode', e.target.value)}
-                        >
-                          <MenuItem value="+1">+1</MenuItem>
-                          <MenuItem value="+44">+44</MenuItem>
-                          <MenuItem value="+33">+33</MenuItem>
-                        </Select>
-                      </FormControl>
-                      <TextField
-                        fullWidth
-                        type="tel"
-                        label={locale === 'fr' ? 'Numéro de téléphone' : 'Phone Number'}
-                        required
-                        value={formData.phone}
-                        onChange={(e) => updateFormData('phone', e.target.value.replace(/\D/g, ''))}
-                        error={!!errors.phone}
-                        helperText={errors.phone}
-                        placeholder="1234567890"
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            borderRadius: 2,
-                            '&:hover fieldset': { borderColor: '#417F73' },
-                            '&.Mui-focused fieldset': { borderColor: '#1E377C' }
-                          }
-                        }}
-                        InputProps={{
-                          startAdornment: <Phone sx={{ mr: 1, color: '#417F73' }} />
-                        }}
-                      />
-                    </Box>
-                    {otpStatus && (
-                      <Alert severity={otpSent ? 'success' : 'error'} sx={{ mt: 1 }}>
-                        {otpStatus}
-                      </Alert>
-                    )}
-                  </Box>
-                </Fade>
-
-                {/* Step 3: Insurance Details */}
-                <Fade in={currentStep === 3} timeout={300}>
-                  <Box sx={{ display: currentStep === 3 ? 'block' : 'none' }}>
                     <Typography variant="h6" sx={{ mb: 3, color: '#1E377C', fontWeight: 600 }}>
                       {locale === 'fr' ? 'Détails de l\'assurance' : 'Insurance Details'}
                     </Typography>
@@ -722,6 +684,77 @@ export default function Enquiry() {
                   </Box>
                 </Fade>
 
+                {/* Step 3: Contact Information */}
+                <Fade in={currentStep === 3} timeout={300}>
+                  <Box sx={{ display: currentStep === 3 ? 'block' : 'none' }}>
+                    <Typography variant="h6" sx={{ mb: 3, color: '#1E377C', fontWeight: 600 }}>
+                      {locale === 'fr' ? 'Informations de contact' : 'Contact Information'}
+                    </Typography>
+                    <TextField
+                      fullWidth
+                      type="email"
+                      label={locale === 'fr' ? 'Email' : 'Email'}
+                      required
+                      value={formData.email}
+                      onChange={(e) => updateFormData('email', e.target.value)}
+                      error={!!errors.email}
+                      helperText={errors.email}
+                      placeholder="your.email@example.com"
+                      sx={{ mb: 2,
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                          '&:hover fieldset': { borderColor: '#417F73' },
+                          '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                        }
+                      }}
+                      InputProps={{
+                        startAdornment: <Email sx={{ mr: 1, color: '#417F73' }} />
+                      }}
+                    />
+                    <Box sx={{ display: 'flex', gap: 1, mb: 2, alignItems: 'flex-start' }}>
+                      <Box sx={{ 
+                        width: '80px',
+                        height: '56px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        bgcolor: '#F3F8FF',
+                        borderRadius: 2,
+                        border: '1px solid #E5E7EB',
+                        mt: '1px'
+                      }}>
+                        <Typography sx={{ color: '#1E377C', fontWeight: 600 }}>+1</Typography>
+                      </Box>
+                      <TextField
+                        fullWidth
+                        type="tel"
+                        label={locale === 'fr' ? 'Numéro de téléphone' : 'Phone Number'}
+                        required
+                        value={formData.phone}
+                        onChange={(e) => updateFormData('phone', e.target.value.replace(/\D/g, ''))}
+                        error={!!errors.phone}
+                        helperText={errors.phone}
+                        placeholder="1234567890"
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            borderRadius: 2,
+                            '&:hover fieldset': { borderColor: '#417F73' },
+                            '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                          }
+                        }}
+                        InputProps={{
+                          startAdornment: <Phone sx={{ mr: 1, color: '#417F73' }} />
+                        }}
+                      />
+                    </Box>
+                    {otpStatus && (
+                      <Alert severity={otpSent ? 'success' : 'error'} sx={{ mt: 1 }}>
+                        {otpStatus}
+                      </Alert>
+                    )}
+                  </Box>
+                </Fade>
+
                 {/* Step 4: OTP Verification */}
                 <Fade in={currentStep === 4} timeout={300}>
                   <Box sx={{ display: currentStep === 4 ? 'block' : 'none' }}>
@@ -791,7 +824,7 @@ export default function Enquiry() {
                     <Button
                       variant="contained"
                       onClick={handleNext}
-                      disabled={loading || (currentStep === 2 && sendingOtp)}
+                      disabled={loading || (currentStep === 3 && sendingOtp)}
                       endIcon={<ArrowForward />}
                       sx={{
                         bgcolor: 'rgb(255, 203, 5)',
@@ -805,7 +838,7 @@ export default function Enquiry() {
                         boxShadow: '0 4px 12px rgba(255, 203, 5, 0.3)'
                       }}
                     >
-                      {currentStep === 2 && sendingOtp ? (
+                      {currentStep === 3 && sendingOtp ? (
                         <CircularProgress size={20} sx={{ color: '#1E377C' }} />
                       ) : (
                         locale === 'fr' ? 'Étape suivante' : 'Next Step'
