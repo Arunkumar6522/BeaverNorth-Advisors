@@ -1,17 +1,38 @@
 declare global {
   interface Window {
     gtag: (...args: any[]) => void;
+    fbq: (...args: any[]) => void;
   }
 }
 
 export const trackEvent = (name: string, params?: Record<string, any>) => {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', name, params || {});
+  if (typeof window !== 'undefined') {
+    // Google Analytics
+    if (window.gtag) {
+      window.gtag('event', name, params || {});
+    }
+    // Facebook Pixel - map common events
+    if (window.fbq) {
+      const fbEventMap: Record<string, string> = {
+        'page_view': 'PageView',
+        'lead_submit_success': 'Lead',
+        'form_start': 'InitiateCheckout',
+        'otp_verified': 'CompleteRegistration',
+        'phone_click': 'Contact',
+        'email_click': 'Contact',
+      };
+      const fbEventName = fbEventMap[name] || name;
+      window.fbq('track', fbEventName, params || {});
+    }
   }
 };
 
 export const trackPageView = (path: string) => {
   trackEvent('page_view', { page_path: path });
+  // Facebook Pixel PageView
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', 'PageView', { content_name: path });
+  }
 };
 
 export const trackOutboundClick = (url: string) => {
@@ -32,6 +53,10 @@ export const trackOtpSent = (phoneNumber: string) => {
 
 export const trackOtpVerified = (phoneNumber: string) => {
   trackEvent('otp_verified', { phone_number: phoneNumber });
+  // Facebook Pixel CompleteRegistration event
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', 'CompleteRegistration');
+  }
 };
 
 export const trackLeadSubmitSuccess = (leadData: any) => {
@@ -40,6 +65,14 @@ export const trackLeadSubmitSuccess = (leadData: any) => {
     lead_email: leadData.email,
     insurance_product: leadData.insuranceProduct,
   });
+  // Facebook Pixel Lead event
+  if (typeof window !== 'undefined' && window.fbq) {
+    window.fbq('track', 'Lead', {
+      content_name: leadData.insuranceProduct || 'Insurance Enquiry',
+      value: 0,
+      currency: 'CAD',
+    });
+  }
 };
 
 export const trackLeadSubmitError = (errorMessage: string) => {
