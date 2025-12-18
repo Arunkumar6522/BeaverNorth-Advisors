@@ -27,7 +27,7 @@ import {
 } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { useI18n } from '../i18n'
-import { gtagEvent, trackLeadSubmitError } from '../lib/analytics'
+import { gtagEvent, trackLeadSubmitError, trackLeadSubmitSuccess } from '../lib/analytics'
 import { supabase } from '../lib/supabase'
 
 interface FormData {
@@ -276,6 +276,14 @@ export default function Enquiry() {
       }
 
       gtagEvent('lead_submit_success', { form_id: 'enquiry' })
+      
+      // Track Lead event to Facebook Pixel and Conversions API
+      trackLeadSubmitSuccess({
+        name: leadData.name,
+        email: leadData.email,
+        phone: leadData.phone,
+        insuranceProduct: leadData.insurance_product
+      })
       
       // Redirect to success page
       navigate('/success', { state: { submitted: true } })
