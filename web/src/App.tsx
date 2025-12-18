@@ -22,8 +22,17 @@ export default function App() {
   const { t } = useI18n()
   const navigate = useNavigate()
 
-  // Open contact modal on page load
+  // Open contact modal on page load, but not if coming from success page
   useEffect(() => {
+    // Check if we're coming from success page
+    const fromSuccessPage = sessionStorage.getItem('fromSuccessPage')
+    if (fromSuccessPage === 'true') {
+      // Clear the flag and don't open modal
+      sessionStorage.removeItem('fromSuccessPage')
+      return
+    }
+    
+    // Open modal on fresh page load
     setIsContactModalOpen(true)
   }, [])
 

@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { Box } from '@mui/material'
 import { CheckCircle } from '@mui/icons-material'
 import NotFound from '../pages/NotFound'
 
@@ -14,15 +15,19 @@ export default function SuccessPage() {
   }
 
   useEffect(() => {
+    // Set a flag to prevent popup on landing page
+    sessionStorage.setItem('fromSuccessPage', 'true')
+    
     const timer = setTimeout(() => {
-      navigate('/')
+      // Navigate to landing page without any state to prevent popup
+      navigate('/', { replace: true })
     }, 5000)
 
     return () => clearTimeout(timer)
   }, [navigate])
 
   return (
-    <div style={{
+    <Box sx={{
       position: 'fixed',
       top: 0,
       left: 0,
@@ -33,7 +38,8 @@ export default function SuccessPage() {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      zIndex: 9999
+      zIndex: 9999,
+      px: { xs: 2, sm: 3, md: 4 }
     }}>
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
@@ -44,15 +50,27 @@ export default function SuccessPage() {
           flexDirection: 'column',
           alignItems: 'center',
           textAlign: 'center',
-          color: 'white'
+          color: 'white',
+          width: '100%',
+          maxWidth: '600px',
+          padding: '0 20px'
         }}
       >
-        <CheckCircle sx={{ fontSize: 120, mb: 3 }} />
+        <CheckCircle sx={{ 
+          fontSize: { xs: 80, sm: 100, md: 120 }, 
+          mb: { xs: 2, sm: 3 } 
+        }} />
         <motion.h1
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.4 }}
-          style={{ fontSize: '2.5rem', fontWeight: 'bold', marginBottom: '1rem', margin: 0 }}
+          style={{ 
+            fontSize: 'clamp(1.75rem, 5vw, 2.5rem)', 
+            fontWeight: 'bold', 
+            marginBottom: '1rem', 
+            margin: 0,
+            lineHeight: 1.2
+          }}
         >
           Success!
         </motion.h1>
@@ -60,7 +78,14 @@ export default function SuccessPage() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          style={{ fontSize: '1.2rem', marginBottom: '2rem', margin: '0 0 2rem 0', opacity: 0.9 }}
+          style={{ 
+            fontSize: 'clamp(1rem, 3vw, 1.2rem)', 
+            marginBottom: '2rem', 
+            margin: '0 0 2rem 0', 
+            opacity: 0.9,
+            lineHeight: 1.5,
+            padding: '0 10px'
+          }}
         >
           Your insurance quote request has been submitted successfully.
           <br />
@@ -70,11 +95,15 @@ export default function SuccessPage() {
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.8 }}
-          style={{ fontSize: '1rem', opacity: 0.8 }}
+          style={{ 
+            fontSize: 'clamp(0.875rem, 2.5vw, 1rem)', 
+            opacity: 0.8,
+            textAlign: 'center'
+          }}
         >
           Redirecting to homepage in 5 seconds...
         </motion.div>
       </motion.div>
-    </div>
+    </Box>
   )
 }

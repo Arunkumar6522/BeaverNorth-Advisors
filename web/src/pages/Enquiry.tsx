@@ -277,8 +277,8 @@ export default function Enquiry() {
 
       gtagEvent('lead_submit_success', { form_id: 'enquiry' })
       
-      // Redirect to landing page
-      navigate('/', { state: { enquirySubmitted: true } })
+      // Redirect to success page
+      navigate('/success', { state: { submitted: true } })
       
     } catch (error: any) {
       const errorMessage = error.message || 'Failed to submit form. Please try again.'
