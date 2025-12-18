@@ -27,7 +27,7 @@ import {
 } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { useI18n } from '../i18n'
-import { gtagEvent } from '../lib/analytics'
+import { gtagEvent, trackLeadSubmitError } from '../lib/analytics'
 import { supabase } from '../lib/supabase'
 
 interface FormData {
@@ -244,7 +244,18 @@ export default function Enquiry() {
           .select()
 
         if (dbError) {
-          throw new Error(`Database error: ${dbError.message}`)
+          // Provide user-friendly error messages
+          let errorMessage = 'Failed to submit form. Please try again.'
+          if (dbError.message.includes('insurance_product_check')) {
+            errorMessage = 'Invalid insurance product selected. Please select a valid option and try again.'
+          } else if (dbError.message.includes('smoking_status')) {
+            errorMessage = 'Invalid smoking status selected. Please select a valid option and try again.'
+          } else if (dbError.message.includes('violates check constraint')) {
+            errorMessage = 'Invalid form data. Please check all fields and try again.'
+          } else {
+            errorMessage = `Database error: ${dbError.message}`
+          }
+          throw new Error(errorMessage)
         }
       }
 
@@ -270,9 +281,19 @@ export default function Enquiry() {
       navigate('/', { state: { enquirySubmitted: true } })
       
     } catch (error: any) {
-      setSubmitError(error.message || 'Failed to submit form. Please try again.')
+      const errorMessage = error.message || 'Failed to submit form. Please try again.'
+      setSubmitError(errorMessage)
       setLoading(false)
-      gtagEvent('lead_submit_error', { form_id: 'enquiry', error: error.message })
+      
+      // Track error with lead data for analytics
+      const leadDataForTracking = {
+        name: `${formData.firstName} ${formData.lastName}`.trim(),
+        email: formData.email,
+        phone: `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`,
+        insuranceProduct: formData.insuranceProduct
+      }
+      gtagEvent('lead_submit_error', { form_id: 'enquiry', error: errorMessage })
+      trackLeadSubmitError(errorMessage, leadDataForTracking)
     }
   }
 
@@ -295,12 +316,12 @@ export default function Enquiry() {
   ]
 
   const insuranceProducts = [
-    'Term Life Insurance',
-    'Whole Life Insurance',
-    'Universal Life Insurance',
-    'Critical Illness Insurance',
-    'Disability Insurance',
-    'Travel Insurance'
+    { label: 'Term Life Insurance', value: 'term-life' },
+    { label: 'Whole Life Insurance', value: 'whole-life' },
+    { label: 'Non-Medical Insurance', value: 'non-medical' },
+    { label: 'Mortgage Life Insurance', value: 'mortgage-life' },
+    { label: 'Senior Life Insurance', value: 'senior-life' },
+    { label: 'Travel Insurance', value: 'travel' }
   ]
 
   return (
@@ -672,7 +693,7 @@ export default function Enquiry() {
                         label={locale === 'fr' ? 'Produit d\'assurance' : 'Insurance Product'}
                       >
                         {insuranceProducts.map((product) => (
-                          <MenuItem key={product} value={product}>{product}</MenuItem>
+                          <MenuItem key={product.value} value={product.value}>{product.label}</MenuItem>
                         ))}
                       </Select>
                       {errors.insuranceProduct && (

@@ -91,13 +91,26 @@ exports.handler = async (event, context) => {
   } catch (error) {
     console.error('❌ Twilio verification error:', error);
     
+    // Check for specific error types
+    let errorMessage = `Verification failed: ${error.message}`;
+    
+    if (error.message && error.message.includes('not found')) {
+      errorMessage = 'Verification service not found. Please check your Twilio Service SID configuration.';
+    } else if (error.status === 404) {
+      errorMessage = 'Verification service not found. The Service SID may be incorrect or the verification was not created.';
+    } else if (error.code === 20404) {
+      errorMessage = 'Verification not found. Please request a new verification code.';
+    }
+    
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({
         success: false,
-        message: `Verification failed: ${error.message}`,
-        error: error.message
+        message: errorMessage,
+        error: error.message,
+        code: error.code,
+        status: error.status
       })
     };
   }

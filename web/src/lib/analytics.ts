@@ -53,9 +53,29 @@ export const trackOtpSent = (phoneNumber: string) => {
 
 export const trackOtpVerified = (phoneNumber: string) => {
   trackEvent('otp_verified', { phone_number: phoneNumber });
-  // Facebook Pixel CompleteRegistration event
+  // Facebook Pixel CompleteRegistration event (client-side)
   if (typeof window !== 'undefined' && window.fbq) {
     window.fbq('track', 'CompleteRegistration');
+  }
+  // Facebook Conversions API (server-side)
+  sendFacebookConversion('CompleteRegistration', {}, { phone: phoneNumber });
+};
+
+// Send event to Facebook Conversions API (server-side)
+const sendFacebookConversion = async (eventName: string, eventData?: Record<string, any>, userData?: Record<string, any>) => {
+  try {
+    const apiUrl = window.location.hostname === 'localhost' 
+      ? 'http://localhost:3001/api/facebook-conversions'
+      : '/.netlify/functions/facebook-conversions';
+    
+    await fetch(apiUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventName, eventData, userData })
+    });
+  } catch (error) {
+    console.error('Facebook Conversions API error:', error);
+    // Don't throw - fail silently to not break user flow
   }
 };
 
@@ -65,7 +85,7 @@ export const trackLeadSubmitSuccess = (leadData: any) => {
     lead_email: leadData.email,
     insurance_product: leadData.insuranceProduct,
   });
-  // Facebook Pixel Lead event
+  // Facebook Pixel Lead event (client-side)
   if (typeof window !== 'undefined' && window.fbq) {
     window.fbq('track', 'Lead', {
       content_name: leadData.insuranceProduct || 'Insurance Enquiry',
@@ -73,10 +93,28 @@ export const trackLeadSubmitSuccess = (leadData: any) => {
       currency: 'CAD',
     });
   }
+  // Facebook Conversions API (server-side)
+  sendFacebookConversion('Lead', {
+    content_name: leadData.insuranceProduct || 'Insurance Enquiry',
+    value: '0',
+    currency: 'CAD'
+  }, {
+    email: leadData.email,
+    phone: leadData.phone
+  });
 };
 
-export const trackLeadSubmitError = (errorMessage: string) => {
+export const trackLeadSubmitError = (errorMessage: string, leadData?: any) => {
   trackEvent('lead_submit_error', { error_message: errorMessage });
+  // Facebook Conversions API - track failed submissions
+  sendFacebookConversion('Lead', {
+    content_name: 'Form Submission Failed',
+    value: '0',
+    currency: 'CAD'
+  }, {
+    email: leadData?.email,
+    phone: leadData?.phone
+  });
 };
 
 // New helpers
