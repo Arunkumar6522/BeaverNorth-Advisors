@@ -24,7 +24,7 @@ exports.handler = async (event, context) => {
   try {
     const { eventName, eventData, userData } = JSON.parse(event.body);
     
-    const facebookPixelId = process.env.FACEBOOK_PIXEL_ID || '731513446645109';
+    const facebookPixelId = process.env.FACEBOOK_PIXEL_ID || '2127848290952226';
     const facebookAccessToken = process.env.FACEBOOK_ACCESS_TOKEN;
     const facebookAppId = process.env.FACEBOOK_APP_ID || '2127848290952226';
     
