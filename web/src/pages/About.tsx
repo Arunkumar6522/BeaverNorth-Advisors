@@ -234,6 +234,21 @@ export default function About() {
                   Our network includes more than 20 trusted insurers including Manulife, Beneva, iA Financial Group, Foresters Financial, Assumption Life, Travelance, allowing us to source highly competitive offerings.
                 </Typography>
                 <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    fontSize: { xs: '0.875rem', md: '1rem' },
+                    lineHeight: 1.6,
+                    color: '#6B7280',
+                    textAlign: 'center',
+                    maxWidth: 900,
+                    margin: '0 auto',
+                    mb: 3,
+                    fontStyle: 'italic'
+                  }}
+                >
+                  BeaverNorth Financials is a Canadian insurance and financial services firm and is not affiliated with construction, cladding, or building materials companies.
+                </Typography>
+                <Typography 
                   variant="caption" 
                   sx={{ 
                     fontSize: { xs: '0.7rem', md: '0.75rem' },
