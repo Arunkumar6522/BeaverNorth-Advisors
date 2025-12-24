@@ -34,7 +34,7 @@ interface FormData {
   firstName: string
   lastName: string
   gender: 'male' | 'female' | 'prefer-not-to-say' | ''
-  dob: string
+  ageRange: string
   email: string
   phone: string
   countryCode: string
@@ -60,7 +60,7 @@ export default function Enquiry() {
     firstName: '',
     lastName: '',
     gender: '',
-    dob: '',
+    ageRange: '',
     email: '',
     phone: '',
     countryCode: '+1',
@@ -91,8 +91,8 @@ export default function Enquiry() {
       if (!formData.gender) {
         newErrors.gender = 'Gender is required'
       }
-      if (!formData.dob) {
-        newErrors.dob = 'Date of birth is required'
+      if (!formData.ageRange) {
+        newErrors.ageRange = 'Age range is required'
       }
     } else if (step === 2) {
       if (!formData.smokingStatus) {
@@ -220,18 +220,37 @@ export default function Enquiry() {
 
       gtagEvent('otp_verified', { form_id: 'enquiry' })
 
+      // Convert age range to approximate DOB for database (using middle of range)
+      const getApproximateDOB = (ageRange: string): string => {
+        const today = new Date()
+        let age: number
+        if (ageRange === '18-25') age = 21
+        else if (ageRange === '26-35') age = 30
+        else if (ageRange === '36-45') age = 40
+        else if (ageRange === '46-55') age = 50
+        else if (ageRange === '56-65') age = 60
+        else if (ageRange === '65+') age = 70
+        else age = 35 // default
+        
+        const year = today.getFullYear() - age
+        const month = String(today.getMonth() + 1).padStart(2, '0')
+        const day = String(today.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
+      }
+
       // Save to database
       const leadData = {
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         email: formData.email,
         phone: phoneNumber,
-        dob: formData.dob,
+        dob: getApproximateDOB(formData.ageRange),
         province: formData.province,
         country_code: formData.countryCode,
         smoking_status: formData.smokingStatus,
         insurance_product: formData.insuranceProduct,
         status: 'new',
-        gender: formData.gender || null
+        gender: formData.gender || null,
+        age_range: formData.ageRange // Store age range as well if database supports it
       }
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://demo-project.supabase.co'
@@ -613,25 +632,32 @@ export default function Enquiry() {
                           </Typography>
                         )}
                       </FormControl>
-                      <TextField
-                        fullWidth
-                        type="date"
-                        label={locale === 'fr' ? 'Date de naissance' : 'Date of Birth'}
-                        required
-                        value={formData.dob}
-                        onChange={(e) => updateFormData('dob', e.target.value)}
-                        error={!!errors.dob}
-                        helperText={errors.dob}
-                        InputLabelProps={{ shrink: true }}
-                        inputProps={{ max: new Date().toISOString().split('T')[0] }}
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            borderRadius: 2,
-                            '&:hover fieldset': { borderColor: '#417F73' },
-                            '&.Mui-focused fieldset': { borderColor: '#1E377C' }
-                          }
-                        }}
-                      />
+                      <FormControl fullWidth error={!!errors.ageRange} sx={{
+                        '& .MuiOutlinedInput-root': {
+                          borderRadius: 2,
+                          '&:hover fieldset': { borderColor: '#417F73' },
+                          '&.Mui-focused fieldset': { borderColor: '#1E377C' }
+                        }
+                      }}>
+                        <InputLabel>{locale === 'fr' ? 'Tranche d\'âge' : 'Age Range'}</InputLabel>
+                        <Select
+                          value={formData.ageRange}
+                          onChange={(e) => updateFormData('ageRange', e.target.value)}
+                          label={locale === 'fr' ? 'Tranche d\'âge' : 'Age Range'}
+                        >
+                          <MenuItem value="18-25">18-25</MenuItem>
+                          <MenuItem value="26-35">26-35</MenuItem>
+                          <MenuItem value="36-45">36-45</MenuItem>
+                          <MenuItem value="46-55">46-55</MenuItem>
+                          <MenuItem value="56-65">56-65</MenuItem>
+                          <MenuItem value="65+">65+</MenuItem>
+                        </Select>
+                        {errors.ageRange && (
+                          <Typography variant="caption" sx={{ color: 'error.main', mt: 0.5, ml: 1.75 }}>
+                            {errors.ageRange}
+                          </Typography>
+                        )}
+                      </FormControl>
                     </Box>
                   </Box>
                 </Fade>

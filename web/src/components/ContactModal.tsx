@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { supabase } from '../lib/supabase'
 import { useI18n } from '../i18n'
@@ -22,7 +22,7 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
     firstName: '',
     lastName: '',
     gender: '' as 'male' | 'female' | 'prefer-not-to-say' | '',
-    dob: '',
+    ageRange: '',
     smokingStatus: '',
     province: '',
     insuranceProduct: '',
@@ -40,16 +40,16 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
   const [otpStatus, setOtpStatus] = useState<string>('')
   const [submitError, setSubmitError] = useState<string>('')
 
-  const dobPickerRef = useRef<HTMLInputElement>(null)
-
-  // Set the calendar's initial displayed date (without filling the text input)
+  // Removed dobPickerRef - using age range instead
   useEffect(() => {
-    if (dobPickerRef.current) {
-      try {
-        dobPickerRef.current.value = '2001-03-29'
-      } catch {}
+    let interval: ReturnType<typeof setInterval>
+    if (otpResendTimer > 0) {
+      interval = setInterval(() => {
+        setOtpResendTimer((prev) => prev - 1)
+      }, 1000)
     }
-  }, [])
+    return () => clearInterval(interval)
+  }, [otpResendTimer])
 
   // OTP Timer Effect
   useEffect(() => {
@@ -167,8 +167,8 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
         throw new Error('Missing required fields: first name or phone')
       }
 
-      if (!formData.dob || !formData.smokingStatus || !formData.province || !formData.insuranceProduct) {
-        throw new Error('Missing required fields: dob, smoking status, province, or insurance product')
+      if (!formData.ageRange || !formData.smokingStatus || !formData.province || !formData.insuranceProduct) {
+        throw new Error('Missing required fields: age range, smoking status, province, or insurance product')
       }
       
       // Check for validation errors
@@ -189,17 +189,36 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
         throw new Error('Please enter a valid email address')
       }
 
+      // Convert age range to approximate DOB for database (using middle of range)
+      const getApproximateDOB = (ageRange: string): string => {
+        const today = new Date()
+        let age: number
+        if (ageRange === '18-25') age = 21
+        else if (ageRange === '26-35') age = 30
+        else if (ageRange === '36-45') age = 40
+        else if (ageRange === '46-55') age = 50
+        else if (ageRange === '56-65') age = 60
+        else if (ageRange === '65+') age = 70
+        else age = 35 // default
+        
+        const year = today.getFullYear() - age
+        const month = String(today.getMonth() + 1).padStart(2, '0')
+        const day = String(today.getDate()).padStart(2, '0')
+        return `${year}-${month}-${day}`
+      }
+
       const leadData = {
         name: `${formData.firstName} ${formData.lastName}`.trim(),
         email: formData.email,
         phone: `${formData.countryCode}${formData.phone.replace(/\D/g, '')}`,
-        dob: formData.dob,
+        dob: getApproximateDOB(formData.ageRange),
         province: formData.province,
         country_code: formData.countryCode,
         smoking_status: formData.smokingStatus,
         insurance_product: formData.insuranceProduct,
         status: 'new',
-        gender: formData.gender || null
+        gender: formData.gender || null,
+        age_range: formData.ageRange // Store age range as well if database supports it
       }
 
       console.log('💾 Attempting to save lead to Supabase...')
@@ -386,36 +405,7 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
     return emailRegex.test(email)
   }
 
-  // Helpers for DOB
-  const formatDobInput = (raw: string) => {
-    const digits = raw.replace(/\D/g, '').slice(0, 8)
-    const mm = digits.slice(0, 2)
-    const dd = digits.slice(2, 4)
-    const yyyy = digits.slice(4, 8)
-    if (digits.length <= 2) return mm
-    if (digits.length <= 4) return `${mm}/${dd}`
-    return `${mm}/${dd}/${yyyy}`
-  }
-
-  const maxDobDate = () => {
-    const d = new Date()
-    d.setHours(23, 59, 59, 999)
-    return d
-  }
-
-  const parseDobToISO = (mmddyyyy: string): string | null => {
-    const m = mmddyyyy.match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
-    if (!m) return null
-    const month = Number(m[1])
-    const day = Number(m[2])
-    const year = Number(m[3])
-    if (month < 1 || month > 12) return null
-    if (day < 1 || day > 31) return null
-    const dt = new Date(year, month - 1, day)
-    if (isNaN(dt.getTime()) || dt.getMonth() !== month - 1 || dt.getDate() !== day || dt.getFullYear() !== year) return null
-    if (dt > maxDobDate()) return null
-    return `${year.toString().padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-  }
+  // Removed DOB helpers - using age range instead
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -442,16 +432,14 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
       return
     }
 
-    // DOB typed input with MM/DD/YYYY and min age 25
-    if (name === 'dob') {
-      const formatted = formatDobInput(value)
-      const iso = parseDobToISO(formatted)
-      setFormData(prev => ({ ...prev, dob: iso ?? formatted }))
-      if (!iso && formatted.length === 10) {
-        setValidationErrors(prev => ({ ...prev, dob: 'Enter a valid date (MM/DD/YYYY).' }))
-      } else if (iso) {
-        setValidationErrors(prev => ({ ...prev, dob: '' }))
+    // Age range validation
+    if (name === 'ageRange') {
+      if (!value) {
+        setValidationErrors(prev => ({ ...prev, ageRange: 'Age range is required' }))
+      } else {
+        setValidationErrors(prev => ({ ...prev, ageRange: '' }))
       }
+      setFormData(prev => ({ ...prev, [name]: value }))
       return
     }
     
@@ -772,83 +760,37 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
                     color: 'var(--text-primary)',
                     marginBottom: '8px'
                   }}>
-                    {locale === 'fr' ? 'Quand êtes‑vous né(e) ?' : 'When were you born?'} <span style={{ color: '#EF4444' }}>*</span>
+                    {locale === 'fr' ? 'Tranche d\'âge' : 'Age Range'} <span style={{ color: '#EF4444' }}>*</span>
                   </label>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <div style={{ position: 'relative', width: '100%' }}>
-                      <input
-                        type="text"
-                        name="dob"
-                        placeholder="MM/DD/YYYY"
-                        value={formData.dob.length === 10 && formData.dob.includes('-') ? (() => { const [y,m,d]=formData.dob.split('-'); return `${m}/${d}/${y}` })() : formData.dob}
-                        onChange={handleChange}
-                        maxLength={10}
-                        style={{
-                          width: '100%',
-                          padding: '14px 44px 14px 16px',
-                          border: `2px solid ${validationErrors.dob ? '#EF4444' : 'var(--line)'}`,
-                          borderRadius: '12px',
-                          fontSize: '16px',
-                          background: 'var(--surface-1)',
-                          color: 'var(--text-primary)',
-                          outline: 'none',
-                          height: '48px',
-                          boxSizing: 'border-box'
-                        }}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (dobPickerRef.current) {
-                            if (!dobPickerRef.current.value) {
-                              try { dobPickerRef.current.value = '2001-03-29' } catch {}
-                            }
-                            (dobPickerRef.current as any).showPicker?.()
-                            dobPickerRef.current.click()
-                          }
-                        }}
-                        aria-label="Pick date"
-                        style={{
-                          position: 'absolute',
-                          right: '10px',
-                          top: '50%',
-                          transform: 'translateY(-50%)',
-                          border: 'none',
-                          background: 'transparent',
-                          cursor: 'pointer',
-                          color: '#6B7280',
-                          fontSize: '18px',
-                          padding: 0
-                        }}
-                      >
-                        📅
-                      </button>
-                    </div>
-                    <input
-                      ref={dobPickerRef}
-                      type="date"
-                      aria-hidden="true"
-                      tabIndex={-1}
-                      style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', width: 0, height: 0 }}
-                      max={(function(){ const d=new Date(); const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const day=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${day}`})()}
-                      onChange={(e) => {
-                        const iso = e.target.value // already YYYY-MM-DD
-                        if (iso) {
-                          const picked = new Date(iso)
-                          if (picked > maxDobDate()) {
-                            setValidationErrors(prev => ({ ...prev, dob: 'Date cannot be in the future.' }))
-                            setFormData(prev => ({ ...prev, dob: '' }))
-                          } else {
-                            setValidationErrors(prev => ({ ...prev, dob: '' }))
-                            setFormData(prev => ({ ...prev, dob: iso }))
-                          }
-                        }
-                      }}
-                    />
-                  </div>
-                  {validationErrors.dob && (
+                  <select
+                    name="ageRange"
+                    value={formData.ageRange}
+                    onChange={handleChange}
+                    style={{
+                      width: '100%',
+                      padding: '14px 16px',
+                      border: `2px solid ${validationErrors.ageRange ? '#EF4444' : 'var(--line)'}`,
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      background: 'var(--surface-1)',
+                      color: 'var(--text-primary)',
+                      outline: 'none',
+                      height: '48px',
+                      boxSizing: 'border-box',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="">{locale === 'fr' ? 'Sélectionnez une tranche d\'âge' : 'Select age range'}</option>
+                    <option value="18-25">18-25</option>
+                    <option value="26-35">26-35</option>
+                    <option value="36-45">36-45</option>
+                    <option value="46-55">46-55</option>
+                    <option value="56-65">56-65</option>
+                    <option value="65+">65+</option>
+                  </select>
+                  {validationErrors.ageRange && (
                     <p style={{ color: '#EF4444', fontSize: '12px', margin: '4px 0 0 0', fontWeight: 500 }}>
-                      {validationErrors.dob}
+                      {validationErrors.ageRange}
                     </p>
                   )}
                 </div>
@@ -856,17 +798,17 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
                 <button
                   type="button"
                   onClick={nextStep}
-                  disabled={!formData.firstName || !formData.dob || !!validationErrors.firstName || !!validationErrors.dob}
+                  disabled={!formData.firstName || !formData.ageRange || !!validationErrors.firstName || !!validationErrors.ageRange}
                   style={{
                     width: '100%',
-                    background: (!formData.firstName || !formData.dob || validationErrors.firstName || validationErrors.dob) ? 'var(--line)' : 'rgb(255, 203, 5)',
+                    background: (!formData.firstName || !formData.ageRange || validationErrors.firstName || validationErrors.ageRange) ? 'var(--line)' : 'rgb(255, 203, 5)',
                     color: '#1E377C',
                     padding: '16px',
                     borderRadius: '12px',
                     border: 'none',
                     fontSize: '16px',
                     fontWeight: '600',
-                    cursor: (!formData.firstName || !formData.dob || validationErrors.firstName || validationErrors.dob) ? 'not-allowed' : 'pointer',
+                    cursor: (!formData.firstName || !formData.ageRange || validationErrors.firstName || validationErrors.ageRange) ? 'not-allowed' : 'pointer',
                     marginTop: '12px'
                   }}
                 >
@@ -1283,14 +1225,14 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
                       disabled={loading || !formData.phone || !otpSent || !formData.otp || !!validationErrors.email || !!validationErrors.dob}
                       style={{
                         flex: 2,
-                        background: (loading || !formData.phone || !otpSent || !formData.otp || validationErrors.email || validationErrors.dob) ? 'var(--line)' : 'rgb(255, 203, 5)',
+                        background: (loading || !formData.phone || !otpSent || !formData.otp || validationErrors.email || validationErrors.ageRange) ? 'var(--line)' : 'rgb(255, 203, 5)',
                         color: '#1E377C',
                         padding: '16px',
                         borderRadius: '12px',
                         border: 'none',
                         fontSize: '16px',
                         fontWeight: '600',
-                        cursor: (loading || !formData.phone || !otpSent || !formData.otp || validationErrors.email || validationErrors.dob) ? 'not-allowed' : 'pointer'
+                        cursor: (loading || !formData.phone || !otpSent || !formData.otp || validationErrors.email || validationErrors.ageRange) ? 'not-allowed' : 'pointer'
                       }}
                     >
                       {loading ? (locale === 'fr' ? 'Envoi…' : 'Submitting...') : 
