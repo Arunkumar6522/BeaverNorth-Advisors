@@ -60,7 +60,7 @@ export default function Enquiry() {
     firstName: '',
     lastName: '',
     gender: '',
-    ageRange: '',
+    ageRange: '26-35', // Default to age 30 (middle of 26-35 range)
     email: '',
     phone: '',
     countryCode: '+1',
@@ -644,9 +644,10 @@ export default function Enquiry() {
                           value={formData.ageRange}
                           onChange={(e) => updateFormData('ageRange', e.target.value)}
                           label={locale === 'fr' ? 'Tranche d\'âge' : 'Age Range'}
+                          displayEmpty={false}
                         >
                           <MenuItem value="18-25">18-25</MenuItem>
-                          <MenuItem value="26-35">26-35</MenuItem>
+                          <MenuItem value="26-35">26-35 {locale === 'fr' ? '(par défaut)' : '(default)'}</MenuItem>
                           <MenuItem value="36-45">36-45</MenuItem>
                           <MenuItem value="46-55">46-55</MenuItem>
                           <MenuItem value="56-65">56-65</MenuItem>

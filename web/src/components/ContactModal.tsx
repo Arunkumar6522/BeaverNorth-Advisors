@@ -22,7 +22,7 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
     firstName: '',
     lastName: '',
     gender: '' as 'male' | 'female' | 'prefer-not-to-say' | '',
-    ageRange: '',
+    ageRange: '26-35', // Default to age 30 (middle of 26-35 range)
     smokingStatus: '',
     province: '',
     insuranceProduct: '',
@@ -780,9 +780,8 @@ export default function ContactModal({ isOpen, onClose, showCloseButton = true, 
                       cursor: 'pointer'
                     }}
                   >
-                    <option value="">{locale === 'fr' ? 'Sélectionnez une tranche d\'âge' : 'Select age range'}</option>
                     <option value="18-25">18-25</option>
-                    <option value="26-35">26-35</option>
+                    <option value="26-35">26-35 {locale === 'fr' ? '(par défaut)' : '(default)'}</option>
                     <option value="36-45">36-45</option>
                     <option value="46-55">46-55</option>
                     <option value="56-65">56-65</option>
