@@ -171,7 +171,18 @@ export default function Enquiry() {
         body: JSON.stringify({ to: phoneNumber })
       })
       
-      const result = await response.json()
+      let result
+      try {
+        result = await response.json()
+      } catch (parseError) {
+        // If response is not JSON, create error result
+        const text = await response.text()
+        throw new Error(`Server error (${response.status}): ${text || response.statusText}`)
+      }
+      
+      if (!response.ok) {
+        throw new Error(result.message || result.error || `Server error: ${response.status} ${response.statusText}`)
+      }
       
       if (result.success) {
         setOtpSent(true)
@@ -180,10 +191,12 @@ export default function Enquiry() {
         setCurrentStep(4) // Move to step 4 after OTP is sent
         gtagEvent('otp_sent', { form_id: 'enquiry' })
       } else {
-        setOtpStatus(result.message || 'Failed to send verification code. Please try again.')
+        setOtpStatus(result.message || result.error || 'Failed to send verification code. Please try again.')
       }
-    } catch (error) {
-      setOtpStatus('Failed to send verification code. Please try again.')
+    } catch (error: any) {
+      console.error('OTP send error:', error)
+      const errorMessage = error.message || 'Failed to send verification code. Please try again.'
+      setOtpStatus(errorMessage)
     } finally {
       setSendingOtp(false)
     }

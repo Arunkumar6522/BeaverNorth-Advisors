@@ -19,7 +19,47 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    const { to } = JSON.parse(event.body);
+    // Validate request body
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          message: 'Request body is missing',
+          error: 'Missing request body'
+        })
+      };
+    }
+    
+    let bodyData;
+    try {
+      bodyData = JSON.parse(event.body);
+    } catch (parseError) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          message: 'Invalid JSON in request body',
+          error: parseError.message
+        })
+      };
+    }
+    
+    const { to } = bodyData;
+    
+    if (!to) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          message: 'Phone number (to) is required',
+          error: 'Missing phone number'
+        })
+      };
+    }
     
     console.log('📱 Sending OTP to:', to);
     
@@ -28,9 +68,17 @@ exports.handler = async (event, context) => {
     const twilioServiceSid = process.env.TWILIO_SERVICE_SID;
     
     // Check if Twilio credentials are properly configured
-    if (!twilioAccountSid || !twilioAuthToken || !twilioServiceSid || 
-        !twilioAccountSid.startsWith('AC') || !twilioServiceSid.startsWith('VA')) {
+    const hasAccountSid = twilioAccountSid && twilioAccountSid.startsWith('AC');
+    const hasAuthToken = !!twilioAuthToken;
+    const hasServiceSid = twilioServiceSid && twilioServiceSid.startsWith('VA');
+    
+    if (!hasAccountSid || !hasAuthToken || !hasServiceSid) {
       console.log('🔧 Demo mode: Twilio credentials not properly configured');
+      console.log('📋 Config check:', {
+        hasAccountSid,
+        hasAuthToken,
+        hasServiceSid
+      });
       return {
         statusCode: 200,
         headers,
@@ -67,14 +115,37 @@ exports.handler = async (event, context) => {
     
   } catch (error) {
     console.error('❌ Twilio OTP error:', error);
+    console.error('❌ Error details:', {
+      message: error.message,
+      code: error.code,
+      status: error.status,
+      name: error.name,
+      stack: error.stack
+    });
+    
+    // Provide more specific error messages
+    let errorMessage = 'Failed to send OTP. Please try again.';
+    let errorDetails = error.message || 'Unknown error';
+    
+    if (error.code === 20404) {
+      errorMessage = 'Twilio service not found. Please check your TWILIO_SERVICE_SID configuration.';
+    } else if (error.code === 20003) {
+      errorMessage = 'Twilio authentication failed. Please check your Twilio credentials.';
+    } else if (error.message && error.message.includes('resource not found')) {
+      errorMessage = 'Twilio service not found. Please verify your TWILIO_SERVICE_SID is correct.';
+    } else if (error.message) {
+      errorMessage = `Failed to send OTP: ${error.message}`;
+    }
     
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({
         success: false,
-        message: `Failed to send OTP: ${error.message}`,
-        error: error.message
+        message: errorMessage,
+        error: errorDetails,
+        code: error.code || null,
+        status: error.status || null
       })
     };
   }

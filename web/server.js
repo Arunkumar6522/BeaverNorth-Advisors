@@ -111,6 +111,14 @@ app.post('/api/send-otp', otpRateLimit, async (req, res) => {
   try {
     const { to, serviceSid } = req.body;
     
+    if (!to) {
+      return res.status(400).json({
+        success: false,
+        message: 'Phone number (to) is required',
+        error: 'Missing phone number'
+      });
+    }
+    
     console.log('📱 Sending OTP to:', to);
     
     // Demo mode - return success without actually sending
@@ -146,10 +154,25 @@ app.post('/api/send-otp', otpRateLimit, async (req, res) => {
   } catch (error) {
     console.error('❌ Twilio OTP error:', error);
     
+    // Provide more specific error messages
+    let errorMessage = 'Failed to send OTP. Please try again.';
+    let errorDetails = error.message || 'Unknown error';
+    
+    if (error.code === 20404) {
+      errorMessage = 'Twilio service not found. Please check your TWILIO_SERVICE_SID configuration.';
+    } else if (error.code === 20003) {
+      errorMessage = 'Twilio authentication failed. Please check your Twilio credentials.';
+    } else if (error.message && error.message.includes('resource not found')) {
+      errorMessage = 'Twilio service not found. Please verify your TWILIO_SERVICE_SID is correct.';
+    } else if (error.message) {
+      errorMessage = `Failed to send OTP: ${error.message}`;
+    }
+    
     res.status(500).json({
       success: false,
-      message: `Failed to send OTP: ${error.message}`,
-      error: error.message
+      message: errorMessage,
+      error: errorDetails,
+      code: error.code || null
     });
   }
 });
