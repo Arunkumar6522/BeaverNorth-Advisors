@@ -262,8 +262,7 @@ export default function Enquiry() {
         smoking_status: formData.smokingStatus,
         insurance_product: formData.insuranceProduct,
         status: 'new',
-        gender: formData.gender || null,
-        age_range: formData.ageRange // Store age range as well if database supports it
+        gender: formData.gender || null
       }
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://demo-project.supabase.co'
