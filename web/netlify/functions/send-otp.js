@@ -61,23 +61,53 @@ exports.handler = async (event, context) => {
       };
     }
     
+    // Validate phone number format (E.164 format: +12345678901)
+    const phoneRegex = /^\+1\d{10}$/;
+    if (!phoneRegex.test(to)) {
+      console.error('❌ Invalid phone number format:', to);
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          success: false,
+          message: `Invalid phone number format. Expected format: +1XXXXXXXXXX (received: ${to})`,
+          error: 'Invalid phone number format'
+        })
+      };
+    }
+    
     console.log('📱 Sending OTP to:', to);
     
     const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID;
     const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
     const twilioServiceSid = process.env.TWILIO_SERVICE_SID;
     
+    // Log credential status (without exposing actual values)
+    console.log('🔐 Credential check:', {
+      hasAccountSid: !!twilioAccountSid && twilioAccountSid.startsWith('AC'),
+      accountSidLength: twilioAccountSid?.length || 0,
+      hasAuthToken: !!twilioAuthToken,
+      authTokenLength: twilioAuthToken?.length || 0,
+      hasServiceSid: !!twilioServiceSid && twilioServiceSid.startsWith('VA'),
+      serviceSidLength: twilioServiceSid?.length || 0,
+      serviceSidPrefix: twilioServiceSid?.substring(0, 2) || 'none'
+    });
+    
     // Check if Twilio credentials are properly configured
     const hasAccountSid = twilioAccountSid && twilioAccountSid.startsWith('AC');
-    const hasAuthToken = !!twilioAuthToken;
+    const hasAuthToken = !!twilioAuthToken && twilioAuthToken.length > 20; // Auth tokens are typically 32 chars
     const hasServiceSid = twilioServiceSid && twilioServiceSid.startsWith('VA');
     
     if (!hasAccountSid || !hasAuthToken || !hasServiceSid) {
-      console.log('🔧 Demo mode: Twilio credentials not properly configured');
-      console.log('📋 Config check:', {
+      console.error('🔧 Demo mode: Twilio credentials not properly configured');
+      console.error('📋 Config check details:', {
         hasAccountSid,
+        accountSidValid: twilioAccountSid?.startsWith('AC'),
         hasAuthToken,
-        hasServiceSid
+        authTokenLength: twilioAuthToken?.length,
+        hasServiceSid,
+        serviceSidValid: twilioServiceSid?.startsWith('VA'),
+        serviceSidValue: twilioServiceSid ? `${twilioServiceSid.substring(0, 4)}...` : 'missing'
       });
       return {
         statusCode: 200,
@@ -86,7 +116,13 @@ exports.handler = async (event, context) => {
           success: true,
           message: 'OTP sent successfully (Demo Mode)',
           verificationSid: 'demo_verification_sid',
-          to: to
+          to: to,
+          debug: {
+            hasAccountSid,
+            hasAuthToken,
+            hasServiceSid,
+            note: 'Check Netlify function logs for detailed credential status'
+          }
         })
       };
     }
@@ -94,13 +130,28 @@ exports.handler = async (event, context) => {
     // Initialize Twilio client with real credentials
     const client = twilio(twilioAccountSid, twilioAuthToken);
     
-    // Send verification SMS
-    const verification = await client.verify.v2
-      .services(twilioServiceSid)
-      .verifications
-      .create({ to: to, channel: 'sms' });
+    console.log('📤 Attempting to send verification via Twilio...');
+    console.log('📋 Service SID:', twilioServiceSid);
+    console.log('📋 Phone number:', to);
     
-    console.log('✅ Twilio verification sent:', verification.sid);
+    // Send verification SMS
+    let verification;
+    try {
+      verification = await client.verify.v2
+        .services(twilioServiceSid)
+        .verifications
+        .create({ to: to, channel: 'sms' });
+      
+      console.log('✅ Twilio verification sent successfully!');
+      console.log('📋 Verification SID:', verification.sid);
+      console.log('📋 Verification status:', verification.status);
+    } catch (twilioError) {
+      console.error('❌ Twilio API call failed:', twilioError);
+      console.error('❌ Error code:', twilioError.code);
+      console.error('❌ Error message:', twilioError.message);
+      console.error('❌ Error status:', twilioError.status);
+      throw twilioError; // Re-throw to be caught by outer catch block
+    }
     
     return {
       statusCode: 200,
