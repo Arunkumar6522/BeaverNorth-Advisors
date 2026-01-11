@@ -29,13 +29,19 @@
     <link rel="alternate" href="https://beavernorth.netlify.app/" hreflang="fr-CA" />
     <link rel="alternate" href="https://beavernorth.netlify.app/" hreflang="x-default" />
 
-    <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) - Google Analytics & Google Ads -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZLHTE52JHN"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-ZLHTE52JHN');
+      // Google Ads conversion ID - Replace with your actual Google Ads ID (format: AW-XXXXXXXXX)
+      // You can find this in Google Ads > Tools & Settings > Conversions
+      const googleAdsId = 'AW-XXXXXXXXX'; // TODO: Replace with your Google Ads conversion ID
+      if (googleAdsId && googleAdsId !== 'AW-XXXXXXXXX') {
+        gtag('config', googleAdsId);
+      }
     </script>
 
     <!-- Meta Pixel Code -->

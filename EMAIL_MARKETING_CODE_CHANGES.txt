@@ -1,0 +1,185 @@
+EMAIL MARKETING MODULE - CODE CHANGES
+=====================================
+
+1. RICHTEXTEDITOR.TSX - Fix Image Resize
+------------------------------------------
+Location: web/src/components/RichTextEditor.tsx
+
+Update handleResizeImage function around line 212:
+
+const handleResizeImage = () => {
+  if (!selectedImage) return
+
+  const width = imageWidth ? (imageWidth.includes('%') ? imageWidth : imageWidth + 'px') : 'auto'
+  const height = imageHeight ? (imageHeight.includes('%') ? imageHeight : imageHeight + 'px') : 'auto'
+
+  selectedImage.style.width = width
+  selectedImage.style.height = height === 'auto' ? 'auto' : height
+  selectedImage.style.maxWidth = '100%'
+  selectedImage.style.objectFit = 'contain' // Add this line
+  
+  // Ensure image fits canvas
+  if (selectedImage.width > editorRef.current?.clientWidth || 0) {
+    selectedImage.style.width = '100%'
+    selectedImage.style.height = 'auto'
+  }
+
+  if (imageLink) {
+    handleAddImageLink()
+  }
+
+  updateContent()
+  setResizeDialogOpen(false)
+  setSelectedImage(null)
+  setImageLink('')
+}
+
+
+2. EMAILMARKETING.TSX - Add Unsubscribe Button & Tab
+-----------------------------------------------------
+Location: web/src/components/EmailMarketing.tsx
+
+A. Add imports at top:
+import { addUnsubscribeButton, personalizeEmailContent } from '../utils/emailHelpers'
+import { fetchUnsubscribers, unsubscribeEmail, Unsubscriber } from '../services/emailMarketingService'
+
+B. Add state after other useState declarations:
+const [unsubscribers, setUnsubscribers] = useState<Unsubscriber[]>([])
+
+C. Add useEffect to load unsubscribers:
+useEffect(() => {
+  const loadUnsubscribers = async () => {
+    const data = await fetchUnsubscribers()
+    setUnsubscribers(data)
+  }
+  loadUnsubscribers()
+}, [])
+
+D. Update handleSaveTemplate to add unsubscribe button:
+const handleSaveTemplate = () => {
+  if (!templateName.trim() || !templateContent.trim()) {
+    alert('Please fill in both name and content')
+    return
+  }
+
+  // Add unsubscribe button automatically
+  const contentWithUnsubscribe = addUnsubscribeButton(templateContent)
+
+  if (editingTemplate) {
+    setTemplates(templates.map(t => 
+      t.id === editingTemplate.id 
+        ? { ...t, name: templateName, content: contentWithUnsubscribe }
+        : t
+    ))
+  } else {
+    const newTemplate: EmailTemplate = {
+      id: Date.now().toString(),
+      name: templateName,
+      content: contentWithUnsubscribe,
+      createdAt: new Date().toISOString()
+    }
+    setTemplates([...templates, newTemplate])
+  }
+  setTemplateDialogOpen(false)
+  setEditingTemplate(null)
+  setTemplateName('')
+  setTemplateContent('')
+}
+
+E. Update Tabs to include Unsubscribers:
+<Tabs value={activeTab} onChange={(_, newValue) => setActiveTab(newValue)} sx={{ mb: 3 }}>
+  <Tab label="Email Templates" />
+  <Tab label="Categories" />
+  <Tab label="Tracking" />
+  <Tab label="Unsubscribers" />
+</Tabs>
+
+F. Add Unsubscribers Tab (after Tracking tab, activeTab === 3):
+{activeTab === 3 && (
+  <Box>
+    <Card sx={{ p: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h5" sx={{ fontWeight: 600 }}>
+          Unsubscribers ({unsubscribers.length})
+        </Typography>
+        <Typography variant="body2" sx={{ color: '#6B7280' }}>
+          People who have unsubscribed from email campaigns
+        </Typography>
+      </Box>
+      
+      {unsubscribers.length === 0 ? (
+        <Box sx={{ textAlign: 'center', py: 4 }}>
+          <Typography variant="body2" sx={{ color: '#9CA3AF' }}>
+            No unsubscribers yet
+          </Typography>
+        </Box>
+      ) : (
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: 600 }}>Email</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Category</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Unsubscribed At</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Reason</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {unsubscribers.map((unsub) => (
+                <TableRow key={unsub.id} hover>
+                  <TableCell>{unsub.email}</TableCell>
+                  <TableCell>{unsub.name || '-'}</TableCell>
+                  <TableCell>
+                    {unsub.category_name ? (
+                      <Chip label={unsub.category_name} size="small" />
+                    ) : (
+                      '-'
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="caption">
+                      {formatDate(unsub.unsubscribed_at)}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>{unsub.reason || '-'}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+    </Card>
+  </Box>
+)}
+
+G. Filter unsubscribed emails when sending:
+In handleSendEmail function, before creating recipients:
+
+// Filter out unsubscribed emails
+const unsubscribedEmails = unsubscribers.map(u => u.email.toLowerCase())
+const validContacts = category.contacts.filter(
+  contact => !unsubscribedEmails.includes(contact.email.toLowerCase())
+)
+
+if (validContacts.length === 0) {
+  alert('All contacts in this category have unsubscribed')
+  return
+}
+
+// Use validContacts instead of category.contacts
+
+
+3. BACKEND - Email Sending Function (After AWS SES Approval)
+------------------------------------------------------------
+Location: web/netlify/functions/send-email-campaign.js
+
+Create new file with AWS SES integration for sending emails.
+
+
+4. DATABASE SETUP
+-----------------
+Run: database/email_marketing/01_create_email_marketing_tables.sql
+
+This creates all necessary tables for email marketing functionality.
+

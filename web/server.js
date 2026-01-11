@@ -869,6 +869,117 @@ app.post('/api/facebook-conversions', async (req, res) => {
   }
 });
 
+// Google Ads Conversions API endpoint
+app.post('/api/google-ads-conversions', async (req, res) => {
+  try {
+    const { eventName, eventData, userData } = req.body;
+
+    const googleAdsCustomerId = process.env.GOOGLE_ADS_CUSTOMER_ID; // Format: 123-456-7890
+    const googleAdsConversionActionId = process.env.GOOGLE_ADS_CONVERSION_ACTION_ID;
+    const googleAdsAccessToken = process.env.GOOGLE_ADS_ACCESS_TOKEN;
+    const googleAdsDeveloperToken = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;
+
+    if (!googleAdsCustomerId || !googleAdsConversionActionId || !googleAdsAccessToken || !googleAdsDeveloperToken) {
+      console.log('⚠️ Google Ads Conversions API not configured');
+      return res.json({
+        success: false,
+        message: 'Google Ads Conversions API not configured. Please set environment variables.'
+      });
+    }
+
+    // Hash user data for privacy (SHA-256)
+    const hashData = (data) => {
+      if (!data) return null;
+      return crypto.createHash('sha256').update(data.toLowerCase().trim()).digest('hex');
+    };
+
+    // Map event names to conversion action IDs
+    const conversionActionMap = {
+      'LEAD_SUBMIT': googleAdsConversionActionId,
+      'FORM_START': googleAdsConversionActionId,
+      'OTP_VERIFIED': googleAdsConversionActionId,
+      'PHONE_CLICK': googleAdsConversionActionId,
+      'EMAIL_CLICK': googleAdsConversionActionId,
+    };
+
+    const conversionActionId = conversionActionMap[eventName] || googleAdsConversionActionId;
+
+    // Prepare user identifiers (hashed)
+    const userIdentifiers = [];
+    if (userData?.email) {
+      userIdentifiers.push({
+        hashedEmail: hashData(userData.email)
+      });
+    }
+    if (userData?.phone) {
+      const phoneNumber = userData.phone.replace(/\D/g, '');
+      if (phoneNumber) {
+        userIdentifiers.push({
+          hashedPhoneNumber: hashData(phoneNumber)
+        });
+      }
+    }
+
+    // Prepare conversion data
+    const conversionData = {
+      conversionAction: `customers/${googleAdsCustomerId}/conversionActions/${conversionActionId}`,
+      conversionDateTime: new Date().toISOString().replace(/\.\d{3}/, ''),
+      conversionValue: parseFloat(eventData?.value || '0'),
+      currencyCode: eventData?.currency || 'CAD',
+      ...(eventData?.transaction_id && { orderId: eventData.transaction_id }),
+    };
+
+    if (userIdentifiers.length > 0) {
+      conversionData.userIdentifiers = userIdentifiers;
+    }
+
+    // Send to Google Ads Conversions API
+    const apiUrl = `https://googleads.googleapis.com/v16/customers/${googleAdsCustomerId}:uploadClickConversions`;
+    
+    const payload = {
+      conversions: [conversionData],
+      partialFailure: false
+    };
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${googleAdsAccessToken}`,
+        'developer-token': googleAdsDeveloperToken,
+        'login-customer-id': googleAdsCustomerId.replace(/-/g, ''),
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      console.log('✅ Google Ads Conversions API event sent:', eventName);
+      return res.json({
+        success: true,
+        message: 'Event sent to Google Ads Conversions API',
+        result
+      });
+    } else {
+      console.error('❌ Google Ads Conversions API error:', result);
+      return res.json({
+        success: false,
+        message: result.error?.message || 'Failed to send event to Google Ads Conversions API',
+        error: result
+      });
+    }
+
+  } catch (error) {
+    console.error('❌ Google Ads Conversions API handler error:', error);
+    return res.status(500).json({
+      success: false,
+      message: `Google Ads Conversions API error: ${error.message}`,
+      error: error.message
+    });
+  }
+});
+
 // Serve React app in production
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
