@@ -2,22 +2,8 @@ declare global {
   interface Window {
     gtag: (...args: any[]) => void;
     fbq: (...args: any[]) => void;
-    dataLayer: any[];
   }
 }
-
-// Google Ads conversion labels - Replace these with your actual conversion labels from Google Ads
-// You can find these in Google Ads > Tools & Settings > Conversions > [Your Conversion Action] > Tag Setup
-const GOOGLE_ADS_CONVERSIONS = {
-  LEAD_SUBMIT: 'YOUR_LEAD_CONVERSION_LABEL', // TODO: Replace with your lead conversion label
-  FORM_START: 'YOUR_FORM_START_CONVERSION_LABEL', // TODO: Replace with your form start conversion label
-  OTP_VERIFIED: 'YOUR_OTP_VERIFIED_CONVERSION_LABEL', // TODO: Replace with your OTP verified conversion label
-  PHONE_CLICK: 'YOUR_PHONE_CLICK_CONVERSION_LABEL', // TODO: Replace with your phone click conversion label
-  EMAIL_CLICK: 'YOUR_EMAIL_CLICK_CONVERSION_LABEL', // TODO: Replace with your email click conversion label
-};
-
-// Google Ads conversion ID - should match the one in index.html
-const GOOGLE_ADS_ID = 'AW-XXXXXXXXX'; // TODO: Replace with your Google Ads ID
 
 export const trackEvent = (name: string, params?: Record<string, any>) => {
   if (typeof window !== 'undefined') {
@@ -59,8 +45,6 @@ export const trackScrollDepth = (depth: number) => {
 
 export const trackFormStart = () => {
   trackEvent('form_start', { form_name: 'contact_enquiry_modal' });
-  // Google Ads conversion - Form Start
-  trackGoogleAdsConversion(GOOGLE_ADS_CONVERSIONS.FORM_START, { value: 0, currency: 'CAD' });
 };
 
 export const trackOtpSent = (phoneNumber: string) => {
@@ -75,10 +59,6 @@ export const trackOtpVerified = (phoneNumber: string) => {
   }
   // Facebook Conversions API (server-side)
   sendFacebookConversion('CompleteRegistration', {}, { phone: phoneNumber });
-  // Google Ads conversion - OTP Verified
-  trackGoogleAdsConversion(GOOGLE_ADS_CONVERSIONS.OTP_VERIFIED, { value: 0, currency: 'CAD' });
-  // Google Ads Conversions API (server-side)
-  sendGoogleAdsConversion('OTP_VERIFIED', { value: '0', currency: 'CAD' }, { phone: phoneNumber });
 };
 
 // Send event to Facebook Conversions API (server-side)
@@ -122,21 +102,6 @@ export const trackLeadSubmitSuccess = (leadData: any) => {
     email: leadData.email,
     phone: leadData.phone
   });
-  // Google Ads conversion - Lead Submit (client-side)
-  trackGoogleAdsConversion(GOOGLE_ADS_CONVERSIONS.LEAD_SUBMIT, {
-    value: 0,
-    currency: 'CAD',
-    transaction_id: `lead_${Date.now()}_${leadData.email?.replace(/[^a-zA-Z0-9]/g, '') || 'unknown'}`,
-  });
-  // Google Ads Conversions API (server-side)
-  sendGoogleAdsConversion('LEAD_SUBMIT', {
-    value: '0',
-    currency: 'CAD',
-    transaction_id: `lead_${Date.now()}_${leadData.email?.replace(/[^a-zA-Z0-9]/g, '') || 'unknown'}`,
-  }, {
-    email: leadData.email,
-    phone: leadData.phone
-  });
 };
 
 export const trackLeadSubmitError = (errorMessage: string, leadData?: any) => {
@@ -155,18 +120,10 @@ export const trackLeadSubmitError = (errorMessage: string, leadData?: any) => {
 // New helpers
 export const trackPhoneClick = (phone: string, context?: string) => {
   trackEvent('phone_click', { phone_number: phone, context });
-  // Google Ads conversion - Phone Click
-  trackGoogleAdsConversion(GOOGLE_ADS_CONVERSIONS.PHONE_CLICK, { value: 0, currency: 'CAD' });
-  // Google Ads Conversions API (server-side)
-  sendGoogleAdsConversion('PHONE_CLICK', { value: '0', currency: 'CAD' }, { phone });
 };
 
 export const trackEmailClick = (email: string, context?: string) => {
   trackEvent('email_click', { email, context });
-  // Google Ads conversion - Email Click
-  trackGoogleAdsConversion(GOOGLE_ADS_CONVERSIONS.EMAIL_CLICK, { value: 0, currency: 'CAD' });
-  // Google Ads Conversions API (server-side)
-  sendGoogleAdsConversion('EMAIL_CLICK', { value: '0', currency: 'CAD' }, { email });
 };
 
 export const trackFileDownload = (fileName: string, fileType?: string) => {
@@ -195,43 +152,6 @@ export const trackModuleView = (module: string) => {
 
 export const trackLanguageChange = (language: string) => {
   trackEvent('language_change', { language });
-};
-
-// Google Ads conversion tracking (client-side)
-const trackGoogleAdsConversion = (conversionLabel: string, params?: Record<string, any>) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  if (conversionLabel === 'YOUR_LEAD_CONVERSION_LABEL' || 
-      conversionLabel === 'YOUR_FORM_START_CONVERSION_LABEL' ||
-      conversionLabel === 'YOUR_OTP_VERIFIED_CONVERSION_LABEL' ||
-      conversionLabel === 'YOUR_PHONE_CLICK_CONVERSION_LABEL' ||
-      conversionLabel === 'YOUR_EMAIL_CLICK_CONVERSION_LABEL' ||
-      GOOGLE_ADS_ID === 'AW-XXXXXXXXX') {
-    console.log('⚠️ Google Ads conversion tracking not configured. Please set your conversion labels and Google Ads ID.');
-    return;
-  }
-  
-  window.gtag('event', 'conversion', {
-    'send_to': `${GOOGLE_ADS_ID}/${conversionLabel}`,
-    ...params
-  });
-};
-
-// Send event to Google Ads Conversions API (server-side)
-const sendGoogleAdsConversion = async (eventName: string, eventData?: Record<string, any>, userData?: Record<string, any>) => {
-  try {
-    const apiUrl = window.location.hostname === 'localhost' 
-      ? 'http://localhost:3001/api/google-ads-conversions'
-      : '/.netlify/functions/google-ads-conversions';
-    
-    await fetch(apiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventName, eventData, userData })
-    });
-  } catch (error) {
-    console.error('Google Ads Conversions API error:', error);
-    // Don't throw - fail silently to not break user flow
-  }
 };
 
 // Backwards compatibility aliases
